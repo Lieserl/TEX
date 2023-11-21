@@ -1,0 +1,305 @@
+\section{实验步骤及实验分析}
+    \subsection{准备工作}
+        \begin{enumerate}
+            \item 登陆 \textbf{bupt1} 服务器，在自己的目录下找到 \textbf{bomb533.tar} 文件，使用 \textbf{tar -xvf bomb533.tar} 命令解压缩该文件。
+                \begin{figure*}[htbp]
+                    \centering
+                    \includegraphics*[width = 10cm]{s0_0.png}
+                \end{figure*}
+            \item 使用 \textbf{cd bomb533} 命令移动到 \textbf{bomb533} 目录下并使用 \textbf{ls} 命令查看当前目录下的文件。可以发现，\textbf{bomb} 即是我们需要逆向的可执行文件，\textbf{bomb.c} 是提供的部分 \textbf{C} 代码。
+                \begin{figure*}[htbp]
+                    \centering
+                    \includegraphics*[width = 10cm]{s0_1.png}
+                \end{figure*}
+                \par \textbf{PS}：存在 \textbf{sol.txt} 文件是因为这部分拆炸弹前忘了截图，拆完回来补截图的。
+            \item 使用 \textbf{gdb bomb} 命令进入调试阶段。至此，准备工作完毕，开始正式拆弹。
+                \begin{figure*}[htbp]
+                    \centering
+                    \includegraphics*[width = 12cm]{s0_2.png}
+                \end{figure*}
+        \end{enumerate}
+
+    \subsection{第一炸弹：字符串炸弹}
+        \par 写在前面：由于调试过程中需要用到大量 \textbf{disassemble}、\textbf{stepi}、\textbf{nexti} 指令，全部截图显得十分冗余，故只在 \textbf{第一炸弹} 展示完整截图，其他部分相关命令只进行文字描述。其次，有时候会忘记截图，想起来的时候代码已经执行过几行了，所以看到进入函数后第一个 \textbf{disassemble} 命令指向的位置不是第一句，请不要感到意外。        \begin{enumerate}
+            \item 进入调试界面，我们首先使用 \textbf{list} 命令查看第一颗炸弹的位置，在 \textbf{74} 行发现了第一颗炸弹。于是我们使用 \textbf{break 74} 命令在该行设置一个断点。
+                \begin{figure*}[htbp]
+                    \centering
+                    \includegraphics*[width = 12cm]{s1_0.png}
+                \end{figure*}
+            \item 使用 \textbf{run} 命令运行程序，提示输入第一颗炸弹。由于我们此时并不知道密码是多少，因此随便填写。填写完成后，程序运行到断点位置暂停。
+                \begin{figure*}[htbp]
+                    \centering
+                    \includegraphics*[width = 12cm]{s1_1.png}
+                \end{figure*}
+            \item 接下来我们使用 \textbf{disassemble} 命令查看当前汇编代码，并使用 \textbf{stepi} 命令单步执行，进入 \textbf{phase\_1(input)} 函数内部进行拆弹。
+                \begin{figure*}[htbp]
+                    \hspace*{1cm}
+                    \includegraphics*[width = 10cm]{s1_2.png} \\
+                    \hspace*{1.5cm}
+                    \includegraphics*[width = 12cm]{s1_3.png}
+                \end{figure*}
+            \newpage
+            \item 使用 \textbf{disassemble} 命令查看第一颗炸弹的汇编代码。接下来对汇编代码进行分析：
+                \par 在 \textbf{<+9>} 位置，将 \textbf{\$0x402720} 移动到了 \textbf{\%rsi} 寄存器中，猜测该寄存器存放了我们输入的字符串作为参数传入 \textbf{strings\_not\_equal} 函数中，然后在 \textbf{<+16>} 位置判断函数返回值是否为 \textbf{0}。如果是，则转跳到 \textbf{<+23>} 位置；否则继续执行，引爆炸弹，\textbf{BOMB!!!}
+                \begin{figure*}[htbp]
+                    \centering
+                    \includegraphics*[width = 12cm]{s1_4.png}
+                \end{figure*}
+            \item 为了验证我们的猜想，我们先使用 \textbf{stepi} 命令移动到 \textbf{<+9>} 位置，然后使用 \par \textbf{x /s} 命令查看 \textbf{\%esi} 寄存器中究竟存放着什么，结果发现竟然就是我们梦寐以求的密码（\sout{我第一次拆的时候还没发现，血亏}）。但图都截过了，那就当我们不知道这件事，继续看看 \textbf{strings\_not\_equal} 里面究竟有什么吧。
+                \begin{figure*}[htbp]
+                    \centering
+                    \includegraphics*[width = 12cm]{s1_5.png}
+                \end{figure*}
+            \item 继续使用 \textbf{stepi} 命令，进入到 \textbf{string\_not\_equal} 函数中，使用 \textbf{disassemble} 命令查看汇编代码。
+                \begin{figure*}[htbp]
+                    \hspace*{1.7cm}
+                    \includegraphics*[width = 9cm]{s1_6.png} \\
+                    \hspace*{1.3cm}
+                    \includegraphics*[width = 11cm]{s1_7.png}
+                \end{figure*}
+            \item 阅读汇编代码，我们发现函数调用了两次 \textbf{string\_length} 函数，在第一次调用后将返回值复制至 \textbf{\%r12d} 寄存器中，最后将 \textbf{\%r12d} 和 \textbf{\%rax} 寄存器中的内容相比较，即比较两个字符串的长度是否一致。如果不一致，则跳转到 \textbf{<+96>} 位置。可以看到，在 \textbf{<+96>} 位置将 \textbf{\%edx} 寄存器的内容复制到 \textbf{\%eax} 寄存器作为返回值，而在 \textbf{<+26>} 位置我们知道 \textbf{\%edx} 存放的值为 \textbf{1}。所以如果两个字符串长度不等则返回 \textbf{1}，炸弹爆炸，所以两个 \textbf{string\_length} 中必然有一个是密码。
+                \begin{figure*}[htbp]
+                    \centering
+                    \includegraphics*[width = 12cm]{s1_7_1.png}
+                \end{figure*}
+            \item 使用 \textbf{stepi} 指令分别移动到两处调用位置，分别查看 \textbf{\%rdi} 寄存器中的内容，即可得出密码。
+                \begin{figure*}[htbp]
+                    \centering
+                    \includegraphics*[width = 12cm]{s1_8.png}
+                \end{figure*}
+            \item 重新运行程序，输入密码，第一炸弹被拆除。
+                \begin{figure*}[htbp]
+                    \centering
+                    \includegraphics*[width = 12cm]{s1_9.png}
+                \end{figure*}
+        \end{enumerate}
+    \newpage
+    \subsection{第二炸弹：枯萎穿心攻击}
+        \begin{enumerate}
+            \item 我们在第二炸弹位置设置断点，进入函数内部，使用 \textbf{disassemble} 命令查看汇编代码。
+                \begin{figure*}[htbp]
+                    \centering
+                    \includegraphics*[width = 12cm]{s2_0.png}
+                \end{figure*}
+            \item 由函数 \textbf{read\_six\_numbers} 可以推测这关的密码是 \textbf{6} 个符合一定顺序的数字，为了验证假设，我们进入函数内部查看其汇编代码。
+            \item 在函数内部我们发现了提示中的关键函数 \textbf{sscanf}，在函数之后程序将 \textbf{\%eax} 寄存器的内容（\textbf{sscanf} 的返回值）与 \textbf{5} 做比较，并在判断为否时引爆炸弹。
+                \begin{figure*}[htbp]
+                    \centering
+                    \includegraphics*[width = 12cm]{s2_1.png}
+                \end{figure*}
+            \newpage
+            \item 我们移动至 \textbf{+34} 位置，使用 \textbf{x /s } 命令查看 \textbf{sscanf} 的第一个参数值 \textbf{\%esi}，发现函数确实是读入 \textbf{6} 个数字，并且中间用空格隔开。
+                \begin{figure*}[htbp]
+                    \hspace*{2cm}
+                    \includegraphics*[width = 8cm]{s2_2.png}
+                \end{figure*}
+            \item 现在让我们来分析一下 \textbf{phase\_2} 中剩下的内容：
+                \begin{itemize}
+                    \item 读入完成后紧接着是两个判断，分别把 \textbf{0} 和 \textbf{1} 与 \textbf{(\%rsp)} 和 \textbf{0x4(\%rsp)}（这里是比较 \textbf{\%rsp} 所指向地址存放的值）做比较，若为否则引爆炸弹，推测 \textbf{\%rsp} 寄存器指向的一片地址空间（即 \textbf{数组}）存放着我们输入的数据，使用\textbf{x /6 } 命令查看，发现结果和我们的推测一样（此处是补截的图，所以输入为密码）。
+                        \par 所以这两个比较说明我们输入的第一和第二个数为 \textbf{0} 和 \textbf{1}。
+                        \begin{figure*}[htbp]
+                            \hspace*{1.5cm}
+                            \includegraphics*[width = 11cm]{s2_4.png} \\
+                            \hspace*{2cm}
+                            \includegraphics*[width = 8cm]{s2_3.png}
+                        \end{figure*}
+                    \item 接下来我们先看到 \textbf{<+75>} 位置，在 \textbf{\%rbp} 和 \textbf{\%rbx} 内容不相等时转跳回 \textbf{<+56>} 位置，所以推测这是一个 \textbf{do while} 循环，用来判断输入的后四个数是否满足要求。
+                        \begin{figure*}[htbp]
+                            \centering
+                            \includegraphics*[width = 12cm]{s2_5.png}
+                        \end{figure*}
+                    \item 现在回过头来看之后的汇编代码，我们先把 \textbf{数组 \ } 指针 \textbf{\%rsp} 复制到 \textbf{\%rbx} 中（即现在 \textbf{\%rbx} 也是数组指针），然后将数组的第四个元素复制到 \textbf{\%rbp} 寄存器中。接下来执行至 \textbf{<+56>} 位置，进入循环。
+                        \begin{figure*}[htbp]
+                            \centering
+                            \includegraphics*[width = 12cm]{s2_6.png}
+                        \end{figure*}
+                    \item 前两行的操作是将\textbf{\%rbx} 指向的数组中的元素和下一个元素相加并存储到 \textbf{\%eax} 寄存器中，接着判断相加得到的结果与数组的下下个元素是否相等。如果不相等，则引爆炸弹。由于第一次迭代时 \textbf{\%rbx} 指向数组第一个元素，因此数组的第三个元素应该是第一和第二个元素的和。最后，将 \textbf{0x4} 加到 \textbf{\%rbx} 中，即将 \textbf{\%rbx} 指向数组的第二个元素，判断 \textbf{\%rbx} 是否等于 \textbf{\%rbp}（\textbf{(0x10\%rsp)}）。如果不等，则继续循环。
+                        \begin{figure*}[htbp]
+                            \centering
+                            \includegraphics*[width = 12cm]{s2_7.png}
+                        \end{figure*}
+                \end{itemize}
+            \item 通过分析，我们了解这段汇编代码实现的功能是判断数组的第 \textbf{k} 个元素与第 \textbf{k + 1} 个元素相加的结果是否等于第 \textbf{k + 2} 个元素。如果不等，则引爆炸弹。直到 \textbf{k} $=$ \textbf{5} 时停止迭代，因此，所求密码是前两项为 \textbf{0}、\textbf{1}，长度为 \textbf{6} 的斐波那契数列。即 \textbf{0 \ 1 \ 1 \ 2 \ 3 \ 5}。
+            \newpage
+            \item 重新运行输入密码，成功拆除第二炸弹。
+                \begin{figure*}[htbp]
+                    \hspace*{1.2cm}
+                    \includegraphics*[width = 10cm]{s2_8.png}
+                \end{figure*}
+        \end{enumerate}
+    \subsection{第三炸弹：败者食尘}
+        \begin{enumerate}
+            \item 查看第三炸弹的汇编代码如下：
+                \begin{figure*}[htbp]
+                    \centering
+                    \includegraphics*[width = 7cm]{s3_0_0.png}
+                    \includegraphics*[width = 7cm]{s3_0_1.png}
+                \end{figure*}
+            \item 我们还是如法炮制地查看 \textbf{sscanf} 的输入，发现这段密码是由 \textbf{数字 \ 字符 \ 数字} 组成的，并且在输入小于两个字符时引爆炸弹。
+                \begin{figure*}[htbp]
+                    \hspace*{1cm}
+                    \includegraphics*[width = 12cm]{s3_1_1.png} \\ 
+                    \hspace*{1.5cm}
+                    \includegraphics*[width = 10cm]{s3_1.png}
+                \end{figure*}
+            \newpage
+            \item 继续往后，我们发现了三个 \textbf{lea} 指令，根据上个炸弹，我们可以知道输入的三个字符分别存放在 \textbf{0x10(\%rsp)}、\textbf{0xf(\%rsp)}、\textbf{0x14(\%rsp)} 中。
+                \begin{figure*}[htbp]
+                    \hspace*{1cm}
+                    \includegraphics*[width = 12cm]{s3_2.png}
+                \end{figure*}
+                \par 补充说明：由于函数的前六个参数按顺序存放在 \textbf{\%rdi \ \%rsi \ \%rdx \ \%rcx \ \%r8 \ \%r9} 中，因此整个工作流为将对应地址放入寄存器，\textbf{sscanf} 将输入读入寄存器所指向的内存空间，其中 \textbf{(\%rdx) \ (\%rcx) \ (\%r8)} 按顺序分别存放三个输入。
+            \item 接下来，我们看到了熟悉的语句：\textbf{jmpq \ *0x402790(,\%rax,8)}，说明从 \textbf{<+70>} 位置开始是一个 \textbf{switch} 语句。
+                \begin{figure*}[htbp]
+                    \hspace*{1cm}
+                    \includegraphics*[width = 14cm]{s3_3.png}
+                \end{figure*}
+            \item \textbf{switch} 语句执行前，判断如果输入的第一个数字大于 \textbf{7}，则引爆炸弹。说明输入的第一个数字和 \textbf{switch} 语句的转跳最多到 \textbf{7}。
+                \begin{figure*}[htbp]
+                    \hspace*{1cm}
+                    \includegraphics*[width = 14cm]{s3_4.png}
+                \end{figure*}
+            \item 使用 \textbf{x /20wx } 查看 \textbf{switch} 语句的转跳表，确定代码的整体框架：
+                \begin{tabular}{cccccccc}
+                    0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 \\
+                    <+77> & +111> & <+145> & <+179> & <+210> & <+237> & <+264> & <+291>
+                \end{tabular}
+                \includegraphics*[width = 12cm]{s3_5.png}
+            \item 由于每个部分的功能都一样，所以在此只解释 \textbf{0} 对应的情况：
+                \par 首先将立即数 \textbf{0x74} 复制到 \textbf{\%eax} 中，然后判断输入的第三个数字是否等于 \textbf{0x3de}，如果相等，就跳转到 \textbf{<+328>} 位置；否则引爆炸弹。
+                \par 在 \textbf{<+328>} 位置，判断输入的第二个字符是否与 \textbf{\%al} 寄存器储存的内容（即 \textbf{\%eax} 寄存器的最低 \textbf{8} 位）相同。如果相同，\textbf{SAFE!!!}，否则 \textbf{BOMB!!!}
+                \begin{figure*}
+                    \includegraphics*[width = 14cm]{s3_6_0.png} \\
+                    \includegraphics*[width = 14cm]{s3_6_1.png}
+                \end{figure*}
+            \newpage
+            \item 综上，我们可以总结出每一种情况对应的输入，任选其一作为密码即可。
+                \begin{table}[htbp]
+                    \hspace*{3cm}
+                    \begin{tabular}{c|c|c}
+                        \textbf{input1} & \textbf{input2(char)} & \textbf{input3} \\
+                        $0$ & $0x74$ & $0x3de$ \\
+                        $1$ & $0x62$ & $0x246$ \\
+                        $2$ & $0x61$ & $0x1f5$ \\
+                        $3$ & $0x74$ & $0x8a$ \\
+                        $4$ & $0x79$ & $0xe1$ \\
+                        $5$ & $0x74$ & $0x1aa$ \\
+                        $6$ & $0x73$ & $0x2f1$ \\
+                        $7$ & $0x63$ & $0x15b$ \\
+                    \end{tabular}
+                \end{table}
+            \item 输入密码，解除第三炸弹
+                \begin{figure*}[htbp]
+                    \centering
+                    \includegraphics*[width = 12cm]{s3_7.png}
+                \end{figure*}
+        \end{enumerate}
+    \newpage
+    \subsection{第四炸弹：递归炸弹}
+        \par 我愿称其为除第一炸弹以外最简单的炸弹，因为真的很容易卡 \textbf{bug} 来 \textbf{skip}。
+        \begin{enumerate}
+            \item 还是先查看其汇编代码。
+                \begin{figure*}[htbp]
+                    \hspace*{2cm}
+                    \includegraphics*[width = 10cm]{s4_0.png}
+                \end{figure*}
+            \item 依然是先看 \textbf{sscanf} 传入参数用的几个寄存器，发现这次的密码是 \textbf{数字 \ 数字} \par 的形式。同时由上题可知，读入的两个数字分别被放在 \textbf{0x4(\%rsp)} 和 \textbf{(\%rsp)} 中；在 \textbf{sscanf} 返回值不等于 \textbf{2} 时爆炸。
+                \begin{figure*}[htbp]
+                    \hspace*{2cm}
+                    \includegraphics*[width = 6cm]{s4_1.png}
+                \end{figure*}
+            \item 接着往下看，在 \textbf{<+43>} 位置将第二个元素拷贝到 \textbf{\%eax} 寄存器中，减去 \textbf{0x2} 后与 \textbf{0x2} 做比较。如果大于 \textbf{0x2}，则炸弹爆炸。所以我们输入的第二个数应该小于等于 \textbf{4}。然后将 \textbf{func4} 的参数立即数 \textbf{0x6} 和第二个元素传入 \textbf{\%edi}  和 \textbf{\%esi} 中，调用函数 \textbf{func4}。
+                \begin{figure*}[htbp]
+                    \hspace*{2cm}
+                    \includegraphics*[width = 12cm]{s4_2.png}
+                \end{figure*}
+            \newpage
+            \item 进入 \textbf{func4} 内部，查看其汇编代码，发现其是一个递归函数，我们逐步分析其功能。
+                \begin{figure*}[htbp]
+                    \hspace*{2cm}
+                    \includegraphics*[width = 12cm]{s4_3.png}
+                \end{figure*}
+                \begin{itemize}
+                    \item 首先是递归出口，当 \textbf{\%edi} 寄存器中的值小于等于 \textbf{0} 时直接返回。注意在函数的最后将 \textbf{0x0} 赋值给了 \textbf{\%eax}，因此此处的返回值一定为 \textbf{0}；接着将第二个元素复制到 \textbf{\%eax}中，当 \textbf{\%edi} 寄存器中的值等于 \textbf{1} 时，返回第二个元素。
+                        \begin{figure*}[htbp]
+                            \hspace*{2cm}
+                            \includegraphics*[width = 12cm]{s4_4_0.png} \\
+                            \hspace*{2cm}
+                            \includegraphics*[width = 12cm]{s4_4_1.png}
+                        \end{figure*}
+                    \item 接着将 \textbf{\%edi} 复制到 \textbf{\%ebx} 中，令 \textbf{\%edi} 减一，调用 \textbf{func4} 函数。然后将返回值 \textbf{\%rax} 加上第二个元素并存储在 \textbf{\%rdi} 中。将 \textbf{\%rbx}（也就是 \textbf{\%edi} 的初值） 减 \textbf{2} 的值存放在 \textbf{\%esi} 中，再次调用 \textbf{func4}，并将返回值加上之前的处理过的返回值 \textbf{\%r12d}。
+                        \begin{figure*}[htbp]
+                            \hspace*{2cm}
+                            \includegraphics*[width = 12cm]{s4_5.png}
+                        \end{figure*}
+                    \item 根据上面描述，我们可以将其翻译成 \textbf{C} 代码：
+                    \lstinputlisting[style = C]{rec.c}
+                \end{itemize}
+            \item 分析完 \textbf{func4} 的功能，我们接着往下看。程序将第一个元素与函数返回值做比较。如果不相等，炸弹爆炸。
+                \begin{figure*}[htbp]
+                    \hspace*{2cm}
+                    \includegraphics*[width = 12cm]{s4_6.png}
+                \end{figure*}
+            \item 综上，我们的输入必须满足 \textbf{elem1} $=$ \textbf{fun4(6, elem2)}，同时第二个输入要小于等于 \textbf{4}，至此第四炸弹解除。
+                \begin{figure*}[htbp]
+                    \hspace*{2cm}
+                    \includegraphics*[width = 12cm]{s4_7.png}
+                \end{figure*}
+        \end{enumerate}
+        \par \textbf{skip}方法：只要知道递归边界，我可以直接传边界进去，这样可以省去对递归函数的分析；或者随便试一组数据，单步执行，在 \textbf{func4} 结束后查看 \textbf{\%rax} 寄存器的值就可以找到对应的答案。
+    \subsection{第五炸弹：真·二进制炸弹}
+        \begin{enumerate}
+            \item 老样子，先查汇编
+                \begin{figure*}[htbp]
+                    \hspace*{1.5cm}
+                    \includegraphics*[width = 12cm]{s5_0.png}
+                \end{figure*}
+            \item 可以看到程序在 \textbf{<+24>} 位置调用了 \textbf{string\_length} 函数，并在之后将返回值与 \textbf{0x6} 比较。说明这次的输入是一个长度为 \textbf{6} 的字符串。
+                \begin{figure*}[htbp]
+                    \hspace*{1.5cm}
+                    \includegraphics*[width = 12cm]{s5_1.png}
+                \end{figure*}
+            \item 继续往下看，发现在 \textbf{<+69>} 位置的跳转指令会跳转回 \textbf{<+44>} 位置，显然这也是一个 \textbf{do while} 循环，接下来分析循环的部分。
+                \begin{figure*}[htbp]
+                    \hspace*{1.5cm}
+                    \includegraphics*[width = 12cm]{s5_2.png}
+                \end{figure*}
+            \item 在循环外，程序先将 \textbf{0x0} 赋值给了 \textbf{\%eax}，然后进入循环。循环开始时，将 \textbf{\%rbx + \%rax} 所指向地址的数据的末尾 \textbf{8} 位做 \textbf{0} 拓展传给了 \textbf{\%edx} 寄存器，然后将 \textbf{\%edx} 与 \textbf{0xf} 做按位与的操作。我们知道，\textbf{0xf} 的二进制表示为 \textbf{1111}，因此这句话执行的结果为保留 \textbf{\%edx} 的最低 \textbf{4} 位。
+                \begin{figure*}[htbp]
+                    \hspace*{1.5cm}
+                    \includegraphics*[width = 12cm]{s5_3.png}
+                \end{figure*}
+            \item 此外，我们注意到 \textbf{<+61>} 位置将 \textbf{\%rax} 的值加 \textbf{1}， 并在其值等于 \textbf{6} 时结束循环。因此 \textbf{\%eax} 的作用为作为索引用来遍历我们输入的字符串。
+                \begin{figure*}[htbp]
+                    \hspace*{1.5cm}
+                    \includegraphics*[width = 12cm]{s5_4.png}
+                \end{figure*}
+            \item 接下来，和以前一样，程序将之前取出的末尾 \textbf{4} 位作为索引去访问一个地址，于是使用 \textbf{x /s} 命令查看该地址存放的数据，发现是一串不规律的字符串。
+                \par 不知道为啥，\textbf{figure*} 环境只能插 \textbf{3} 张图，所以这里拿炸弹凑个数。
+                \begin{figure*}[htbp]
+                    \hspace*{1.5cm}
+                    \includegraphics*[width = 12cm]{s5_5_0.png} \\
+                    \hspace*{2cm}
+                    \includegraphics*[width = 14cm]{s5_5_1.png}
+                \end{figure*}
+                \hspace*{2cm}
+                \includegraphics*[width = 10cm]{vspace.png}
+            \newpage
+            \item 然后程序将取得的结果的末尾 \textbf{8} 位存入 \textbf{\%rsp + \%rax} 所指的内存位置。不难发现，此处 \textbf{\%rax} 的作用也是作为索引。
+                \begin{figure*}[htbp]
+                    \hspace*{1.5cm}
+                    \includegraphics*[width = 12cm]{s5_6.png}
+                \end{figure*}
+            \item 接着将 \textbf{\%rax} 加 \textbf{1}，并判断是否结束循环。经过上述分析，可以看出这段循环的作用是将输入字符串的每一字符的最低 \textbf{4} 位作为索引，取出某个字符并存储到 \textbf{\%rsp} 所指的内存中，形成一个新的字符串。
+            \item 接着在 \textbf{<+76>} 位置将某个地址传入 \textbf{\%esi}，并将 \textbf{\%rsp} 传入 \textbf{\%rdi}，紧接着调用了 \textbf{string\_not\_equal} 函数。说明程序在将之前生成的字符串与某个字符串做对比，并通过结果确定炸弹是否爆炸。于是我们使用 \textbf{x /s} 命令查看目标字符串。
+                \begin{figure*}[htbp]
+                    \hspace*{1.5cm}
+                    \includegraphics*[width = 12cm]{s5_7.png} \\
+                    \hspace*{2cm} 
+                    \includegraphics*[width = 6cm]{s5_8.png}
+                \end{figure*}
+
+            \item \textbf{oilers!!!} 于是，这次的密码就很清晰了：通过查找 \textbf{acsii} 码确定究竟输入哪些字符可以从某一不规律的字符串中依次取出 \textbf{o \ i \ l \ e \ r \ s} 几个字符，对应下来为 \textbf{ZDOEFG}。至此 \textbf{Dr. Evil} 的阴谋彻底破灭，可喜可贺。
+        \end{enumerate}
+
+ \xi \sum_{n = 1}^{\infty} \lambda       \int_{}^{} \frac{\sqrt{} }{}  \,dx   \thicksim \backsim ( ) \binom{\rightarrow }{} \sigma \mu \sqrt[n]{} 

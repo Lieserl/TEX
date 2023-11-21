@@ -1,0 +1,57 @@
+\contentsline {section}{\numberline {1}202109-1 数组推导}{5}{section.1}%
+\contentsline {subsection}{\numberline {1.1}题目}{5}{subsection.1.1}%
+\contentsline {subsubsection}{\numberline {1.1.1}题目描述}{5}{subsubsection.1.1.1}%
+\contentsline {subsubsection}{\numberline {1.1.2}子任务}{5}{subsubsection.1.1.2}%
+\contentsline {subsection}{\numberline {1.2}解法 A（50 分）}{5}{subsection.1.2}%
+\contentsline {subsubsection}{\numberline {1.2.1}原理阐释}{5}{subsubsection.1.2.1}%
+\contentsline {subsubsection}{\numberline {1.2.2}C++ 代码实现}{6}{subsubsection.1.2.2}%
+\contentsline {subsection}{\numberline {1.3}解法 B（100 分）}{6}{subsection.1.3}%
+\contentsline {subsubsection}{\numberline {1.3.1}原理阐释}{6}{subsubsection.1.3.1}%
+\contentsline {subsubsection}{\numberline {1.3.2}C++ 代码实现}{6}{subsubsection.1.3.2}%
+\contentsline {subsubsection}{\numberline {1.3.3}提交结果}{7}{subsubsection.1.3.3}%
+\contentsline {section}{\numberline {2}202109-2 非零段划分}{8}{section.2}%
+\contentsline {subsection}{\numberline {2.1}题目}{8}{subsection.2.1}%
+\contentsline {subsubsection}{\numberline {2.1.1}题目描述}{8}{subsubsection.2.1.1}%
+\contentsline {subsubsection}{\numberline {2.1.2}子任务}{8}{subsubsection.2.1.2}%
+\contentsline {subsection}{\numberline {2.2}解法 A（70 分）}{8}{subsection.2.2}%
+\contentsline {subsubsection}{\numberline {2.2.1}原理阐释}{8}{subsubsection.2.2.1}%
+\contentsline {subsubsection}{\numberline {2.2.2}C++ 代码实现}{9}{subsubsection.2.2.2}%
+\contentsline {subsection}{\numberline {2.3}解法 B（100 分）}{10}{subsection.2.3}%
+\contentsline {subsubsection}{\numberline {2.3.1}原理阐释}{10}{subsubsection.2.3.1}%
+\contentsline {subsubsection}{\numberline {2.3.2}C++ 代码实现}{10}{subsubsection.2.3.2}%
+\contentsline {subsubsection}{\numberline {2.3.3}提交结果}{11}{subsubsection.2.3.3}%
+\contentsline {section}{\numberline {3}202109-3 脉冲神经网络}{12}{section.3}%
+\contentsline {subsection}{\numberline {3.1}题目}{12}{subsection.3.1}%
+\contentsline {subsubsection}{\numberline {3.1.1}题目背景}{12}{subsubsection.3.1.1}%
+\contentsline {subsubsection}{\numberline {3.1.2}题目描述}{12}{subsubsection.3.1.2}%
+\contentsline {subsubsection}{\numberline {3.1.3}子任务}{13}{subsubsection.3.1.3}%
+\contentsline {subsection}{\numberline {3.2}解法 A（30 分）}{13}{subsection.3.2}%
+\contentsline {subsubsection}{\numberline {3.2.1}原理阐释}{13}{subsubsection.3.2.1}%
+\contentsline {subsection}{\numberline {3.3}解法 B（70 分）}{14}{subsection.3.3}%
+\contentsline {subsubsection}{\numberline {3.3.1}原理阐释}{14}{subsubsection.3.3.1}%
+\contentsline {subsection}{\numberline {3.4}解法 C（100 分）}{14}{subsection.3.4}%
+\contentsline {subsubsection}{\numberline {3.4.1}原理阐释}{14}{subsubsection.3.4.1}%
+\contentsline {subsubsection}{\numberline {3.4.2}C++ 代码实现}{15}{subsubsection.3.4.2}%
+\contentsline {subsubsection}{\numberline {3.4.3}提交结果}{17}{subsubsection.3.4.3}%
+\contentsline {section}{\numberline {4}202109-4 收集卡牌}{19}{section.4}%
+\contentsline {subsection}{\numberline {4.1}题目}{19}{subsection.4.1}%
+\contentsline {subsubsection}{\numberline {4.1.1}题目描述}{19}{subsubsection.4.1.1}%
+\contentsline {subsubsection}{\numberline {4.1.2}子任务}{19}{subsubsection.4.1.2}%
+\contentsline {subsection}{\numberline {4.2}解法 A（20 分）}{19}{subsection.4.2}%
+\contentsline {subsubsection}{\numberline {4.2.1}原理阐释}{19}{subsubsection.4.2.1}%
+\contentsline {subsection}{\numberline {4.3}解法 B（40 分）}{20}{subsection.4.3}%
+\contentsline {subsubsection}{\numberline {4.3.1}原理阐释}{20}{subsubsection.4.3.1}%
+\contentsline {subsubsection}{\numberline {4.3.2}C++ 代码实现}{20}{subsubsection.4.3.2}%
+\contentsline {subsection}{\numberline {4.4}解法 C（100 分）}{20}{subsection.4.4}%
+\contentsline {subsubsection}{\numberline {4.4.1}原理阐释}{20}{subsubsection.4.4.1}%
+\contentsline {subsubsection}{\numberline {4.4.2}C++ 代码实现}{21}{subsubsection.4.4.2}%
+\contentsline {subsubsection}{\numberline {4.4.3}提交结果}{22}{subsubsection.4.4.3}%
+\contentsline {section}{\numberline {5}202109-5 箱根山岳险天下}{23}{section.5}%
+\contentsline {subsection}{\numberline {5.1}题目}{23}{subsection.5.1}%
+\contentsline {subsubsection}{\numberline {5.1.1}题目背景}{23}{subsubsection.5.1.1}%
+\contentsline {subsubsection}{\numberline {5.1.2}题目描述}{23}{subsubsection.5.1.2}%
+\contentsline {subsubsection}{\numberline {5.1.3}子任务}{24}{subsubsection.5.1.3}%
+\contentsline {subsection}{\numberline {5.2}解法 A（100 分）}{24}{subsection.5.2}%
+\contentsline {subsubsection}{\numberline {5.2.1}原理阐释}{24}{subsubsection.5.2.1}%
+\contentsline {subsubsection}{\numberline {5.2.2}C++ 代码实现}{25}{subsubsection.5.2.2}%
+\contentsline {subsubsection}{\numberline {5.2.3}提交结果}{31}{subsubsection.5.2.3}%

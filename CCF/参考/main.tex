@@ -1,0 +1,96 @@
+\documentclass[UTF8, 12pt, a4paper, oneside]{ctexart}
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{geometry}
+\usepackage{ulem}
+\usepackage[most]{tcolorbox}
+\usepackage[hidelinks]{hyperref}
+\usepackage{color}
+\usepackage{framed}
+\usepackage{mathtools,amssymb}
+\usepackage{bm}
+
+\usepackage{listings}
+
+\lstset{
+    basicstyle          =   \sffamily,          % 基本代码风格
+    keywordstyle        =   \bfseries,          % 关键字风格
+    commentstyle        =   \rmfamily\itshape,  % 注释的风格，斜体
+    stringstyle         =   \ttfamily,  % 字符串风格
+    flexiblecolumns,                % 别问为什么，加上这个
+    numbers             =   left,   % 行号的位置在左边
+    showspaces          =   false,  % 是否显示空格，显示了有点乱，所以不现实了
+    numberstyle         =   \zihao{-5}\ttfamily,    % 行号的样式，小五号，tt等宽字体
+    showstringspaces    =   false,
+    captionpos          =   t,      % 这段代码的名字所呈现的位置，t指的是top上面
+    frame               =   lrtb,   % 显示边框
+}
+
+\lstdefinestyle{C++}{
+    language        =   C++, % 语言选Python
+    basicstyle      =   \zihao{-5}\ttfamily,
+    numberstyle     =   \zihao{-5}\ttfamily,
+    keywordstyle    =   \color{blue},
+    keywordstyle    =   [2] \color{teal},
+    stringstyle     =   \color{magenta},
+    commentstyle    =   \color{red}\ttfamily,
+    breaklines      =   true,   % 自动换行，建议不要写太长的行
+    columns         =   fixed,  % 如果不加这一句，字间距就不固定，很丑，必须加
+    basewidth       =   0.5em,
+}
+
+\usepackage{paralist}
+\let\itemize\compactitem
+\let\enditemize\endcompactitem
+\let\enumerate\compactenum
+\let\endenumerate\endcompactenum
+\let\description\compactdesc
+\let\enddescription\endcompactdesc
+
+\definecolor{shadecolor}{RGB}{241, 241, 255}
+\geometry{left=2.54cm,right=2.54cm,top=3.18cm,bottom=3.18cm}
+\linespread{1.5}
+
+\newcounter{problemname}[subsubsection]
+%\newenvironment{problem}{\begin{shaded}\stepcounter{problemname}\par\noindent\textbf{题目\arabic{problemname}. }}{\end{shaded}\par}
+\newenvironment{problem}{\begin{shaded}\stepcounter{problemname}\par\noindent\textbf{题目. }}{\end{shaded}\par}
+
+%\newenvironment{problem}{\begin{shaded}\par\noindent\textbf{题目. }}{\end{shaded}\par}
+\newenvironment{solution}{\par\noindent\textbf{解答. }}{\par}
+\newenvironment{note}{\par\noindent\textbf{题目\arabic{problemname}的注记. }}{\par}
+\year=2023
+\month=4
+\day=23
+
+\begin{document}
+	\sloppy
+	\thispagestyle{empty}
+	\begin{figure}[t]
+		\centering
+		\includegraphics[width=13cm]{logo1.png}
+	\end{figure}
+	\vspace*{\fill}
+		\begin{center}
+			\Huge\textbf{程序设计竞赛基础\\第九周作业\\第 23 次 CCF 计算机\\软件能力认证\ 解题报告}
+		\end{center}
+	\vspace*{\fill}
+	\begin{table}[b]
+		\centering
+		\large
+		\begin{tabular}{ll}
+		\textbf{课程:} & 程序设计竞赛基础 \\
+		\textbf{姓名:} & 卢安来 \\
+		\textbf{学号:} & 2022212720 \\
+		\textbf{时间:} & \today \\
+		\end{tabular}
+	\end{table}
+	\newpage
+	\tableofcontents
+	\include{section0.tex}
+	\include{section1.tex}
+	\include{section2.tex}
+	\include{section3.tex}
+	\include{section4.tex}
+	\include{section5.tex}
+\end{document}

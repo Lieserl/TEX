@@ -1,0 +1,47 @@
+\section{算法设计题}
+\begin{enumerate}
+    \item 从一个给定的顺序表 \textbf{L} 中删除值在 \textbf{[x, y]} $(x \leq y)$ 之间的所有元素，要求以较高的效率来实现，并分析你的算法时间复杂度。(提示：移动位置一步到位)
+        \begin{mquote}
+            \begin{enumerate}
+                \item 定义两个指针 \textbf{\textit{p、q}}，\textbf{\textit{p}}指针用来遍历原顺序表，\textbf{\textit{q}} 指针指向新顺序表的末尾，\textbf{\textit{p}} 的每一次迭代中，我们检查 \textbf{elem[p]} 的值是否合法，如果合法，就将其加入新顺序表，并令 \textbf{\textit{q}} 后移一位。操作完成后，新顺序表中存放的即是结果，同时，由于 \textbf{\textit{q}} 指针一值指向表尾后一位，可以用来更新表长
+                \item 注意到每一次操作后，两指针的位置关系有 \textbf{\textit{q}} $\leq$ \textbf{\textit{p}}，所以我们可以直接在原顺序表上进行操作，同时保证不会意外将合法元素移除。
+            \end{enumerate}
+            \par 由于只需要一次遍历即可求解出答案，因此时间复杂度为：\textbf{\textit{O(n)}}    
+        \end{mquote}
+        \lstinputlisting[
+            style = C++,
+        ]{algorithm_1.cpp}
+    \item 设计一个空间复杂度为 \textbf{\textit{0(1)}} 的算法 \textbf{shift(SqList L, int k)} 将顺序表 \textbf{L} 中的元素整体循环左移 \textbf{k} 位，要求以较高的效率来实现，并分析在如下示例的 \textbf{10} 个数据，循环左移 \textbf{4} 位时这 \textbf{10} 个数据总共移动的次数。
+        \par 示例数据：
+        \par 顺序表 \textbf{L} 初始数据为：\textbf{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+        \par 整体循环左移 \textbf{4} 位后为：\textbf{5, 6, 7, 8, 9, 10, 1, 2, 3, 4}
+        \begin{mquote}
+            \par 当我们将最终得到的序列反转后，不难发现其为 \textbf{(1, k)} 和 \textbf{(k + 1, length)} 区间各反转一次的结果，以下给出证明：
+            \par 设元素 \textbf{\textit{e}} 的位置为 \textbf{\textit{x}} $(1 \leq x \leq length)$， 由题意可知，最终其位置应为 \textbf{(x - k) \% length}
+            \par 可以分为  \textbf{\textit{x}} $\leq$ \textbf{\textit{k}} 和 \textbf{\textit{x}} $>$ \textbf{\textit{k}} 两种情况讨论
+            \begin{itemize}
+                \item \textbf{\textit{x}} $\leq$ \textbf{\textit{k}} 时，第一次反转后其位置为 $k - x + 1$，整体反转后其位置为 $length - (k - x + 1) + 1 = length - k + x = (x - k) \ \% \ length$；
+                \item \textbf{\textit{x}} $>$ \textbf{\textit{k}} 时，第一次反转后其位置为 $length - x + 1$，整体反转后其位置为 $length - (length - x + 1) + 1 = x - k = (x - k) \ \% \ length$
+            \end{itemize}
+        \end{mquote}
+        \lstinputlisting[
+            style = C++,
+        ]{algorithm_2.cpp}
+        \begin{mquote}
+            \par 下面分析图示数据所需移动次数
+            \par 我们首先反转了前 \textbf{4} 个元素，每个元素移动 \textbf{1} 次，共移动 \textbf{4} 次；再反转后 \textbf{6} 个元素，共移动 \textbf{6} 次；最后我们反转整个序列，共移动 \textbf{10} 次
+            \par 综上，我们一共移动了 \textbf{20} 次
+        \end{mquote}
+    \item 设计一个算法删除一个单链表倒数第 \textbf{k} 个结点
+        \begin{mquote}
+            \par 定义两个指针 \textbf{\textit{p}} 和 \textbf{\textit{q}}，首先先让 \textbf{\textit{p}} 指针走到第 \textbf{\textit{k}} 个结点，然后再让 \textbf{\textit{p}} 指针和 \textbf{\textit{q}} 指针一起走到 \textbf{\textit{p}} 指针到达表尾时，此时 \textbf{\textit{q}} 指针的位置刚好在倒数第 $k + 1$ 个结点的位置
+        \end{mquote}
+        \lstinputlisting[
+            style = C++,
+        ]{algorithm_3.cpp}
+    \item 设计一个算法检测一个单链表 \textbf{L} 上是否因为某种错误操作而产生了环
+        \begin{mquote}
+            \par 判断成环的一个经典算法是 \textbf{\textit{Floyd判圈算法}}，定义一个快指针和一个慢指针，慢指针每次移动一位，快指针每次移动两位，如果链表成环，快指针一定会在某一时刻与慢指针指向同一结点
+        \end{mquote}
+        \lstinputlisting{algorithm_4.cpp}
+\end{enumerate}

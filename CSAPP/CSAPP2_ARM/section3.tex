@@ -1,0 +1,286 @@
+\section{实验步骤及实验分析}
+    \subsection{准备工作}
+        \begin{enumerate}
+            \item 登陆 \textbf{kunpeng3} 服务器，在自己的目录下找到 \textbf{bomb132.tar} 文件，使用 \textbf{tar -xvf bomb132.tar} 命令解压缩该文件。
+                \begin{figure*}[htbp]
+                    \centering
+                    \includegraphics*[width = 10cm]{s0_0.png}
+                \end{figure*}
+            \item 使用 \textbf{cd bomb132} 命令移动到 \textbf{bomb132} 目录下并使用 \textbf{ls} 命令查看当前目录下的文件。可以发现，\textbf{bomb} 即是我们需要逆向的可执行文件，\textbf{bomb.c} 是提供的部分 \textbf{C} 代码。
+                \begin{figure*}[htbp]
+                    \centering
+                    \includegraphics*[width = 10cm]{s0_1.png}
+                \end{figure*}
+            \item 使用 \textbf{gdb bomb} 命令进入调试阶段。至此，准备工作完毕，开始正式拆弹。
+                \begin{figure*}[htbp]
+                    \centering
+                    \includegraphics*[width = 12cm]{s0_2.png}
+                \end{figure*}
+        \end{enumerate}
+
+    \subsection{第一炸弹：字符串炸弹}
+        \par 写在前面：由于调试过程中需要用到大量 \textbf{disassemble}、\textbf{stepi}、\textbf{nexti} 指令，全部截图显得十分冗余，故只在 \textbf{第一炸弹} 展示完整截图，其他部分相关命令只进行文字描述。其次，有时候会忘记截图，想起来的时候代码已经执行过几行了，所以看到进入函数后第一个 \textbf{disassemble} 命令指向的位置不是第一句，请不要感到意外。        \begin{enumerate}
+            \item 进入调试界面，我们首先使用 \textbf{list} 命令查看第一颗炸弹的位置，在 \textbf{74} 行发现了第一颗炸弹。于是我们使用 \textbf{break 74} 命令在该行设置一个断点。
+                \begin{figure*}[htbp]
+                    \centering
+                    \includegraphics*[width = 12cm]{s1_0.png}
+                \end{figure*}
+            \item 使用 \textbf{run} 命令运行程序，提示输入第一颗炸弹。由于我们此时并不知道密码是多少，因此随便填写。填写完成后，程序运行到断点位置暂停。
+                \begin{figure*}[htbp]
+                    \centering
+                    \includegraphics*[width = 12cm]{s1_1.png}
+                \end{figure*}
+            \item 接下来我们使用 \textbf{stepi} 命令单步执行，进入 \textbf{phase\_1(input)} 函数内部进行拆弹。
+                \begin{figure*}[htbp]
+                    \hspace*{1.5cm}
+                    \includegraphics*[width = 12cm]{s1_3.png}
+                \end{figure*}
+            \newpage
+            \item 使用 \textbf{disassemble} 命令查看第一颗炸弹的汇编代码。接下来对汇编代码进行分析：
+                \par 在 \textbf{<+8>} 位置，将 \textbf{\$0x402000} 移动到了 \textbf{x1} 寄存器中，并加上了 \textbf{0x680}，猜测该寄存器存放了我们输入的字符串作为参数传入 \textbf{strings\_not\_equal} 函数中，然后在 \textbf{<+20>} 位置判断函数返回值是否为 \textbf{0}。如果是，则继续执行；否则转跳到 \textbf{<+32>} 位置，引爆炸弹，\textbf{BOMB!!!}
+                \begin{figure*}[htbp]
+                    \centering
+                    \includegraphics*[width = 12cm]{s1_4.png}
+                \end{figure*}
+            \item 为了验证我们的猜想，我们先使用 \textbf{stepi} 命令移动到 \textbf{<+16>} 位置，然后使用 \par \textbf{x /s} 命令查看 \textbf{x1} 寄存器中究竟存放着什么，结果发现竟然就是我们梦寐以求的密码，第一颗炸弹成功解除！（\sout{更详细的方法和解释在基础版炸弹写过了，这里懒得写了}）
+                \begin{figure*}[htbp]
+                    \centering
+                    \includegraphics*[width = 12cm]{s1_5.png}
+                \end{figure*}
+            \item 重新运行程序，输入密码，第一炸弹被拆除。
+                \begin{figure*}[htbp]
+                    \centering
+                    \includegraphics*[width = 12cm]{s1_6.png}
+                \end{figure*}
+        \end{enumerate}
+    \newpage
+    \subsection{第二炸弹：枯萎穿心攻击}
+        \begin{enumerate}
+            \item 我们在第二炸弹位置设置断点，进入函数内部，使用 \textbf{disassemble} 命令查看汇编代码。
+                \begin{figure*}[htbp]
+                    \centering
+                    \includegraphics*[width = 12cm]{s2_0.png}
+                \end{figure*}
+            \item 由函数 \textbf{read\_six\_numbers} 可以推测这关的密码是 \textbf{6} 个符合一定顺序的数字，为了验证假设，我们进入函数内部查看其汇编代码。
+            \item 在函数内部我们发现了提示中的关键函数 \textbf{sscanf}，在函数之后程序将 \textbf{w0} 寄存器的内容（\textbf{sscanf} 的返回值）与 \textbf{5} 做比较，并在其小于等于 \textbf{5} 时引爆炸弹。
+                \begin{figure*}[htbp]
+                    \centering
+                    \includegraphics*[width = 12cm]{s2_1.png}
+                \end{figure*}
+            \newpage
+            \item 我们移动至 \textbf{<+40>} 位置，使用 \textbf{x /s } 命令查看 \textbf{sscanf} 的第一个参数值 \textbf{x1}，发现函数确实是读入 \textbf{6} 个数字，并且中间用空格隔开。
+                \begin{figure*}[htbp]
+                    \hspace*{2cm}
+                    \includegraphics*[width = 8cm]{s2_2.png}
+                \end{figure*}
+            \item 现在让我们来分析一下 \textbf{phase\_2} 中剩下的内容：
+                \begin{itemize}
+                    \item 读入完成后程序将 \textbf{w0 + 40}（即 \textbf{w0 + 0x28}，\textbf{x1} 寄存器指向的地址） 指向地址的值与 \textbf{0x1} 做比较，若不相等则引爆炸弹。
+                        \begin{figure*}[htbp]
+                            \hspace*{1.5cm}
+                            \includegraphics*[width = 11cm]{s2_3.png} 
+                        \end{figure*}
+                    \item 接下来程序直接跳转至 \textbf{<+64>} 位置，分别把 \textbf{[x19]} 和 \textbf{[x19, \#4]} 地址的值移动到 \textbf{w1} 和 \textbf{w0} 寄存器中，接下来将 \textbf{w0} 和 \textbf{w1} 左移一位后的值做比较，若为真则跳转回 \textbf{<+52>} 位置；若为否则引爆炸弹，推测 \textbf{x19} 寄存器指向的一片地址空间（即 \textbf{数组}）存放着我们输入的数据，使用\textbf{x /6d } 命令查看，发现结果和我们的推测一样（此处是补截的图，所以输入为密码），与此同时，我们也知道了之前 \textbf{w0 + 40} 指向的值与 \textbf{0x1} 做比较是为了检查数组的第一个元素是否为 \textbf{1}。
+                        \begin{figure*}[htbp]
+                            \hspace*{1.5cm}
+                            \includegraphics*[width = 11cm]{s2_4.png} \\ 
+                            \hspace*{2cm}
+                            \includegraphics*[width = 8cm]{s2_4_1.png} 
+                        \end{figure*}
+                    \item 接下来我们先看到 \textbf{<+52>} 位置，将 \textbf{x19} 加上 \textbf{0x4} 的偏移量，此时 \textbf{x19} 指向的元素从数组的第一个元素变为数组的第二个元素，接下来将 \textbf{x20} 与 \textbf{x19} 做比较，如果相等，则跳转到 \textbf{<+88>} 位置，程序结束；否则程序继续运行，再次执行上述判断。                    
+                        \begin{figure*}[htbp]
+                            \centering
+                            \includegraphics*[width = 12cm]{s2_5.png}
+                        \end{figure*} 
+                    \newpage
+                    \item 回头看到 \textbf{<+36>} 位置，发现 \textbf{x20} 存放的是 \textbf{x19 + 0x14}，现在，我们可以看出这是一个 \textbf{do while} 循环。
+                        \begin{figure*}[htbp] 
+                            \hspace*{2cm}
+                            \includegraphics*[width = 10cm]{s2_6.png}
+                        \end{figure*}
+                \end{itemize}
+            \item 至此，我们基本了解了这段汇编代码的功能：每次迭代判断数组第 \textbf{k} 个元素是否为下一个元素的 $\frac{1}{2}$。如果不等，则引爆炸弹；否则移动到 \textbf{k + 1 } 位置，直到 \textbf{x19} $=$ \textbf{x19 + 0x14} 时停止迭代，即当 \textbf{k} $=$ \textbf{5} 时停止循环。因此，所求密码是首项为 \textbf{1}，公比为 \textbf{2}，长度为 \textbf{6} 的等比数列。即 \textbf{1 \ 2 \ 4 \ 8 \ 16 \ 32}。
+            \item 重新运行输入密码，成功拆除第二炸弹。
+                \begin{figure*}[htbp]
+                    \hspace*{1.2cm}
+                    \includegraphics*[width = 10cm]{s2_7.png}
+                \end{figure*}
+        \end{enumerate}
+    \newpage
+    \subsection{第三炸弹：败者食尘}
+        \begin{enumerate}
+            \item 查看第三炸弹的汇编代码如下：
+                \begin{figure*}[htbp]
+                    \centering
+                    \includegraphics*[width = 10cm]{s3_0.png}
+                \end{figure*}
+            \newpage
+            \item 我们还是如法炮制地查看 \textbf{sscanf} 的输入，发现这段密码是由 \textbf{数字 \ 数字 \ } 组成的，并且在输入小于一个字符时引爆炸弹。
+                \begin{figure*}[htbp]
+                    \hspace*{1cm}
+                    \includegraphics*[width = 12cm]{s3_1_0.png} \\ 
+                    \hspace*{1.5cm}
+                    \includegraphics*[width = 6cm]{s3_1.png}
+                \end{figure*}
+            \item 继续往后，程序将某一地址存放的值存入 \textbf{w1} 寄存器，并将其与 \textbf{0x3} 比较，推测 \textbf{[x29, \#28]} 位置存放的是我们传入的变量，使用 \textbf{print} 命令查看，发现是我们传入的第一个变量。
+                \begin{figure*}[htbp]
+                    \hspace*{1cm}
+                    \includegraphics*[width = 12cm]{s3_2.png} \\
+                    \hspace*{1.7cm}
+                    \includegraphics*[width = 3cm]{s3_2_1.png}
+                \end{figure*}
+            \item 接下来是一系列判断语句，我们对其进行归纳并列出对应条件下的转跳位置。
+            \begin{tabular}{cccccccc}
+                0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 \\
+                <+116> & <+188> & <+196> & <+204> & <+212> & <+220> & <+228> & <+148> \\
+            \end{tabular}
+                \begin{figure*}[htbp]
+                    \hspace*{1cm}
+                    \includegraphics*[width = 14cm]{s3_3.png} \\
+                    \hspace*{1cm}
+                    \includegraphics*[width = 13cm]{s3_3_1.png}
+                \end{figure*}
+            \newpage
+            \item 其中，当 \textbf{w1} $<$ \textbf{0} 时，程序首先会跳转至 \textbf{<+104>} 位置，并运行至 \textbf{<+120>} 位置，此时 \textbf{cbnz} 命令会判断 \textbf{w1} 是否为 \textbf{0}。如果不是，则引爆炸弹，故 \textbf{w1} 不能小于 \textbf{0}；当 \textbf{w1} $>$ \textbf{7} 时，程序会一直运行至 \textbf{<+84>} 位置引爆炸弹。
+                \begin{figure*}[htbp]
+                    \hspace*{1cm}
+                    \includegraphics*[width = 14cm]{s3_3_2.png}
+                \end{figure*}
+            \item 至此，我们发现程序会在 \textbf{w1} 为不同值时执行不同的命令，故此处应为一个 \textbf{switch} 语句。由于每个部分的功能都一样，所以在此只解释 \textbf{w1} $=$ \textbf{4} 对应的情况：
+                \begin{itemize}
+                    \item 通过上述转跳表，我们知道应跳转至 \textbf{<+212} 位置，然后程序将 \textbf{w0} 置 \textbf{0}，并跳转至 \textbf{<+136>} 位置。
+                        \begin{figure*}[htbp]
+                            \hspace*{1cm}
+                            \includegraphics*[width = 14cm]{s3_4.png}
+                        \end{figure*}
+                    \item 在 \textbf{<+136>} 位置，程序首先进行 \textbf{4} 次加减法，由于加上和减去的数一致，因此最终 \textbf{w0} 的值仍为 \textbf{0}。
+                        \begin{figure*}[htbp]
+                            \hspace*{1cm}
+                            \includegraphics*[width = 14cm]{s3_5.png}
+                        \end{figure*}
+                    \item 接下来判断传入的第一个变量是否大于 \textbf{5}，如果大于，则引爆炸弹。
+                        \includegraphics*[width = 14cm]{s3_6.png}
+                    \item 继续进行，我们发现其将 \textbf{[x29, \#24]} 地址存放的值存入 \textbf{w1} 中，使用 \textbf{print} 指令查看，发现是我们传入的第二个变量。
+                        \begin{figure*}[htbp]
+                            \hspace*{1cm}
+                            \includegraphics*[width = 6cm]{s3_7.png}
+                        \end{figure*}
+                    \newpage
+                    \item 然后比较 \textbf{w0} 和 \textbf{w1} 中的值是否相等，如果相等，就不会引爆炸弹。我们知道 \textbf{w0} 的值为 \textbf{0}，\textbf{w1} 是传入的第二个变量，因此第一个变量为 \textbf{4}，第二个变量为 \textbf{0}。
+                        \begin{figure*}[htbp]
+                            \hspace*{1cm}
+                            \includegraphics*[width = 14cm]{s3_8.png}
+                        \end{figure*}
+                \end{itemize}
+            \item 输入密码，解除第三炸弹。
+                \begin{figure*}[htbp]
+                    \hspace*{1.5cm}
+                    \includegraphics*[width = 8cm]{s3_9.png}
+                \end{figure*}
+        \end{enumerate}
+    \newpage
+    \subsection{第四炸弹：递归炸弹}
+        \par 我愿称其为除第一炸弹以外最简单的炸弹，因为真的很容易卡 \textbf{bug} 来 \textbf{skip}。（\sout{而且和低阶炸弹基本一模一样，嘻嘻}）
+        \begin{enumerate}
+            \item 还是先查看其汇编代码。
+                \begin{figure*}[htbp]
+                    \hspace*{2cm}
+                    \includegraphics*[width = 10cm]{s4_0.png}
+                \end{figure*}
+            \item 依然是先看 \textbf{sscanf} 传入参数用的几个寄存器，发现这次的密码是 \textbf{数字 \ 数字} \par 的形式。同时由上题可知，读入的两个数字分别被放在 \textbf{[x29, \#24]} 和 \textbf{[x29, \#28]} 中；在 \textbf{sscanf} 返回值不等于 \textbf{2} 时爆炸。
+                \begin{figure*}[htbp]
+                    \hspace*{2cm}
+                    \includegraphics*[width = 6cm]{s4_1.png}
+                \end{figure*}
+            \item 接着往下看，在 \textbf{<+36>} 位置将第二个元素拷贝到 \textbf{w0} 寄存器中，减去 \textbf{0x2} 后与 \textbf{0x2} 做比较。如果大于 \textbf{0x2}，则炸弹爆炸。所以我们输入的第二个数应该小于等于 \textbf{4}。然后将 \textbf{func4} 的参数立即数 \textbf{0x5} 和第二个元素传入 \textbf{w0}  和 \textbf{w1} 中，调用函数 \textbf{func4}。
+                \begin{figure*}[htbp]
+                    \hspace*{1.5cm}
+                    \includegraphics*[width = 12cm]{s4_2.png} \\
+                    \hspace*{2cm}
+                    \includegraphics*[width = 4cm]{s4_2_1.png} 
+                \end{figure*}
+            \newpage
+            \item 进入 \textbf{func4} 内部，查看其汇编代码，发现其是一个递归函数，我们逐步分析其功能。
+                \begin{figure*}[htbp]
+                    \hspace*{2cm}
+                    \includegraphics*[width = 12cm]{s4_3.png}
+                \end{figure*}
+                \begin{itemize}
+                    \item 首先是递归出口，当 \textbf{w0} 寄存器中的值小于等于 \textbf{0} 时直接返回。注意在函数的最后将 \textbf{0x0} 赋值给了 \textbf{w0}，因此此处的返回值一定为 \textbf{0}；接着先把 \textbf{w0} 复制到 \textbf{w19} 中，再将第二个元素复制到 \textbf{w0}中，当 \textbf{w19} 寄存器（即原来的 \textbf{w0}）中的值等于 \textbf{1} 时，返回第二个元素。
+                        \begin{figure*}[htbp]
+                            \hspace*{2cm}
+                            \includegraphics*[width = 12cm]{s4_4_0.png} \\
+                            \hspace*{2cm}
+                            \includegraphics*[width = 12cm]{s4_4_1.png}
+                        \end{figure*}
+                    \item 接着将 \textbf{w1} 复制到 \textbf{w20} 中，令 \textbf{w0} $=$ \textbf{w19 - 1}（\textbf{w19} 即原来的 \textbf{w0}），调用 \textbf{func4} 函数。然后将返回值 \textbf{w0} 加上 \textbf{w20}（即第二个元素）并存储在 \textbf{w21} 中。将 \textbf{w19}（也就是 \textbf{w0} 的初值）减 \textbf{2} 的值存放在 \textbf{w0} 中，再次调用 \textbf{func4}，并将返回值加上之前的处理过的返回值 \textbf{w21}。
+                        \begin{figure*}[htbp]
+                            \hspace*{2cm}
+                            \includegraphics*[width = 12cm]{s4_5.png}
+                        \end{figure*}
+                    \item 根据上面描述，我们可以将其翻译成 \textbf{C} 代码：
+                    \lstinputlisting[style = C]{rec.c}
+                \end{itemize}
+            \item 分析完 \textbf{func4} 的功能，我们接着往下看。程序将第一个元素与函数返回值做比较。如果不相等，炸弹爆炸。
+                \begin{figure*}[htbp]
+                    \hspace*{2cm}
+                    \includegraphics*[width = 12cm]{s4_6.png}
+                \end{figure*}
+            \item 综上，我们的输入必须满足 \textbf{elem1} $=$ \textbf{fun4(6, elem2)}，同时第二个输入要小于等于 \textbf{4}，至此第四炸弹解除。
+                \begin{figure*}[htbp]
+                    \hspace*{2cm}
+                    \includegraphics*[width = 12cm]{s4_7.png}
+                \end{figure*}
+        \end{enumerate}
+        \par \textbf{skip}方法：只要知道递归边界，我可以直接传边界进去，这样可以省去对递归函数的分析；或者随便试一组数据，单步执行，在 \textbf{func4} 结束后查看 \textbf{\%rax} 寄存器的值就可以找到对应的答案。
+    \subsection{第五炸弹：真·二进制炸弹}
+        \begin{enumerate}
+            \item 老样子，先查汇编。（\sout{这题也和低阶的差不多，血赚}）
+                \begin{figure*}[htbp]
+                    \hspace*{1.5cm}
+                    \includegraphics*[width = 12cm]{s5_0.png}
+                \end{figure*}
+            \item 可以看到程序在 \textbf{<+16>} 位置调用了 \textbf{string\_length} 函数，并在之后将返回值与 \textbf{0x6} 比较。说明这次的输入是一个长度为 \textbf{6} 的字符串。
+                \begin{figure*}[htbp]
+                    \hspace*{1.5cm}
+                    \includegraphics*[width = 12cm]{s5_1.png}
+                \end{figure*}
+            \item 继续往下看，发现在 \textbf{<+68>} 位置的跳转指令会跳转回 \textbf{<+48>} 位置，显然这也是一个 \textbf{do while} 循环，接下来分析循环的部分。
+                \begin{figure*}[htbp]
+                    \hspace*{1.5cm}
+                    \includegraphics*[width = 12cm]{s5_2.png}
+                \end{figure*}
+            \newpage
+            \item 在循环外，程序先将 \textbf{x19} \textbf{x19 + 6}拷贝到 \textbf{x2} 和 \textbf{x0}中，再将 \textbf{0x0} 赋值给了 \textbf{w3}，然后我们先看循环部分的汇编代码。循环开始时，将 \textbf{[x2]} 所指向地址的数据的末尾 \textbf{8} 位做 \textbf{0} 拓展传给了 \textbf{w1} 寄存器，并让 \textbf{x2} 的值加一，然后将 \textbf{x1} 与 \textbf{0xf} 做按位与的操作。我们知道，\textbf{0xf} 的二进制表示为 \textbf{1111}，因此这句话执行的结果为保留 \textbf{x1} 的最低 \textbf{4} 位。
+                \begin{figure*}[htbp]
+                    \hspace*{1.5cm}
+                    \includegraphics*[width = 12cm]{s5_3.png}
+                \end{figure*}
+            \item 此外，我们注意到 \textbf{<+64>} 位置在 \textbf{x2} 的值等于 \textbf{x0}（即最初的 \textbf{x2 + 6}） 时结束循环。因此 \textbf{x2} 的作用为作为指针用来遍历我们输入的字符串。
+                \begin{figure*}[htbp]
+                    \hspace*{1.5cm}
+                    \includegraphics*[width = 12cm]{s5_4.png}
+                \end{figure*}
+            \item 接下来，和以前一样，程序将之前取出的末尾 \textbf{4} 位作为索引去访问 \textbf{x4} 所指向的内存空间（因为输入为 \textbf{int} 类型，所以索引要乘上 \textbf{4}，即 \textbf{lsl \#2}）。我们回过头来看 \textbf{<+40>} 位置，发现 \textbf{x4} $=$ \textbf{0x402640}，于是使用 \textbf{x /16d} 命令查看该地址存放的数据，发现是 \textbf{16} 个不重复打乱的数字。 
+                \par 不知道为啥，\textbf{figure*} 环境只能插 \textbf{3} 张图，所以这里拿炸弹凑个数。
+                \begin{figure*}[htbp]
+                    \hspace*{1.5cm}
+                    \includegraphics*[width = 12cm]{s5_5_0.png} \\
+                    \hspace*{1.4cm}
+                    \includegraphics*[width = 14cm]{s5_5_1.png} \\
+                    \hspace*{2cm}
+                    \includegraphics*[width = 14cm]{s5_5_2.png}
+                \end{figure*}
+            \newpage
+            \item 然后程序将取得的结果存入 \textbf{w1} 寄存器中，并将其加到 \textbf{w3}。接着判断是否结束循环。经过上述分析，可以看出这段循环的作用是将输入字符串的每一字符的最低 \textbf{4} 位作为索引，取出一些数字并相加存放在 \textbf{w3} 中。
+                \begin{figure*}[htbp]
+                    \hspace*{1.5cm}
+                    \includegraphics*[width = 12cm]{s5_6.png}
+                \end{figure*}
+            \item 接着在 \textbf{<+72>} 位置将之前得到的结果与 \textbf{0x3d} 做比较，如果相等则 \textbf{SAFE}。
+                \begin{figure*}[htbp]
+                    \hspace*{1.5cm}
+                    \includegraphics*[width = 12cm]{s5_7.png}
+                \end{figure*}
+            \item 于是，这次的密码就很清晰了：通过查找 \textbf{acsii} 码确定究竟输入哪些字符可以从之前的数中依次取出某些数，使其和为 \textbf{0x3d}，这里选择 \textbf{16 \ 15 \ 14 \ 13  \ 2 \ 1}，对应下来为 \textbf{ONJEPS}。至此 \textbf{Dr. Evil} 的阴谋又双彻底破灭，可喜可贺。
+        \end{enumerate}

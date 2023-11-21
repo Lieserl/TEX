@@ -1,0 +1,66 @@
+\section{简答题}
+\begin{enumerate}
+    \item 画出执行下列各行语句后最终的各指针及链表的示意图
+        \lstinputlisting[
+            style = C,
+        ]{section1_1.c}
+        \par 最终各指针及链表的示意图如下图所示
+        \begin{figure*}[htbp]
+            \centering
+            \includegraphics*[width = 12cm]{section1_2.jpg}
+        \end{figure*}
+    \item 已知 \textbf{\textit{P}} 结点是某双向链表的中间结点，写出以下操作的语句序列
+        \begin{choices}
+            \item 在 \textbf{\textit{P}} 结点后插入 \textbf{\textit{S}} 结点的语句序列；
+                \begin{mquote}
+                    \par S->next = P->next;
+                    \par S->prior = P;
+                    \par P->next->prior = S;
+                    \par P->next = S;
+                \end{mquote}
+            \item 在 \textbf{\textit{P}} 结点前插入 \textbf{\textit{S}} 结点的语句序列；
+                \begin{mquote}
+                    \par S->prior = P->prior;
+                    \par S->next = P;
+                    \par P->prior->next = S;
+                    \par P->prior = S;
+                \end{mquote}
+            \item 删除 \textbf{\textit{P}} 结点的直接后继结点的语句序列；
+                \begin{mquote}
+                    \par P->next = P->next->next;
+                    \par free(P->next->prior);
+                    \par P->next->prior = P;
+                \end{mquote}
+            \item 删除 \textbf{\textit{P}} 结点的直接前驱结点的语句序列；
+                \begin{mquote}
+                    \par P->prior = P->prior->prior;
+                    \par free(P->prior->next);
+                    \par P->prior->next = P;
+                \end{mquote}
+            \item 删除 \textbf{\textit{P}} 结点的语句序列。
+                \begin{mquote}
+                    \par P->prior->next = P->next;
+                    \par P->next->prior = P->prior;
+                    \par free(P);
+                \end{mquote}
+        \end{choices}
+    \item 简述以下算法的功能
+        \begin{choices}
+            \item 第一小题
+                \lstinputlisting[
+                    style = C++,    
+                ]{section1_3_1.cpp}
+                \begin{mquote}
+                    \par 在一个至少有两个结点的单链表中，将第一个结点断开，并将其添加到链表的尾部
+                \end{mquote}
+            \item 第二小题
+                \lstinputlisting[
+                    style = C,
+                ]{section1_3_2.c}
+                \begin{mquote}
+                    \par 假设 $pa$ 的前驱结点为 $pa_{prior}$，$pb$ 的前驱结点为 $pb_{prior}$
+                    \par 则该算法的功能为将该单循环链表分裂为 
+                    \par $pa$->...->$pb_{prior}$->$(loop) \ $ 和 $ \ pb$->...->$pa_{prior}$->$(loop) \ $ 两个单循环链表
+                \end{mquote}
+        \end{choices}
+\end{enumerate}

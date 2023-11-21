@@ -1,0 +1,4 @@
+\contentsline {section}{\numberline {1}选择题}{2}{section.1}%
+\contentsline {section}{\numberline {2}简答题}{4}{section.2}%
+\contentsline {section}{\numberline {3}基础编程练习(无需提交)}{7}{section.3}%
+\contentsline {section}{\numberline {4}算法设计题}{8}{section.4}%

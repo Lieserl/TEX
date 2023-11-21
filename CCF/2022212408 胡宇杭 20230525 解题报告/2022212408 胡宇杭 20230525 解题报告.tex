@@ -1,0 +1,146 @@
+\documentclass[UTF8, 12pt, a4paper, oneside]{ctexart}
+\usepackage{listing}
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{geometry}
+\usepackage{ulem}
+\usepackage[most]{tcolorbox}
+\usepackage[hidelinks]{hyperref}
+\usepackage{color}
+\usepackage{framed}
+\usepackage{mathtools,amssymb}
+\usepackage{bm}
+
+\lstset{
+    basicstyle          =   \sffamily,          % 基本代码风格
+    keywordstyle        =   \bfseries,          % 关键字风格
+    commentstyle        =   \rmfamily\itshape,  % 注释的风格，斜体
+    stringstyle         =   \ttfamily,  % 字符串风格
+    flexiblecolumns,                % 别问为什么，加上这个
+    numbers             =   left,   % 行号的位置在左边
+    showspaces          =   false,  % 是否显示空格，显示了有点乱，所以不现实了
+    numberstyle         =   \zihao{-5}\ttfamily,    % 行号的样式，小五号，tt等宽字体
+    showstringspaces    =   false,
+    captionpos          =   t,      % 这段代码的名字所呈现的位置，t指的是top上面
+    frame               =   lrtb,   % 显示边框
+}
+
+\lstdefinestyle{C++}{
+    language        =   C++, % 语言选Python
+    basicstyle      =   \zihao{-5}\ttfamily,
+    numberstyle     =   \zihao{-5}\ttfamily,
+    keywordstyle    =   \color{blue},
+    keywordstyle    =   [2] \color{teal},
+    stringstyle     =   \color{magenta},
+    commentstyle    =   \color{red}\ttfamily,
+    breaklines      =   true,   % 自动换行，建议不要写太长的行
+    columns         =   fixed,  % 如果不加这一句，字间距就不固定，很丑，必须加
+    basewidth       =   0.5em,
+}
+
+\title{20230525 第四次作业 实验报告}
+\author{学号：2022212408 姓名：胡宇杭}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section*{提交结果}
+\begin{figure*}[htbp]
+    \centering
+    \includegraphics*[width = 6in]{submit result.png}
+    \caption{提交结果}
+\end{figure*}
+
+\section{HDU-2602 Bone Collector}
+\begin{itemize}
+    \item 时间限制：$1000\texttt{ ms}$
+    \item 空间限制：$32768\texttt{ KB}$
+\end{itemize}
+\subsection{题目}
+\subsubsection{问题描述}
+\par Bone Collector 带着一容量为 $V$ 的背包，一共有 $N$ 块骨头。对每一次测试，已知每块骨头的体积和价值，问能装下骨头的最大价值?
+\subsubsection{子任务}
+\par 对于所有测试数据，满足 $N \leq 1000$，$V \leq 1000$。
+\subsection{题解}
+\subsubsection{解法一 (100分)}
+\par 根据题意，考虑使用 $dp$ 求解（\sout{都学期末了连01背包都不知道的可以洗洗睡了}）。状态转移方程如下：$$f(i, j) = max(f(i-1, j), f(i-1, j-w_i) + v_i)$$
+\begin{itemize}
+    \item 时间复杂度：$O(nm)$
+    \item 空间复杂度：$O(n)$
+\end{itemize}
+\subsubsection{C++ 代码实现}
+\lstinputlisting[
+    style = C++,
+    title = {\bf HDU-2602 Bone Collector}
+]{test01.cpp}
+
+\section{HDU-1712 ACboy needs your help}
+\begin{itemize}
+    \item 时间限制：$1000\texttt{ ms}$
+    \item 空间限制：$32768\texttt{ KB}$
+\end{itemize}
+\subsection{题目}
+\subsubsection{问题描述}
+\par ACboy 这学期可以选择 $N$ 门课程，\sout{但 ACboy 是个摆子}，所以这学期他只学 $M$ 天。对于课程 $i$ $(1 \leq i \leq N)$，ACboy 学习 $j$ $(1 \leq j \leq M)$ 天可以获得学分 $A_{ij}$，问 ACboy 怎么安排可以获得最大学分?
+\subsubsection{子任务}
+\par 对于所有测试数据，满足 $N \leq 100$，$M \leq 100$。
+\subsection{题解}
+\subsubsection{解法一 (100分)}
+\par 与题一不同，每个课程的价值不在固定，考虑使用分组背包解决。具体来说即是在01背包的基础上再加一层循环遍历第 $i$ 门课程学习 $j$ 天的最优解。状态转移方程如下：$$dp(i, j) = max(dp(i-1, j), dp(i-1, j-k) + a_{ik})$$
+\par 其中 $i$ 代表当前选择的课程，$j$ 代表当前剩余可学习天数，$k$ 代表当前课程的学习天数。
+\begin{itemize}
+    \item 时间复杂度：$O(nm^2)$
+    \item 空间复杂度：$O(nm)$
+\end{itemize}
+\subsubsection{C++ 代码实现}
+\lstinputlisting[
+    style = C++,
+    title = {\bf HDU-1712 ACboy needs your help}
+]{test02.cpp}
+
+\section{洛谷-P4124 手机号码}
+\subsection{题目}
+\begin{itemize}
+    \item 时间限制：$1.0\texttt{ s}$
+    \item 空间限制：$250\texttt{ MB}$
+\end{itemize}
+\subsubsection{问题描述}
+\par 现需要统计号码段中满足某些特征的手机号的数量，特征如下：
+\begin{itemize}
+    \item 号码中要出现至少 $3$ 个相邻的相同数字；
+    \item 号码中不能同时出现 $4$ 和 $8$。
+\end{itemize}
+\par 手机号码一定是11位数，前不含前导 $0$，给定 $L$，$R$，统计 $[L, R]$ 区间内所有满足条件的号码数量。
+\subsubsection{子任务}
+\par 对于所有测试数据，满足 $10^10 \leq L \leq R \leq 10^11$。
+\subsection{题解}
+\subsubsection{解法一 (100分)}
+\par 数位dp，\sout{暴力枚举!}。假设 $dp(pos, pre_1, pre_2, 0/1, 0/1, 0/1)$， 其中，$pos$ 代表当前位数，$pre_1$、$pre_2$ 分别代表 $pos+1$、$pos+2$位的数，三个 $0/1$ 分别代表是否出现过 $3$ 个连续且相同的数、是否出现过 $4$、是否出现过 $8$，按照题目条件确定状态如何转移即可。由于 $dp$ 代码实现晦涩难懂（\sout{懒}），这里采用 $dfs$ 记忆化搜索的形式。
+\subsubsection{C++ 代码实现}
+\lstinputlisting[
+    style = C++,
+    title = {洛谷-P4124 手机号码}
+]{test03.cpp}
+
+\section{洛谷-P1352 没有上司的舞会}
+\subsection{题目}
+\begin{itemize}
+    \item 时间限制：$1000\texttt{ ms}$
+    \item 空间限制：$134144\texttt{ KB}$
+\end{itemize}
+\subsubsection{问题描述}
+\par 某大学有 $n$ 个职员，他们之间有从属关系，除校长以外每个职员都有直接上司。现有一周年庆宴会，宴会邀请编号为 $i$ 的职员会增加快乐指数 $r_i$，但是一个职员和他的直接上司不会同时来参加宴会。问邀请哪些职员可以使宴会的快乐指数最大？
+\subsubsection{子任务}
+\par 对于所有测试数据，满足 $1 \leq n \leq 6*10^3$，$-128 \leq r_i \leq 127$，$1 \leq l, k \leq n$，且给出的关系一定是一棵树。
+\subsection{题解}
+\subsubsection{解法一 (100分)}
+\par 该题可以抽象成一棵以校长为根的树，对于这种情况需使用树形 $dp$ 求解。假设 $dp(i, 0/1)$ 表示以 $i$ 为根节点的子树在不邀请 $/$ 邀请 $i$ 时可达到的最大快乐指数，则状态转移方程为：$$dp(i, 1) = \sum_{j = son[0]}^{sizeof(son)} dp(j, 0)$$ $$dp(i, 0) = \sum_{j = son[0]}^{sizeof(son)} max(dp(j, 0), dp(j, 1))$$
+\par 同时，定义 $bool$ 数组 $vis$ 记录节点 $i$ 是否有父亲从而寻找根节点，从根节点开始 $dfs$ 即可。
+\subsubsection{C++ 代码实现}
+\lstinputlisting[
+    style = C++,
+    title = {洛谷-P1352 没有上司的舞会}
+]{test04.cpp}
+\end{document}

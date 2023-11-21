@@ -1,0 +1,184 @@
+\documentclass[UTF8, 12pt, a4paper, oneside]{ctexart}
+\usepackage{listing}
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{geometry}
+\usepackage{ulem}
+\usepackage[most]{tcolorbox}
+\usepackage[hidelinks]{hyperref}
+\usepackage{color}
+\usepackage{framed}
+\usepackage{mathtools,amssymb}
+\usepackage{bm}
+
+\lstset{
+    basicstyle          =   \sffamily,          % 基本代码风格
+    keywordstyle        =   \bfseries,          % 关键字风格
+    commentstyle        =   \rmfamily\itshape,  % 注释的风格，斜体
+    stringstyle         =   \ttfamily,  % 字符串风格
+    flexiblecolumns,                % 别问为什么，加上这个
+    numbers             =   left,   % 行号的位置在左边
+    showspaces          =   false,  % 是否显示空格，显示了有点乱，所以不现实了
+    numberstyle         =   \zihao{-5}\ttfamily,    % 行号的样式，小五号，tt等宽字体
+    showstringspaces    =   false,
+    captionpos          =   t,      % 这段代码的名字所呈现的位置，t指的是top上面
+    frame               =   lrtb,   % 显示边框
+}
+
+\lstdefinestyle{C++}{
+    language        =   C++, % 语言选Python
+    basicstyle      =   \zihao{-5}\ttfamily,
+    numberstyle     =   \zihao{-5}\ttfamily,
+    keywordstyle    =   \color{blue},
+    keywordstyle    =   [2] \color{teal},
+    stringstyle     =   \color{magenta},
+    commentstyle    =   \color{red}\ttfamily,
+    breaklines      =   true,   % 自动换行，建议不要写太长的行
+    columns         =   fixed,  % 如果不加这一句，字间距就不固定，很丑，必须加
+    basewidth       =   0.5em,
+}
+
+\title{期末大作业 \ 实验报告}
+\author{学号：2022212408 \ 姓名：胡宇杭}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section*{提交结果}
+\begin{figure*}[htbp]
+    \centering
+    \includegraphics*[width = 5.7in]{提交结果.png}
+    \caption{提交结果}
+\end{figure*}
+
+\tableofcontents
+
+\newpage
+\section{202012-4 食材运输}
+\begin{itemize}
+    \item 时间限制：$1.0\texttt{ s}$
+    \item 空间限制：$512.0\texttt{ MB}$
+\end{itemize}
+\subsection{题目}
+\subsubsection{题目背景}
+\par 在 $T$ 市有很多个酒店，这些酒店对于不同种类的食材有不同的需求情况，莱莱公司负责每天给这些酒店运输食材。由于酒店众多，如何规划运输路线成为了一个非常重要的问题。你作为莱莱公司的顾问，请帮他们解决这个棘手的问题。
+\subsubsection{问题描述}
+\par $T$ 市有 $N$ 个酒店，由 $N - 1$ 条无向边连接，构成一棵树，通过某一条边的时间取决于该边的权值。$T$ 市有 $K$ 种食材，每个酒店对食材的需求不同。现有 $K$ 辆车，每辆车负责配送一种食材，且不存在重复。
+\par 每辆车都可以从不超过 $M$ $(1 \leq M \leq K)$个检查点中选择一个作为出发点，现需要确定如何设置检查点和车辆的出发点，使得所有酒店等待时间最大值的最小值。
+\subsubsection{子任务}
+\par $30\%$ 的测试数据满足 $N \leq 10^2$，$M = K$，$K \leq 10$，保证输入数据是一条链，且节点编号满足$u + 1 = v$。
+\par $40\%$ 的测试数据满足 $N \leq 10^2$，$M = K$，$K \leq 10$，无特殊性质。
+\par $30\%$ 的测试数据满足 $N \leq 10^2$，$M \leq K$，$K \leq 10$，无特殊性质。
+\subsection{题解}
+\subsubsection{解法一 (65分)}
+\par 注意到 $70\%$ 的数据满足 $M = K$，等价于对每辆车都可以设置一个检查点，此时问题转化为求解出第 $i$ 种食材在以点$u$为出发点的运输距离$dis_{i_u}$，取其最小值(最短路径)，再对整体取最大值，即：$$ans = max\{min(dis_{i_u}, u \in N), i \in K\}$$
+\par 而求最短路径可以通过树状 $dp$ 实现。不难发现，除了离出发点最远的节点，其他路径都需要经过两次，因此可以通过 $dp$ 求出经过路径的总长度，同时 $DFS$ 出最长路径。即：$dis_{i_u} = dp[u] - max\_dis$。
+\par 该解法理论得分70分。(\sout{剩下5分我也不知道哪扣的})
+\subsubsection{C++ 代码实现}
+\lstinputlisting[
+    style = C++,
+    title = {\bf 202012-4 食材运输 65分代码}
+]{202012-4-65.cpp}
+
+\subsubsection{解法二 (100分)}
+\par 从状压 $dp$ 的角度考虑，设 $S_j$ 为二进制状态为 $j$ 的食材种类的集合。则 $dp(i, S_j)$ 代表选择 $i$ 个检查点，运送食材种类为 $S_j$ 时的最短路径。状态转移方程为：$$dp(i, S_j) = min\{max(dp(1, T), dp(i - 1, S_j - T)), T \subseteq S_j\}$$
+\par 证明：假设已知$dp(1, T)$，$dp(i - 1, S_j - T)$，则 $dp(i, S_j)$ 即是在 $dp(i - 1, S_j - T)$ 的基础上再选一个节点去运送剩余食材种类 $T$。由于题目只要求我们求出等待时间最大值的最小值，所以我们只要取两者的最大值即为该状态下最大等待时间，再遍历 $S_j$,选出使最大等待时间最小的 $T$，即为最短路径。
+\par 初始化：同解法一，用树状 $dp$ 计算出 $dp(1, S_j)$，即： $$dp(1, S_j) = min\{max(dis_{u_i}), i \in S_j\}, u \in N$$
+\begin{itemize}
+    \item 时间复杂度：$DFS$需要遍历每个节点，时间复杂度为 $O(N)$，状压 $dp$ 最外层遍历 $M$ 个检查点，内层循环遍历全部状态和其全部子集，时间复杂度为 $O(M*(2^K)^2)$，总时间复杂度为 $O(M*(2^K)^2)$；
+    \item 空间复杂度：$O(M*2^K + NK + N)$。
+\end{itemize}
+\subsubsection{C++ 代码实现}
+\lstinputlisting[
+    style = C++,
+    title = {\bf 202012-4 食材运输 100分代码}
+]{202012-4-100.cpp}
+
+
+\newpage
+\section{202303-4 星际网络II}
+\begin{itemize}
+    \item 时间限制：$2.0\texttt{ s}$
+    \item 空间限制：$1.0\texttt{ GB}$
+\end{itemize}
+\subsection{题目}
+\subsubsection{问题描述}
+\par 管理一系列由 $n$ 位二进制位组成($n \ mod \ 16 = 0$)，用 $IPv6$ 方法表示的地址。记 $num(s)$ 为地址 $s$ 按高位在前、低位在后组成的 $n$ 位二进制数，称一段连续区间的一系列地址。现需要支持对地址进行以下操作。
+\begin{itemize}
+    \item $1 \ id \ l \ r$：用户 $id$ 申请地址在 $l ~ r$ 的一段连续地址，当且仅当该段地址未被分配或该段地址只被部分(不完全)分配给用户 $id$ 时能申请成功。
+    \item $2 \ s$：检查地址 $s$ 被分配给了哪个用户。
+    \item $3 \ l \ r$：检查 $l~r$ 范围内的所有地址是否全被分配给了某个用户。
+\end{itemize}
+\subsubsection{子任务}
+\begin{figure*}[htbp]
+    \centering
+    \includegraphics*[width =4.5in]{202303-4 子任务.png}
+    \caption{子任务}
+\end{figure*}
+\subsection{题解}
+\subsubsection{解法一 (100分)}
+\par 题目要求涉及到区间修改、单点查询、区间查询，可以考虑使用线段树进行维护。节点储存当前区间的左右端点 $l \ r$，已被占用的区间长度 $cnt$ 以及该区间 $id$ 的最大最小值。对于每次操作：
+\begin{itemize}
+    \item 操作$1$：若该段区间 $cnt = 0$，或 $cnt \ != r - l + 1$ 且 $id_{min} = id_{max} = id_{now}$，则该区间可修改。
+    \item 操作$2$：二分搜索查找即可。
+    \item 操作$3$：若该段区间 $cnt = r - l + 1$ 且 $id_{min} = id_{max}$，则全被分配给了某用户。
+\end{itemize}
+\par 同时，我们注意到：子任务中存在 $n = 512$ 的数据，而 $long \ long$ 的范围只到 $2^{64} - 1$，并且 $2^{512}$ 量级肯定会爆内存。但子任务中总操作次数 $q \leq 50000$，因此可以使用离散化处理(\sout{和 202112-4 一模一样，简直白给})。
+\par 由于题目很贴心的使用了 $IPv6$ 的地址表示方法，所以可以直接比较地址字符串来确定相对大小，处理下进位即可。最后，需要注意要把 $l + 1$、$s + 1$ 一并离散化，否则会出现诸如 $[1,2]$, $[4,5]$在离散化后两区间相邻的问题。
+\begin{itemize}
+    \item 时间复杂度：设离散化后共有$n$个点，线段树单次查询，修改的时间复杂度均为$O(logn)$，共有 $q$ 次查询，总时间复杂度为 $O(q*logn)$；
+    \item 空间复杂度：$O(4n)$。
+\end{itemize}
+\subsubsection{C++ 代码实现}
+\lstinputlisting[
+    style = C++,
+    title = {\bf 202303-4 星际网络II}
+]{202303-4.cpp}
+
+\newpage
+\section{Codeforces 1786F Wooden Spoon}
+\begin{itemize}
+    \item 时间限制：$4.0\texttt{ s}$
+    \item 空间限制：$512.0\texttt{ MB}$
+\end{itemize}
+\subsection{题目}
+\subsubsection{问题描述}
+\par 有 $2^n$ 个人(编号$1 \thicksim  2^n$) 参加比赛，比赛形式类似一颗完全二叉树，并且每次比赛总是二者中编号较小的一方赢得胜利。同时，当参赛者满足以下条件时会获得安慰奖 $Wooden \ Spoon$。
+\begin{itemize}
+    \item 该参赛者 $A$ 输了他的第一场比赛；
+    \item 打败上一位参赛者 $A$ 的参赛者 $B$ 输了他的第二场比赛；
+    \item 打败上一位参赛者 $B$ 的参赛者 $C$ 输了他的第三场比赛；
+    \item ……………………；
+    \item 打败上一位参赛者的参赛者输了最终决赛。
+\end{itemize}
+\par 试确定对于每一位参赛者，其能获得 $Wooden \ spoon$ 时的比赛安排方式的种类($modulo \ 998244353$)。
+\subsubsection{子任务}
+\par 一共有20个测试点，对于第 $i$ 个测试点，有$n = i$。
+\subsection{题解}
+\subsubsection{解法一}
+\par 根据题意，我们不难发现：
+\begin{itemize}
+    \item 从根节点到获得$Wooden \ Spoon$叶子节点(假定权值为$i$) 的路径满足节点权值单调递增的性质，即：$1 = x_1 < x_2 < … < x_n < i$。
+    \item 某一子树的根节点的权值一定是该子树中权值最小的叶子节点。
+\end{itemize}
+\par 对于上述路径，考虑使用 $dp$ 求解。设 $dp(i, j)$ 表示路径 $x_1 -> x_i = j$时的方案数，即权值为 $j$ 的节点在倒数第 $i-1$ 场比赛输掉的方案数。则有： $$ dp(i, j) = 2 * 2^{n-i}! \ C_{2^n - 2^{n-i} - j}^{2^{n-i}-1} \ \sum_{k = 1}^{j - 1}dp(i-1, k)$$
+\par 证明：
+\begin{itemize}
+    \item $2 * 2^{n-i}!$：由完全二叉树的性质，节点$j$ 高度为 $i$，则其某一子树的叶子节点共有 $2^{n-i}$ 个；由性质二，无论这些叶子节点如何排列，最终胜出的一定为 $j$，所以对$j$所在子树的节点求全排列数，即$2^{n-i}!$；同时，$j$节点可能出现在左右子树，有两种可能，因此最终结果为$2*2^{n-i}!$。
+    \item $C_{2^n - 2^{n-i} - j}^{2^{n-i}-1}$：目前已算出 $j$ 所在子树的 $2^{n-1}$个叶子节点的排列方式，还需确定 $j$ 的对手的子树；由性质二：以$j$ 为根节点的子树的叶子节点 $k$ 权值一定满足 $j < k \leq 2^n$，又因为 $j$ 赢得该场比赛，所以其对手节点权值肯定大于 $j$，此时只需要选择剩下 $2_{n-i} - 1$ 个叶子节点，同时，注意不能选择 $j$ 所在子树的 $2_{n-i}个$ 叶子节点。
+    \item $\sum_{k = 1}^{j - 1}dp(i-1, k)$：选择一个权值小于 $j$ 的节点作为 $j$ 的对手，保证 $j$ 失败，其方案数共有 $\sum_{k = 1}^{j - 1}dp(i-1, k)$ 种。
+\end{itemize}
+\par 最终答案为：$\sum_{j = 1}^{i-1}dp(n, j)$，这是因为 $dp(n, j)$ 代表沿着上述路径，但只赢了第一场比赛的方案数，而我们要求的是沿上述路径第一场也输了的方案数。此时，对于编号为 $j$ 的参赛者，他可以选择与玩家 $i \ (i < j)$ 比赛来保证第一场比赛失败。
+\par $PS$：由于题目要求对结果取模，所以可以用快速模指数运算和费马小定理求逆元(\sout{死去的离散又开始攻击我})。
+\begin{itemize}
+    \item 时间复杂度：$O(n*2^n)$；
+    \item 空间复杂度：$O((2n + 2)*2^n)$。
+\end{itemize}
+\subsubsection{C++ 代码实现}
+\lstinputlisting[
+    style = C++,
+    title = {\bf Codeforces 1786F Wooden Spoon}
+]{1786-F.cpp}
+\end{document}

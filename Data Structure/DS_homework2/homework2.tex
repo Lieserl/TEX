@@ -1,0 +1,101 @@
+\documentclass[UTF8, 12pt, a4paper, oneside]{ctexart}
+\usepackage{listing}
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{geometry}
+\usepackage{ulem}
+\usepackage[most]{tcolorbox}
+\usepackage[hidelinks]{hyperref}
+\usepackage{color}
+\usepackage{xcolor}
+\usepackage{framed}
+\usepackage{mdframed}
+\usepackage{mathtools,amssymb}
+\usepackage{bm}
+\usepackage{enumitem}
+
+\definecolor{backcolour}{rgb}{0.18,0.18,0.18}
+\definecolor{codegray}{rgb}{0.93,0.93,0.93}
+\definecolor{codegreen}{rgb}{0.34,0.76,0.34}
+\definecolor{codeblue}{rgb}{0.27,0.35,0.69}
+\definecolor{codepurple}{rgb}{0.69,0.25,0.82}
+\definecolor{codeorange}{rgb}{0.8,0.6,0.2}
+\definecolor{codered}{rgb}{0.8,0.25,0.33}
+
+
+\lstset{
+    backgroundcolor     =   \color{codegray},
+    basicstyle          =   \sffamily,          % 基本代码风格
+    keywordstyle        =   \bfseries,          % 关键字风格
+    commentstyle        =   \rmfamily\itshape,  % 注释的风格，斜体
+    stringstyle         =   \ttfamily,  % 字符串风格
+    flexiblecolumns,                % 别问为什么，加上这个
+    numbers             =   left,   % 行号的位置在左边
+    showspaces          =   false,  % 是否显示空格，显示了有点乱，所以不现实了
+    numberstyle         =   \zihao{-5}\ttfamily,    % 行号的样式，小五号，tt等宽字体
+    showstringspaces    =   false,
+    captionpos          =   t,      % 这段代码的名字所呈现的位置，t指的是top上面
+    aboveskip           =   1em,
+    belowskip           =   1em,
+    frame               =   lrtb,   % 显示边框
+}
+
+\lstdefinestyle{C++}{
+    language        =   C++, % 语言选Python
+    basicstyle      =   \zihao{-5}\ttfamily,
+    numberstyle     =   \zihao{-5}\ttfamily,
+    keywordstyle    =   \color{codepurple},
+    keywordstyle    =   [2] \color{codegray},
+    stringstyle     =   \color{magenta},
+    commentstyle    =   \color{codegreen}\ttfamily,
+    breaklines      =   true,   % 自动换行，建议不要写太长的行
+    columns         =   fixed,  % 如果不加这一句，字间距就不固定，很丑，必须加
+    basewidth       =   0.5em,
+}
+
+\lstdefinestyle{C}{
+    language        =   C, % 语言选Python
+    basicstyle      =   \zihao{-5}\ttfamily,
+    numberstyle     =   \zihao{-5}\ttfamily,
+    keywordstyle    =   \color{codepurple},
+    keywordstyle    =   [2] \color{codegray},
+    stringstyle     =   \color{magenta},
+    commentstyle    =   \color{codegreen}\ttfamily,
+    breaklines      =   true,   % 自动换行，建议不要写太长的行
+    columns         =   fixed,  % 如果不加这一句，字间距就不固定，很丑，必须加
+    basewidth       =   0.5em,
+}
+
+\newlist{choices}{enumerate}{2}
+\setlist[choices,1]{
+  label = \Alph*.,       % 设置标签格式为大写字母后跟括号，例如 A)、B) 等
+  leftmargin = *,        % 设置左边距，使其与上层列表对齐
+  align = left,          % 设置标签对齐方式为左对齐
+  labelwidth = 1.5em,    % 设置标签宽度
+  itemsep = 0.5em        % 设置列表项之间的距离
+}
+
+\newmdenv[
+  leftmargin=0cm,
+  rightmargin=0cm,
+  skipabove=1em,
+  skipbelow=1em,
+  backgroundcolor=gray!20,
+  linewidth=0pt
+]{mquote}
+
+\title{\texttt{\bf  数据结构 第二次作业}}
+\author{学号：2022212408 姓名：胡宇杭}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\input{section0.tex}
+\include{section1.tex}
+\include{section2.tex}
+\include{section3.tex}
+\include{section4.tex}
+
+\end{document}

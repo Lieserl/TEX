@@ -1,0 +1,38 @@
+\section{算法设计题}
+    \begin{enumerate}
+        \item 假设以顺序存储结构实现一个双向栈，即在一维数组的存储空间中存在着两个栈，它们的栈底分别设在数组的两个端点。试编写实现这个双向栈 \textbf{tws} 的三个操作：
+            \begin{choices}
+                \item 初始化栈 \textbf{InitStack(\&tws)};
+                    \lstinputlisting[style = C++]{algorithm_1_1.cpp}
+                \item 入栈 \textbf{push(\&tws, i, e)};
+                    \lstinputlisting[style = C++]{algorithm_1_2.cpp}
+                \item 出栈 \textbf{pop(\&tws, i, \&e)}，其中 \textbf{i} 为 \textbf{0} 或 \textbf{1}，分别指示设在数组两端的两个栈
+                    \lstinputlisting[style = C++]{algorithm_1_3.cpp}
+            \end{choices}
+        \item 假设以带头结点的循环链表表示队列，并且只设一个指针指向队尾元素结点(注意不设头指针)，试编写相应的队列初始化、入队列和出队列的算法
+            \begin{choices}
+                \item 循环链队初始化
+                    \begin{mquote}
+                        \par 初始时队列里没有元素，所以尾指针直接指向头结点
+                    \end{mquote}
+                    \lstinputlisting[style = C++]{algorithm_2_1.cpp}
+                \item 入队
+                    \begin{mquote}
+                        \par 入队时将新的元素的 \textbf{next} 指向头结点，然后将尾指针(原队尾元素)的 \textbf{next} 指向新元素，最后将尾指针指向新元素
+                    \end{mquote}
+                    \lstinputlisting[style = C++]{algorithm_2_2.cpp}
+                \item 出队
+                    \begin{mquote}
+                        \par 出队时先判断队列是否为空。如果为空直接返回；如果不为空，则将头结点后的结点(队头元素)删除。同时如果队列里只有一个结点，删除后队列为空，此时应将尾指针指向头指针
+                    \end{mquote}
+                    \lstinputlisting[style = C++]{algorithm_2_3.cpp}
+            \end{choices}
+        \item 回文是前后两个方向拼写完全相同的字符串。很显然，空字符串是回文，任何一个只有1个字符的字符串是回文。编写一个函数 \textbf{testPalindrome}，判断一个字符串是否是回文
+            \begin{mquote}
+                \par 因为这两节课学的栈，所以这里用栈实现回文串的判断(\sout{感觉不如双指针})
+                \par 具体实现方法如下：
+                \par 将字符串的前半段压入栈中，然后依次判断字符串的后半段和栈顶元素是否一致。如果不一致，则说明该字符串不是回文串；如果一致，则出栈，继续下一次判断
+                \par 如果字符串的长度为奇数，不难发现正中间元素不会影响其是否为一个回文串，因此可以省略
+            \end{mquote}
+            \lstinputlisting[style = C++]{algorithm_3.cpp}
+    \end{enumerate}

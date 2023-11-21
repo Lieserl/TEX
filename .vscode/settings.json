@@ -1,0 +1,6 @@
+{
+    "latex-workshop.latexindent.path": "D:\\latexindent\\bin\\windows\\latexindent.exe",
+    "files.associations": {
+        "iostream": "cpp"
+    },
+}

@@ -1,0 +1,311 @@
+\documentclass[UTF8, 12pt, a4paper, oneside]{ctexart}
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{geometry}
+\usepackage{ulem}
+\usepackage[most]{tcolorbox}
+\usepackage[hidelinks]{hyperref}
+\usepackage{color}
+\usepackage{xcolor}
+\usepackage{framed}
+\usepackage{mathtools,amssymb}
+\usepackage{bm}
+
+\usepackage{listings}
+
+\definecolor{backcolour}{rgb}{0.18,0.18,0.18}
+\definecolor{codegray}{rgb}{0.93,0.93,0.93}
+\definecolor{codegreen}{rgb}{0.34,0.76,0.34}
+\definecolor{codeblue}{rgb}{0.27,0.35,0.69}
+\definecolor{codepurple}{rgb}{0.69,0.25,0.82}
+\definecolor{codeorange}{rgb}{0.8,0.6,0.2}
+\definecolor{codered}{rgb}{0.8,0.25,0.33}
+
+\lstset{
+    basicstyle          =   \sffamily,          % 基本代码风格
+    keywordstyle        =   \bfseries,          % 关键字风格
+    commentstyle        =   \rmfamily\itshape,  % 注释的风格，斜体
+    stringstyle         =   \ttfamily,  % 字符串风格
+    flexiblecolumns,                % 别问为什么，加上这个
+    numbers             =   left,   % 行号的位置在左边
+    showspaces          =   false,  % 是否显示空格，显示了有点乱，所以不现实了
+    numberstyle         =   \zihao{-5}\ttfamily,    % 行号的样式，小五号，tt等宽字体
+    showstringspaces    =   false,
+    captionpos          =   t,      % 这段代码的名字所呈现的位置，t指的是top上面
+    aboveskip           =   1em,
+    belowskip           =   1em,
+    frame               =   lrtb,   % 显示边框
+}
+
+\lstdefinestyle{C++}{
+    language        =   C++, % 语言选Python
+    basicstyle      =   \zihao{-5}\ttfamily,
+    numberstyle     =   \zihao{-5}\ttfamily,
+    keywordstyle    =   \color{blue},
+    keywordstyle    =   [2] \color{teal},
+    stringstyle     =   \color{magenta},
+    commentstyle    =   \color{red}\ttfamily,
+    breaklines      =   true,   % 自动换行，建议不要写太长的行
+    columns         =   fixed,  % 如果不加这一句，字间距就不固定，很丑，必须加
+    basewidth       =   0.5em,
+}
+
+\lstdefinestyle{C}{
+    language        =   C, % 语言选Python
+    basicstyle      =   \zihao{-5}\ttfamily,
+    numberstyle     =   \zihao{-5}\ttfamily,
+    keywordstyle    =   \color{codepurple},
+    keywordstyle    =   [2] \color{codegray},
+    stringstyle     =   \color{magenta},
+    commentstyle    =   \color{codegreen}\ttfamily,
+    breaklines      =   true,   % 自动换行，建议不要写太长的行
+    columns         =   fixed,  % 如果不加这一句，字间距就不固定，很丑，必须加
+    basewidth       =   0.5em,
+}
+
+\usepackage{paralist}
+\let\itemize\compactitem
+\let\enditemize\endcompactitem
+\let\enumerate\compactenum
+\let\endenumerate\endcompactenum
+\let\description\compactdesc
+\let\enddescription\endcompactdesc
+
+\definecolor{shadecolor}{RGB}{241, 241, 255}
+\geometry{left=2.54cm,right=2.54cm,top=3.18cm,bottom=3.18cm}
+\linespread{1.5}
+
+\newcounter{problemname}[subsubsection]
+%\newenvironment{problem}{\begin{shaded}\stepcounter{problemname}\par\noindent\textbf{题目\arabic{problemname}. }}{\end{shaded}\par}
+\newenvironment{problem}{\begin{shaded}\stepcounter{problemname}\par\noindent\textbf{题目. }}{\end{shaded}\par}
+
+%\newenvironment{problem}{\begin{shaded}\par\noindent\textbf{题目. }}{\end{shaded}\par}
+\newenvironment{solution}{\par\noindent\textbf{解答. }}{\par}
+\newenvironment{note}{\par\noindent\textbf{题目\arabic{problemname}的注记. }}{\par}
+
+\begin{document}
+	\sloppy
+	\thispagestyle{empty}
+    \begin{figure}[t]
+		\centering
+		\includegraphics[width=13cm]{logo1.jpg}
+	\end{figure}
+
+    \begin{center}
+        \Huge\textbf{实验报告}
+    \end{center}
+	\vspace*{1em}
+    \begin{figure}[htbp]
+		\centering
+		\includegraphics[width=3cm]{logo2.jpg}
+	\end{figure}
+	\begin{center}
+		\Huge\textbf{题目:} \underline{\textbf{Linux环境和GCC工具链}} 
+	\end{center}
+    \vspace*{5em}
+	\begin{table}[htbp]
+		\centering
+		\large
+		\begin{tabular}{ll}
+        \textbf{班级:} & \underline{2022211321} \\
+		\textbf{学号:} & \underline{2022212414} \\
+		\textbf{姓名:} & \underline{杨明佳} \\
+		\textbf{学院:} & \underline{计算机学院(国家示范性软件学院)} \\
+		\end{tabular}
+	\end{table}
+
+    \vspace*{2em}
+
+    \begin{center}
+        \Huge\textbf{\today} 
+    \end{center}
+
+    \section{实验目的}
+        \begin{enumerate}
+            \item 熟悉 \textbf{\textit{linux}} 系统的常用命令；
+            \item 掌握 \textbf{\textit{gcc}} 编译器的使用方法；
+            \item 掌握 \textbf{\textit{gdb}} 的调试工具使用；
+            \item 掌握 \textbf{\textit{objdump}} 反汇编工具使用；
+            \item 理解反汇编程序（对照源程序与 \textbf{\textit{objdump}} 生成的汇编程序）。
+        \end{enumerate}
+
+    \section{实验环境}
+        \begin{itemize}
+            \item 系统：\textbf{\textit{Linux Ubuntu} 20.04.5} 
+            \item 软件工具：\textbf{\textit{macOS Terminal}}、\textbf{\textit{gcc} 7.5.0}、\textbf{\textit{GNU gdb} 9.2}、\textbf{\textit{GNU objdump} 2.34}
+        \end{itemize}
+    \section{实验内容}
+        \par 现有两个 \textbf{int} 型数组 \textbf{a[i] = i - 50, b[i] = i + y}，其中 \textbf{\textit{y}} 取自于学生本人学号 \textbf{2022211x*y} 的个位。登录 \textbf{\textit{bupt1}} 服务器，在 \textbf{\textit{linux}} 环境下使用 \textbf{\textit{vi}} 编辑器编写 \textbf{\textit{C}} 语言源程序，完成数组 \textbf{a + b} 的功能，规定数组长度为 \textbf{100}，函数名为 \textbf{madd()}，数组 \textbf{\textit{a, b}} 均定义在函数内，采用 \textbf{\textit{gcc}} 编译该程序（使用 \textbf{\textit{-g}} 和 \textbf{\textit{-fno-stack-protector}} 选项），   
+        \begin{enumerate}
+            \item 使用 \textbf{\textit{objdump}} 工具生成汇编程序，找到 \textbf{madd} 函数的汇编程序，给出截图；
+            \item 用 \textbf{\textit{gdb}} 进行调试，练习下列 \textbf{\textit{gdb}} 命令，给出截图；
+                \begin{table}[htbp]
+                    \begin{tabular}{lllllllll}
+                        gdb & file & kill & quit & break & delete & clear & info break & run \\
+                        continue & nexti & stepi & disassemble & list & print & x & info reg & watch \\
+                    \end{tabular}
+                \end{table}
+            \item 找到 \textbf{a[i] + b[i]} 对应的汇编指令，指出 \textbf{a[i]} 和 \textbf{b[i]} 位于哪个寄存器中，给出截图；
+            \item 使用单步指令及 \textbf{\textit{gdb}} 相关命令，显示 \textbf{a[xy] + b[xy]} 对应的汇编指令执行前后操作数寄存器十进制和十六进制的值，其中 \textbf{\textit{x, y}} 取自于学生本人学号 \textbf{\textit{2022211x*y}} 的百位和个位。
+        \end{enumerate}
+
+    \newpage
+    \section{实验步骤及实验分析}
+        \subsection{实验内容一}
+            \begin{enumerate}
+                \item 进入服务器，使用 \textbf{vi main.c} 创建 \textbf{C} 语言源程序
+                    \begin{figure*}[htbp]
+                        \includegraphics*[width = 15cm]{1.1.png}
+                    \end{figure*}
+                \newpage
+                \item 编写完成数组 \textbf{a + b} 的功能
+                    \begin{figure*}[htbp]
+                        \includegraphics*[width = 6cm]{1.2.png}                        
+                    \end{figure*}
+                \item 采用 \textbf{gcc}，使用 \textbf{-g -no-pie -fno-stack-protector} 选项编译该程序
+                    \begin{figure*}[htbp]
+                        \includegraphics*[width = 15cm]{1.3.png}                        
+                    \end{figure*}
+                \newpage
+                \item 使用 \textbf{objdump} 生成汇编程序
+                    \begin{figure*}[htbp]
+                        \includegraphics*[width = 15cm]{1.4.png}                        
+                    \end{figure*}
+                \item \textbf{madd()} 函数的汇编程序如下图所示
+                    \begin{figure*}[htbp]
+                        \centering
+                        \includegraphics*[width = 7cm]{1.5.png}
+                        \includegraphics*[width = 8cm]{1.6.png}
+                    \end{figure*}
+            \end{enumerate}
+        
+        \newpage
+        \subsection{实验内容二}
+            \par 为了保证程序运行次数尽可能少（\sout{懒}），实现顺序会与提供的有所不同
+            \begin{enumerate}
+                \item 使用 \textbf{gdb} 命令打开 \textbf{GDB}
+                    \begin{figure*}[htbp]
+                        \includegraphics*[width = 15cm]{2.1.png}                        
+                    \end{figure*}
+                \item 使用 \textbf{file work1} 命令运行之前编译的程序
+                    \begin{figure*}[htbp]
+                        \includegraphics*[width = 9cm]{2.2.png}                        
+                    \end{figure*}
+                \item 使用 \textbf{break} 命令添加断点
+                    \begin{figure*}[htbp]
+                        \includegraphics*[width = 15cm]{2.3.png}                        
+                    \end{figure*}
+                \newpage
+                \item 使用 \textbf{info break} 命令查看所有的断点
+                    \begin{figure*}[htbp]
+                        \includegraphics*[width = 13cm]{2.4.png}                        
+                    \end{figure*}
+                \item 使用 \textbf{delete} 命令删除断点
+                    \begin{figure*}[htbp]
+                        \includegraphics*[width = 15cm]{2.5.png}                        
+                    \end{figure*}
+                \newpage
+                \item 使用 \textbf{list} 命令查看源代码，并在循环中设置断点
+                    \begin{figure*}[htbp]
+                        \includegraphics*[width = 12cm]{2.6.png}                        
+                    \end{figure*}
+                \item 使用 \textbf{run} 命令运行程序，并在第一处断点暂停
+                    \begin{figure*}[htbp]
+                        \includegraphics*[width = 12cm]{2.7.png}                        
+                    \end{figure*}
+                \item 使用 \textbf{stepi} 命令执行一条指令
+                    \begin{figure*}[htbp]
+                        \includegraphics*[width = 14cm]{2.8.png}                        
+                    \end{figure*}
+                \newpage
+                \item 使用 \textbf{continue} 命令继续运行程序，在下个断点处暂停
+                    \begin{figure*}[htbp]
+                        \includegraphics*[width = 12cm]{2.9.png}                        
+                    \end{figure*}
+                \item 使用 \textbf{clear} 命令删除函数 \textbf{madd()} 的断点
+                    \begin{figure*}[htbp]
+                        \includegraphics*[width = 14cm]{2.10.png}                        
+                    \end{figure*}
+                \item 使用 \textbf{disassemble} 命令查看函数 \textbf{madd()} 的汇编代码
+                    \begin{figure*}[htbp]
+                        \includegraphics*[width = 12cm]{2.11.png}                        
+                    \end{figure*}
+                \newpage
+                \item 使用 \textbf{info reg} 命令查看当前所有寄存器的值
+                    \begin{figure*}[htbp]
+                        \includegraphics*[width = 12cm]{2.12.png}                        
+                    \end{figure*}
+                \item 使用 \textbf{print} 命令输出 \textbf{\%rax} 寄存器的内容
+                    \begin{figure*}[htbp]
+                        \includegraphics*[width = 7cm]{2.13.png}                        
+                    \end{figure*}
+                \item 使用 \textbf{x/20} 命令检查函数 \textbf{madd()} 的前 \textbf{20} 个字节
+                    \begin{figure*}[htbp]
+                        \includegraphics*[width = 17cm]{2.14.png}                        
+                    \end{figure*}
+                \newpage
+                \item 使用 \textbf{watch} 命令监视变量 \textbf{i}，继续运行，程序在 \textbf{i} 的值发生变化时暂停
+                    \begin{figure*}[htbp]
+                        \includegraphics*[width = 7cm]{2.15.png} 
+                    \end{figure*}
+                    \begin{figure*}[htbp]
+                        \includegraphics*[width = 15cm]{2.16.png}                       
+                    \end{figure*}
+                \item 使用 \textbf{kill} 命令停止程序
+                    \begin{figure*}[htbp]
+                        \includegraphics*[width = 14cm]{2.17.png}                        
+                    \end{figure*}
+                \newpage
+                \item 使用 \textbf{nexti} 命令执行下一个函数
+                    \begin{figure*}[htbp]
+                        \includegraphics*[width = 13cm]{2.19.png}                        
+                    \end{figure*}
+                \item 使用 \textbf{quit} 命令退出 \textbf{GDB}
+                    \begin{figure*}[htbp]
+                        \includegraphics*[width = 7cm]{2.18.png}                        
+                    \end{figure*}
+            \end{enumerate}
+        \newpage
+        \subsection{实验内容三}
+            \par 使用 \textbf{objdump -S -d work1} 命令生成汇编程序，我们可以很直观地找到 \textbf{a[i] = a[i] + b[i]} 的汇编代码，如下图所示
+            \begin{figure*}[htbp]
+                \includegraphics*[width = 12cm]{3.1.png}
+            \end{figure*}
+            \begin{figure*}[htbp]
+                \includegraphics*[width = 14cm]{3.2.png}
+            \end{figure*}
+            \par 从 \textbf{add \%eax, \%ecx}，我们可以看出 \textbf{a[i]} 被存放在 \textbf{\%ecx} 寄存器中，\textbf{b[i]} 被存放在 \textbf{\%eax} 寄存器中
+        
+        \subsection{实验内容四}
+            \begin{enumerate}
+                \item 用 \textbf{GDB} 打开之前编译的程序
+                    \begin{figure*}[htbp]
+                        \includegraphics*[width = 14cm]{4.1.png}
+                    \end{figure*}
+                \newpage
+                \item 添加条件断点，在 \textbf{i == 48} 时暂停程序
+                    \begin{figure*}[htbp]
+                        \includegraphics*[width = 12cm]{4.2.png}
+                    \end{figure*}
+                \item 此时由于不知道 \textbf{stepi} 命令应该执行几步，所以先使用 \textbf{disassemble/m} 命令查看汇编代码，发现应执行 \textbf{8} 步，并且操作数寄存器为 \textbf{\%ecx} 和 \textbf{\%eax}
+                    \begin{figure*}[htbp]
+                        \includegraphics*[width = 18cm]{4.4.png}
+                    \end{figure*}
+                    \begin{figure*}[htbp]
+                        \includegraphics*[width = 14cm]{4.3.png}
+                    \end{figure*}
+                \newpage
+                \item 按照题目要求输出指定内容
+                    \begin{figure*}[htbp]
+                        \includegraphics*[width = 14cm]{4.5.png}
+                    \end{figure*}
+            \end{enumerate}
+    \section{总结体会}
+        \begin{itemize}
+            \item 在本次实验中，我深入了解了 \textbf{\textit{Linux}} 环境下的常用命令、\textbf{\textit{gcc}} 编译器、\textbf{\textit{gdb}} 调试工具以及 \textbf{\textit{objdump}} 反汇编工具，更加深刻地认识到了汇编程序与源程序之间的对应关系，并通过实验加强了对相关命令的掌握。
+            \item 遇到的问题：一开始我以为 \textbf{stepi} 和 \textbf{nexti} 命令的操作对象是源代码，导致在实验时并没有及时发现使用 \textbf{stepi} 和 \textbf{nexti} 命令时代码并没有运行至下一行的根本原因
+            \item 解决方法：通过询问大语言模型，在 \textbf{\textit{Stack Overflow}} 上查询相关问题，最终发现这两条命令的操作对象是汇编代码，解决了问题
+            \item 建议：希望老师能提早把实验需要更改的地方通知给大家，\sout{今天都写了一半了才通知实验有更新}
+        \end{itemize}
+\end{document}

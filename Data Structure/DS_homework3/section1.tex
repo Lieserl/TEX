@@ -1,0 +1,61 @@
+\section{简答题}
+    \begin{enumerate}
+        \item 简述以下算法的功能
+            \lstinputlisting[style = C++]{section1_1.cpp}
+            \begin{mquote}
+                \par 第 \textbf{5} 行执行的代码是将栈中所有的元素取出并按取出的顺序存放在顺序表中
+                \par 第 \textbf{6} 行执行的代码是将存放在顺序表中的元素从表头元素开始入栈
+                \par 结合前两点，该算法实现的功能是将栈中元素反转
+            \end{mquote}
+        \item 简述以下算法的功能
+            \lstinputlisting[style = C++]{section1_2.cpp}
+            \begin{mquote}
+                \par 在第一个 \textbf{while} 循环中，从栈 \textbf{S} 中取出值不为元素为 \textbf{e} 的元素并存放到另一个栈，直至栈空
+                \par 在第二个 \textbf{while} 循环中，将栈 \textbf{T} 中的元素取出并放回栈 \textbf{S} 中
+                \par 比较栈 \textbf{S} 前后的状态，其他元素相对顺序不变，但值为 \textbf{e} 的元素被取出了，所以算法的功能是删除栈中所有值为 \textbf{e} 的元素
+            \end{mquote}
+        \item 简述以下算法的功能
+            \lstinputlisting[style = C++]{section1_3.cpp}
+            \begin{mquote}
+                \par 第一个 \textbf{while} 循环中，将队列 \textbf{Q} 的所有元素取出，并压入栈中
+                \par 第二个 \textbf{while} 循环中，将栈中元素全部取出并入队
+                \par 结合前两点，该算法实现的功能是将队列中的元素反转
+            \end{mquote}
+        \newpage
+        \item 画出对表达式：$3 - 2 * 8 / 4 + 3^2$ 求值时，操作数栈和运算符栈的变化过程
+            \begin{figure*}[htbp]
+                \centering
+                \includegraphics*[width = 10cm]{operator.jpg}
+            \end{figure*}
+        \item 已知主串 \textbf{s} $=$ \textbf{`ADBADABBAABADABBADADA'}，模式串 \textbf{pat} $=$ \textbf{`ADABBADADA'} ,写出模式串的 \textbf{nextval} 函数值，并由此画出 \textbf{KMP} 算法匹配的过程
+            \par \textbf{nextval} $=$ \textbf{\{0, 1, 0, 2, 1, 0, 1, 0, 4, 0\}}
+            \par 默认字符串下标从 \textbf{1} 开始
+            \begin{itemize}
+                \item 第一次比较发现在 \textbf{j} $=$ \textbf{3} 时不匹配，令 \textbf{j} $=$ \textbf{nextval[j]} $=$ \textbf{0};
+                    \begin{figure*}[htbp]
+                        \centering
+                        \includegraphics*[width = 11cm]{1.1.png}
+                    \end{figure*}
+                \item 第二次比较发现在 \textbf{j} $=$ \textbf{7} 时不匹配，令 \textbf{j} $=$ \textbf{nextval[j]} $=$ \textbf{1};
+                    \begin{figure*}[htbp]
+                        \centering
+                        \includegraphics*[width = 11cm]{1.2.png}
+                    \end{figure*}
+                \newpage
+                \item 第三次比较发现在 \textbf{j} $=$ \textbf{2} 时不匹配，令 \textbf{j} $=$ \textbf{nextval[j]} $=$ \textbf{1};
+                    \begin{figure*}[htbp]
+                        \centering
+                        \includegraphics*[width = 11cm]{1.3.png}
+                    \end{figure*}
+                \item 第四次比较发现在 \textbf{j} $=$ \textbf{1} 时不匹配，令 \textbf{j} $=$ \textbf{nextval[j]} $=$ \textbf{0};
+                    \begin{figure*}[htbp]
+                        \centering
+                        \includegraphics*[width = 11cm]{1.4.png}
+                    \end{figure*}
+                \item 第五次比较模式串与主串匹配，程序结束
+                    \begin{figure*}[htbp]
+                        \centering
+                        \includegraphics*[width = 11cm]{1.5.png}
+                    \end{figure*}
+            \end{itemize}
+    \end{enumerate}
