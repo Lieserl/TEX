@@ -1,0 +1,17 @@
+\section{实验内容}
+    \begin{itemize}
+        \item 登录 \textbf{bupt1} 服务器，在 \textbf{home} 目录下可以找到一个 \textbf{targetn.tar} 文件，解压后得到如下文件：
+        \begin{table}[htbp]
+            \centering
+            \begin{tabular}{c|c|c}
+                README.txt & ctargat & rtarget \\
+                cookie.txt & farm.c & hex2raw \\
+            \end{tabular}
+        \end{table}
+        \item \textbf{ctarget} 和 \textbf{rtarget} 运行时从标准输入读入字符串，这两个程序都存在缓冲区溢出漏洞。通过代码注入的方法实现对 \textbf{ctarget} 程序的攻击，共有 \textbf{3} 关，输入一个特定字符串，可成功调用 \textbf{touch1}，或 \textbf{touch2}，或 \textbf{touch3} 就通关，并向计分服务器提交得分信息；通过 \textbf{ROP} 方法实现对 \textbf{rtarget} 程序的攻击，共有 \textbf{2} 关，在指定区域找到所需要的小工具，进行拼接完成指定功能，再输入一个特定字符串，实现成功调用 \textbf{touch2} 或 \textbf{touch3} 就通关，并向计分服务器提交得分信息；否则失败，但不扣分。因此，本实验需要通过反汇编和逆向工程对 \textbf{ctraget} 和 \textbf{rtarget} 执行文件进行分析，找到保存返回地址在堆栈中的位置以及所需要的小工具机器码。实验 \textbf{2} 的具体内容见 \textbf{实验2说明}，尤其需要认真阅读各阶段的\textbf{Some Advice}提示。
+        \item 本实验包含了 \textbf{5} 个阶段（或关卡），难度逐级递增。各阶段分数如下所示：
+        \begin{figure*}[htbp]
+            \centering
+            \includegraphics*[width = 10cm]{pointTable.png}
+        \end{figure*}
+    \end{itemize}

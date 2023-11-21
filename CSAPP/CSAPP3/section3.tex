@@ -1,0 +1,172 @@
+\section{实验步骤及实验分析}
+    \subsection{准备工作}
+        \begin{enumerate}
+            \item 登陆 \textbf{bupt1} 服务器，在自己的目录下找到 \textbf{target534.tar} 文件，使用 \textbf{tar -xvf target534.tar} 命令解压缩该文件。
+                \begin{figure*}[htbp]
+                    \centering
+                    \includegraphics*[width = 10cm]{s0_0.png}
+                \end{figure*}
+            \item 使用 \textbf{cd target534} 命令移动到 \textbf{target534} 目录下，可以发现之前解压的文件，接下来我们对每个文件的作用进行解释。
+            \begin{itemize}
+                \item \textbf{README.txt}：对每个文件功能的简单介绍；
+                \item \textbf{ctarget}：一个可执行文件，我们需要对其进行 \textbf{Code Injection} 攻击，对应上述 \textbf{Phase} $1 \sim 3$；
+                \item \textbf{rtarget}：一个可执行文件，我们需要对其进行 \textbf{Return-oriented Programming} 攻击，对应上述 \textbf{Phase} $4 \sim 5$；
+                \item \textbf{farm.c}：小工具农场的源代码，我们可以通过 \textbf{objdump} （此处使用 \textbf{gcc} 编译时必须加入 \textbf{-Og} 选项）对其反汇编获得小工具的机器码，省去了在 \textbf{rtarget} 中翻阅查找小工具的麻烦(\sout{虽然最后还是得从 \textbf{rtarget} 中查找对应小工具的内存地址})；
+                \item \textbf{cookie.txt}：在某些 \textbf{phase} 需要作为参数传递的一个签名；
+                \item \textbf{hex2raw}：由于程序读取的是字符串，所以我们需要将写好的 \textbf{txt} 文件转换为二进制读取才能达到预期效果。
+            \end{itemize}
+            \item 使用 \textbf{objdump -d} 命令对两个程序反汇编。至此，准备工作完毕，开始 \textbf{\textit{ATTACK LAB}}。
+                \begin{figure*}[htbp]
+                    \centering
+                    \includegraphics*[width = 12cm]{s0_1.png}
+                \end{figure*}
+        \end{enumerate}
+    
+    \subsection{Phase 1}
+        \begin{enumerate}
+            \item 我们首先翻看官方文档，查阅要求，得知两个重要函数 \textbf{test()} 和 \textbf{getbuf()}
+                \lstinputlisting[style = C]{test.c}
+                \par 我们的任务是想办法让程序执行 \textbf{touch1()} 函数，根据提示及课上所学，\textbf{Gets()} 是一个类似于 \textbf{gets()} 的函数，这意味着在读入字符串长度超过定义的 \textbf{BUFFER\_SIZE} 时，会造成内存泄漏，而这将会是我们的突破点：通过覆盖原有的返回地址，让 \textbf{getbuf()} 函数结束后返回到我们指定的位置。
+            \item 接下来，我们打开之前反汇编得到的 \textbf{ctg.txt} 文件，查看 \textbf{getbuf()} 的汇编代码。
+                \begin{figure*}[htbp]
+                    \includegraphics*[width = 10cm]{s1_0.png}
+                \end{figure*}
+            \item 可以看到，程序通过将栈帧 \textbf{\%rsp} 减去 \textbf{0x18}，为 \textbf{getbuf()} 开辟了 \textbf{24} 字节的内存空间。紧接着两行，程序将 \textbf{\%rsp} 作为参数调用了 \textbf{Gets()} 函数，说明读入的字符串存放在栈顶。
+            \item 根据上述分析，我们要做的事已经很明确了，通过输入一个较长的字符串，将位于 \textbf{\%rsp + 0x18} 位置的返回地址覆盖成 \textbf{touch1()} 的地址。为此，我们查看 \textbf{touch1()} 的地址位置。
+                \begin{figure*}[htbp]
+                    \includegraphics*[width = 10cm]{s1_1.png}
+                \end{figure*}
+            \item 得到 \textbf{touch1()} 的返回地址后，就可以编写我们的攻击文本 \textbf{Hex.txt} 了。
+                \begin{figure*}[htbp]
+                    \includegraphics*[width = 10cm]{s1_2.png}
+                \end{figure*}
+            \item 其中，由于一开始为 \textbf{getbuf()} 分配了 \textbf{0x18} 字节的内存空间，所以我们需要先输入 \textbf{24} 个任意字符（\textbf{0x0a} 除外）对堆栈空间进行填充，然后输入 \textbf{touch1()} 的返回地址，实现对原有返回地址的覆盖。
+            \item 使用 \textbf{./hex2raw < Hex.txt | ./ctarget} 命令运行程序，成功 \textbf{``touch"} 了 \textbf{touch1()}，\textbf{Phase 1} 完成。
+                \begin{figure*}[htbp]
+                    \includegraphics*[width = 10cm]{s1_3.png}
+                \end{figure*}
+        \end{enumerate}
+    
+    \subsection{Phase 2}
+        \begin{enumerate}
+            \item 和之前一样，我们先查阅官方文档获取 \textbf{touch2()} 的源代码。
+                \lstinputlisting[style = C]{touch2.c}
+            \item 可以发现，与之前不同的是，这次我们不仅需要让 \textbf{getbuf()} 返回到 \textbf{touch2()}，而且需要将给定的 \textbf{cookie} 作为参数传给 \textbf{touch2()}，即将 \textbf{cookie} 传递至 \textbf{\%rdi} 寄存器中。
+            \item 根据课上所学，要想实现在返回 \textbf{touch2()} 前执行某些指令，可以使用 \textbf{Code Injection} 方法。具体来说，这次我们还是需要覆盖原有的返回地址，但不同的是，我们并不是直接用 \textbf{touch2()} 的地址覆盖它，而是用我们的 \textbf{Injected Code} 的地址去覆盖它，这样程序就会去执行我们的 \textbf{Injected Code}。根据需求，我们的 \textbf{Injected Code} 需要实现两个功能：
+                \begin{itemize}
+                    \item 将 \textbf{cookie} 传入 \textbf{\%rdi}：其实现较为简单，我们只需要将 \textbf{cookie} 对应的立即数通过 \textbf{mov} 命令复制到 \textbf{\%rdi} 中。
+                    \item 在执行完 \textbf{Injected Code} 后程序能正常返回至 \textbf{touch2()}：我们知道，程序在执行 \textbf{ret} 指令时，会返回至当前栈帧指向的内存地址，所以我们要做的就是在返回前将 \textbf{touch2()} 的返回地址压入栈中。
+                \end{itemize}
+            \item 通过上述分析，我们分析了需要编写的 \textbf{Injected Code}，接下来使用 \textbf{vim} 对其进行编辑。
+                \begin{figure*}[htbp]
+                    \includegraphics*[width = 10cm]{s2_0.png}
+                \end{figure*}
+            \item 使用 \textbf{gcc -c} 命令对其进行编译，并使用 \textbf{objdump -d} 命令反汇编得到其机器码
+                \begin{figure*}[htbp]
+                    \includegraphics*[width = 10cm]{s2_1.png} \\
+                    \includegraphics*[width = 10cm]{s2_2.png}
+                \end{figure*}
+            \item 之前说过，我们需要让程序第一次返回到 \textbf{Injected Code} 的位置。为了方便，我们可以选择将其放置到栈底位置，然后确定栈底的地址。
+            \item 使用 \textbf{gdb} 调试 \textbf{ctarget} 程序，之前已经确定过 \textbf{getbuf()} 的地址，通过 \textbf{break} 命令在相应位置设置断点。
+                \begin{figure*}[htbp]
+                    \includegraphics*[width = 10cm]{s2_3.png}
+                \end{figure*}
+            \item 运行程序，并使用 \textbf{p \$rsp} 查看栈帧指向的地址，将其减去 \textbf{0x18} 即是栈底的位置。
+                \begin{figure*}[htbp]
+                    \includegraphics*[width = 10cm]{s2_4.png}
+                \end{figure*}
+            \item 准备工作完成，根据之前的设想编辑 \textbf{Hex2.txt} 文件。
+                \begin{figure*}[htbp]
+                    \includegraphics*[width = 10cm]{s2_5.png}
+                \end{figure*}
+            \item 使用 \textbf{./hex2raw < Hex2.txt | ./ctarget} 命令运行程序，成功 \textbf{``touch"} 了 \textbf{touch2()}，\textbf{Phase 2} 完成。
+        \end{enumerate}
+    \par 写在后面：为什么读入的字符串可以作为指令被执行：程序会为执行的指令的机器码分配一片内存空间，并依次执行这些机器码，而我们通过修改返回值让其跳转至了栈底位置。也就是说，这时程序并不是将其当作存储的字符串，而是一系列机器码进行执行。
+
+    \subsection{Phase 3}
+        \begin{enumerate}
+            \item 和之前一样，我们先查阅官方文档获取 \textbf{hexmatch()} 和 \textbf{touch3()} 的源代码。
+                \lstinputlisting[style = C]{touch3.c}
+            \item 可以看到，这次我们要将 \textbf{cookie} 以字符串的形式传递进 \textbf{touch3()} 中，除此之外并无任何差别(\sout{那不直接乱杀})。
+            \item 我们照葫芦画瓢，先选一个位置存放我们的字符串(没错又是栈底)，然后编写我们的 \textbf{Injected Code}(这里就不浪费空间再写一遍查看 \textbf{touch3()} 地址的操作了)。
+                \begin{figure*}[htbp]
+                    \includegraphics*[width = 10cm]{s3_0.png}
+                \end{figure*}
+            \item 接着用 \textbf{gcc -c} 命令对其进行编译，并使用 \textbf{objdump -d} 命令反汇编得到其机器码
+                \begin{figure*}[htbp]
+                    \includegraphics*[width = 10cm]{s3_1.png} \\
+                    \includegraphics*[width = 10cm]{s3_2.png}
+                \end{figure*}
+            \item 根据生成的机器码编写相应的 \textbf{Hex3.txt} 文件。
+                \begin{figure*}[htbp]
+                    \includegraphics*[width = 10cm]{s3_3.png}
+                \end{figure*}
+            \item 然后运行，完结撒花，收工！
+                \begin{figure*}[htbp]
+                    \includegraphics*[width = 10cm]{s3_4.png}
+                \end{figure*}
+            \item 不出意外的寄了捏。
+                \begin{figure*}[htbp]
+                    \includegraphics*[width = 10cm]{furina.jpg}
+                \end{figure*}
+            \item \sout{本着能查资料就不动脑子的原则}，我打开了官方手册查看了提示，发现了如下几句话：
+                \begin{mquote}
+                    When functions hexmatch and strncmp are called, they push data onto the stack, overwritingportions of memory that held the buffer used by getbuf.
+                \end{mquote}
+                \par 这意味着，我们的想法是没问题的，但在调用 \textbf{hexmatch()} 和 \textbf{strncmp()} 函数时，它们会将我们原来的 \textbf{Injected Code} 给覆盖，导致失败。
+                \begin{figure*}[htbp]
+                    \includegraphics*[width = 10cm]{magic.png}
+                \end{figure*}
+                \par 于是，我们需要将字符串放置在一个绝对安全的位置，回想一下，在程序正常运行的时候，哪个位置是绝对不会被覆盖的呢？俗话说得好，最安全的地方就是最安全的地方，也就是原来存放 \textbf{getbuf()} 返回地址的位置及其之上的位置(因为堆栈的存储是由高到低的)。
+            \item 依据上述想法，我们重新编写 \textbf{Injected Code}，因为返回地址长度是 \textbf{8} 字节，所以我们将字符串放到 \textbf{\%rsp + 0x8} (此处 \%rsp 指的是栈顶)的位置。
+                \begin{figure*}[htbp]
+                    \includegraphics*[width = 10cm]{s3_5.png}
+                \end{figure*}
+            \item 接着用 \textbf{gcc -c} 命令 (\sout{忘截图了}) 对其进行编译，并使用 \textbf{objdump -d} 命令反汇编得到其机器码。
+                \begin{figure*}[htbp]
+                    \includegraphics*[width = 10cm]{s3_6.png}
+                \end{figure*}
+            \item 根据生成的机器码编写相应的 \textbf{Hex3.txt} 文件，运行，通关！
+                \begin{figure*}[htbp]
+                    \includegraphics*[width = 10cm]{s3_7.png} \\
+                    \includegraphics*[width = 10cm]{s3_8.png}
+                \end{figure*}
+        \end{enumerate}
+
+    \subsection{Phase 4}
+        \par \textbf{``一刻也没为 \textit{CI} 的被解决而哀悼，立刻赶往 BUPT1服务器 的是 \textit{ROP \ }!"}
+        \begin{enumerate}
+            \item 老样子，先查阅官方手册，发现了以下两点
+                \begin{itemize}
+                    \item It uses randomization so that the stack positions differ from one run to another. This makes it impossibleto determine where your injected code will be located.
+                    \item It marks the section of memory holding the stack as nonexecutable, so even if you could set theprogram counter to the start of your injected code, the program would fail with a segmentation fault.
+                \end{itemize}
+                \par 这意味着，我们之前的伎俩(因为我们无法定位栈帧的位置，进而无法定位 \textbf{Injected Code} 的位置，同时也不能在栈中执行 \textbf{Injected Code})都失效了。但俗话说的好，上帝为你关上一扇门，肯定会为你开一扇窗，这次其为我们提供了丰富的小工具来解决问题。
+            \item 通览官方手册，可以总结出小工具的使用方法：
+                \begin{mquote}
+                    \par 虽然每个小工具执行的机器可能与我们实际需要的效果截然不同，但我们可以断章取义地让程序从中间某部分开始执行，从而达成需求的效果。
+                    \par 例如，\textbf{48 89 c0} 执行的汇编代码为 \textbf{movq \%rax, \%rax}。但如果我们让其初始执行地址加一，就会变成 \textbf{89 c0}，对应的汇编代码为 \textbf{movl \%eax, \%eax}。
+                    \par 至于小工具的调用，我们还是使用之前的方法 -- \textbf{overwritingportions}，但由于我们需要使用很多小工具，所以需要链式地在栈中存放一系列小工具的地址来实现调用完一个小工具后紧接着调用下一个的效果。
+                    \par 所以，对于 \textbf{ROP} 类的问题，我们要做的只有两件事，通过分析得出可能的汇编代码，然后据此选择一系列小工具来实现。
+                \end{mquote}
+            \item 回看 \textbf{Phase 4} 的要求：用 \textbf{ROP} 解决 \textbf{Phase 2}，也就是我们要实现的功能还是两点：
+                \begin{itemize}
+                    \item 将 \textbf{cookie} 传入 \textbf{\%rdi} 寄存器中。
+                    \item 程序最终返回至 \textbf{touch2()} 函数中。
+                \end{itemize}    
+            \item 由于这次我们不能简单粗暴的编写 \textbf{Injected Code}，所以需要重新找一个方法来获得我们的 \textbf{cookie} 并将其存放到 \textbf{\%rdi} 中。而最适合做这种事的命令无疑是 \textbf{popq}。
+            \item 查看之前生成的 \textbf{rtg} 文件，发现只有 \textbf{setval_168} 能实现 \textbf{popq} 和 \textbf{retq}(以下不再赘述 retq) 命令，其对应汇编代码为 \textbf{popq \%rax}。
+                \begin{figure*}[htbp]
+                    \includegraphics*[width = 10cm]{s4_0.png}
+                \end{figure*}
+            \item 那接下来的任务就明了了，找到 \textbf{movq \%rax, \%rdi} 对应的小工具。通过查看手册，得到其机器码为 \textbf{48 89 c7}，故所需小工具为 \textbf{addval_241}。
+                \begin{figure*}[htbp]
+                    \includegraphics*[width = 10cm]{s4_1.png}
+                \end{figure*}
+            \item 根据这两个小工具的地址和 \textbf{touch3()} 的地址编写 \textbf{Hex4.txt} 文件。
+                
+            \item 使用 \textbf{./hex2raw < Hex2.txt | ./ctarget} 命令运行程序，成功 \textbf{``touch"} 了 \textbf{touch2()}，\textbf{Phase 4} 完成。   
+        \end{enumerate}
+        
+
+    
