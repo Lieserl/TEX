@@ -3,7 +3,7 @@
         \begin{enumerate}
             \item 登陆 \textbf{bupt1} 服务器，在自己的目录下找到 \textbf{target534.tar} 文件，使用 \textbf{tar -xvf target534.tar} 命令解压缩该文件。
                 \begin{figure*}[htbp]
-                    \centering
+                    \hspace*{1.5cm}
                     \includegraphics*[width = 10cm]{s0_0.png}
                 \end{figure*}
             \item 使用 \textbf{cd target534} 命令移动到 \textbf{target534} 目录下，可以发现之前解压的文件，接下来我们对每个文件的作用进行解释。
@@ -17,7 +17,7 @@
             \end{itemize}
             \item 使用 \textbf{objdump -d} 命令对两个程序反汇编。至此，准备工作完毕，开始 \textbf{\textit{ATTACK LAB}}。
                 \begin{figure*}[htbp]
-                    \centering
+                    \hspace*{1.5cm}
                     \includegraphics*[width = 12cm]{s0_1.png}
                 \end{figure*}
         \end{enumerate}
@@ -29,24 +29,30 @@
                 \par 我们的任务是想办法让程序执行 \textbf{touch1()} 函数，根据提示及课上所学，\textbf{Gets()} 是一个类似于 \textbf{gets()} 的函数，这意味着在读入字符串长度超过定义的 \textbf{BUFFER\_SIZE} 时，会造成内存泄漏，而这将会是我们的突破点：通过覆盖原有的返回地址，让 \textbf{getbuf()} 函数结束后返回到我们指定的位置。
             \item 接下来，我们打开之前反汇编得到的 \textbf{ctg.txt} 文件，查看 \textbf{getbuf()} 的汇编代码。
                 \begin{figure*}[htbp]
+                    \hspace*{1.5cm}
                     \includegraphics*[width = 10cm]{s1_0.png}
                 \end{figure*}
             \item 可以看到，程序通过将栈帧 \textbf{\%rsp} 减去 \textbf{0x18}，为 \textbf{getbuf()} 开辟了 \textbf{24} 字节的内存空间。紧接着两行，程序将 \textbf{\%rsp} 作为参数调用了 \textbf{Gets()} 函数，说明读入的字符串存放在栈顶。
+            \newpage
             \item 根据上述分析，我们要做的事已经很明确了，通过输入一个较长的字符串，将位于 \textbf{\%rsp + 0x18} 位置的返回地址覆盖成 \textbf{touch1()} 的地址。为此，我们查看 \textbf{touch1()} 的地址位置。
                 \begin{figure*}[htbp]
-                    \includegraphics*[width = 10cm]{s1_1.png}
+                    \hspace*{1.5cm}
+                    \includegraphics*[width = 12cm]{s1_1.png}
                 \end{figure*}
             \item 得到 \textbf{touch1()} 的返回地址后，就可以编写我们的攻击文本 \textbf{Hex.txt} 了。
                 \begin{figure*}[htbp]
-                    \includegraphics*[width = 10cm]{s1_2.png}
+                    \hspace*{1.5cm}
+                    \includegraphics*[width = 6cm]{s1_2.png}
                 \end{figure*}
             \item 其中，由于一开始为 \textbf{getbuf()} 分配了 \textbf{0x18} 字节的内存空间，所以我们需要先输入 \textbf{24} 个任意字符（\textbf{0x0a} 除外）对堆栈空间进行填充，然后输入 \textbf{touch1()} 的返回地址，实现对原有返回地址的覆盖。
             \item 使用 \textbf{./hex2raw < Hex.txt | ./ctarget} 命令运行程序，成功 \textbf{``touch"} 了 \textbf{touch1()}，\textbf{Phase 1} 完成。
                 \begin{figure*}[htbp]
+                    \hspace*{1.5cm}
                     \includegraphics*[width = 10cm]{s1_3.png}
                 \end{figure*}
         \end{enumerate}
     
+    \newpage
     \subsection{Phase 2}
         \begin{enumerate}
             \item 和之前一样，我们先查阅官方文档获取 \textbf{touch2()} 的源代码。
@@ -57,32 +63,45 @@
                     \item 将 \textbf{cookie} 传入 \textbf{\%rdi}：其实现较为简单，我们只需要将 \textbf{cookie} 对应的立即数通过 \textbf{mov} 命令复制到 \textbf{\%rdi} 中。
                     \item 在执行完 \textbf{Injected Code} 后程序能正常返回至 \textbf{touch2()}：我们知道，程序在执行 \textbf{ret} 指令时，会返回至当前栈帧指向的内存地址，所以我们要做的就是在返回前将 \textbf{touch2()} 的返回地址压入栈中。
                 \end{itemize}
+            \newpage
             \item 通过上述分析，我们分析了需要编写的 \textbf{Injected Code}，接下来使用 \textbf{vim} 对其进行编辑。
                 \begin{figure*}[htbp]
-                    \includegraphics*[width = 10cm]{s2_0.png}
+                    \hspace*{1.5cm}
+                    \includegraphics*[width = 6cm]{s2_0.png}
                 \end{figure*}
-            \item 使用 \textbf{gcc -c} 命令对其进行编译，并使用 \textbf{objdump -d} 命令反汇编得到其机器码
+            \item 使用 \textbf{gcc -c} 命令 (忘截了捏) 对其进行编译，并使用 \textbf{objdump -d} 命令反汇编得到其机器码
                 \begin{figure*}[htbp]
-                    \includegraphics*[width = 10cm]{s2_1.png} \\
+                    \hspace*{1.5cm}
+                    \includegraphics*[width = 9cm]{s2_1.png} \\
+                    \hspace*{1.5cm}
                     \includegraphics*[width = 10cm]{s2_2.png}
                 \end{figure*}
             \item 之前说过，我们需要让程序第一次返回到 \textbf{Injected Code} 的位置。为了方便，我们可以选择将其放置到栈底位置，然后确定栈底的地址。
             \item 使用 \textbf{gdb} 调试 \textbf{ctarget} 程序，之前已经确定过 \textbf{getbuf()} 的地址，通过 \textbf{break} 命令在相应位置设置断点。
                 \begin{figure*}[htbp]
+                    \hspace*{1.5cm}
                     \includegraphics*[width = 10cm]{s2_3.png}
                 \end{figure*}
+            \newpage
             \item 运行程序，并使用 \textbf{p \$rsp} 查看栈帧指向的地址，将其减去 \textbf{0x18} 即是栈底的位置。
                 \begin{figure*}[htbp]
-                    \includegraphics*[width = 10cm]{s2_4.png}
+                    \hspace*{1.5cm}
+                    \includegraphics*[width = 7cm]{s2_4.png}
                 \end{figure*}
+            
             \item 准备工作完成，根据之前的设想编辑 \textbf{Hex2.txt} 文件。
                 \begin{figure*}[htbp]
-                    \includegraphics*[width = 10cm]{s2_5.png}
+                    \hspace*{1.5cm}
+                    \includegraphics*[width = 6cm]{s2_5.png}
                 \end{figure*}
             \item 使用 \textbf{./hex2raw < Hex2.txt | ./ctarget} 命令运行程序，成功 \textbf{``touch"} 了 \textbf{touch2()}，\textbf{Phase 2} 完成。
+                \begin{figure*}[htbp]
+                    \hspace*{1.5cm}
+                    \includegraphics*[width = 10cm]{s2_6.png}
+                \end{figure*}
         \end{enumerate}
     \par 写在后面：为什么读入的字符串可以作为指令被执行：程序会为执行的指令的机器码分配一片内存空间，并依次执行这些机器码，而我们通过修改返回值让其跳转至了栈底位置。也就是说，这时程序并不是将其当作存储的字符串，而是一系列机器码进行执行。
-
+    
     \subsection{Phase 3}
         \begin{enumerate}
             \item 和之前一样，我们先查阅官方文档获取 \textbf{hexmatch()} 和 \textbf{touch3()} 的源代码。
@@ -90,45 +109,58 @@
             \item 可以看到，这次我们要将 \textbf{cookie} 以字符串的形式传递进 \textbf{touch3()} 中，除此之外并无任何差别(\sout{那不直接乱杀})。
             \item 我们照葫芦画瓢，先选一个位置存放我们的字符串(没错又是栈底)，然后编写我们的 \textbf{Injected Code}(这里就不浪费空间再写一遍查看 \textbf{touch3()} 地址的操作了)。
                 \begin{figure*}[htbp]
-                    \includegraphics*[width = 10cm]{s3_0.png}
+                    \hspace*{1.5cm}
+                    \includegraphics*[width = 7cm]{s3_0.png}
                 \end{figure*}
             \item 接着用 \textbf{gcc -c} 命令对其进行编译，并使用 \textbf{objdump -d} 命令反汇编得到其机器码
                 \begin{figure*}[htbp]
-                    \includegraphics*[width = 10cm]{s3_1.png} \\
+                    \hspace*{1.5cm}
+                    \includegraphics*[width = 9cm]{s3_1.png} \\
+                    \hspace*{1.5cm}
                     \includegraphics*[width = 10cm]{s3_2.png}
                 \end{figure*}
+            \newpage
             \item 根据生成的机器码编写相应的 \textbf{Hex3.txt} 文件。
                 \begin{figure*}[htbp]
-                    \includegraphics*[width = 10cm]{s3_3.png}
+                    \hspace*{1.5cm}
+                    \includegraphics*[width = 6cm]{s3_3.png}
                 \end{figure*}
             \item 然后运行，完结撒花，收工！
                 \begin{figure*}[htbp]
+                    \hspace*{1.5cm}
                     \includegraphics*[width = 10cm]{s3_4.png}
                 \end{figure*}
-            \item 不出意外的寄了捏。
+            \item 如果不出意外的话，那大概率是出意外了。
                 \begin{figure*}[htbp]
-                    \includegraphics*[width = 10cm]{furina.jpg}
+                    \hspace*{1.5cm}
+                    \includegraphics*[width = 5cm]{furina.jpg}
                 \end{figure*}
             \item \sout{本着能查资料就不动脑子的原则}，我打开了官方手册查看了提示，发现了如下几句话：
                 \begin{mquote}
-                    When functions hexmatch and strncmp are called, they push data onto the stack, overwritingportions of memory that held the buffer used by getbuf.
+                    \par When functions hexmatch and strncmp are called, they push data onto the stack, overwritingportions of memory that held the buffer used by getbuf.
                 \end{mquote}
+                \newpage
                 \par 这意味着，我们的想法是没问题的，但在调用 \textbf{hexmatch()} 和 \textbf{strncmp()} 函数时，它们会将我们原来的 \textbf{Injected Code} 给覆盖，导致失败。
                 \begin{figure*}[htbp]
+                    \centering
                     \includegraphics*[width = 10cm]{magic.png}
                 \end{figure*}
                 \par 于是，我们需要将字符串放置在一个绝对安全的位置，回想一下，在程序正常运行的时候，哪个位置是绝对不会被覆盖的呢？俗话说得好，最安全的地方就是最安全的地方，也就是原来存放 \textbf{getbuf()} 返回地址的位置及其之上的位置(因为堆栈的存储是由高到低的)。
             \item 依据上述想法，我们重新编写 \textbf{Injected Code}，因为返回地址长度是 \textbf{8} 字节，所以我们将字符串放到 \textbf{\%rsp + 0x8} (此处 \%rsp 指的是栈顶)的位置。
                 \begin{figure*}[htbp]
-                    \includegraphics*[width = 10cm]{s3_5.png}
+                    \hspace*{1.5cm}
+                    \includegraphics*[width = 7cm]{s3_5.png}
                 \end{figure*}
             \item 接着用 \textbf{gcc -c} 命令 (\sout{忘截图了}) 对其进行编译，并使用 \textbf{objdump -d} 命令反汇编得到其机器码。
                 \begin{figure*}[htbp]
+                    \hspace*{1.5cm}
                     \includegraphics*[width = 10cm]{s3_6.png}
                 \end{figure*}
             \item 根据生成的机器码编写相应的 \textbf{Hex3.txt} 文件，运行，通关！
                 \begin{figure*}[htbp]
-                    \includegraphics*[width = 10cm]{s3_7.png} \\
+                    \hspace*{1.5cm}
+                    \includegraphics*[width = 5cm]{s3_7.png} \\
+                    \hspace*{1.5cm}
                     \includegraphics*[width = 10cm]{s3_8.png}
                 \end{figure*}
         \end{enumerate}
@@ -141,7 +173,7 @@
                     \item It uses randomization so that the stack positions differ from one run to another. This makes it impossibleto determine where your injected code will be located.
                     \item It marks the section of memory holding the stack as nonexecutable, so even if you could set theprogram counter to the start of your injected code, the program would fail with a segmentation fault.
                 \end{itemize}
-                \par 这意味着，我们之前的伎俩(因为我们无法定位栈帧的位置，进而无法定位 \textbf{Injected Code} 的位置，同时也不能在栈中执行 \textbf{Injected Code})都失效了。但俗话说的好，上帝为你关上一扇门，肯定会为你开一扇窗，这次其为我们提供了丰富的小工具来解决问题。
+                \par 这意味着，我们之前的伎俩都失效了(因为我们无法定位栈帧的位置，进而无法定位 \textbf{Injected Code} 的位置，同时也不能在栈中执行 \textbf{Injected Code})。但俗话说的好，上帝为你关上一扇门，肯定会为你开一扇窗，这次其为我们提供了丰富的小工具来解决问题。
             \item 通览官方手册，可以总结出小工具的使用方法：
                 \begin{mquote}
                     \par 虽然每个小工具执行的机器可能与我们实际需要的效果截然不同，但我们可以断章取义地让程序从中间某部分开始执行，从而达成需求的效果。
@@ -155,17 +187,73 @@
                     \item 程序最终返回至 \textbf{touch2()} 函数中。
                 \end{itemize}    
             \item 由于这次我们不能简单粗暴的编写 \textbf{Injected Code}，所以需要重新找一个方法来获得我们的 \textbf{cookie} 并将其存放到 \textbf{\%rdi} 中。而最适合做这种事的命令无疑是 \textbf{popq}。
-            \item 查看之前生成的 \textbf{rtg} 文件，发现只有 \textbf{setval_168} 能实现 \textbf{popq} 和 \textbf{retq}(以下不再赘述 retq) 命令，其对应汇编代码为 \textbf{popq \%rax}。
+            \item 查看之前生成的 \textbf{rtg} 文件，发现只有 \textbf{setval\_168} 能实现 \textbf{popq} 和 \textbf{retq} (以下不再赘述) 命令，其对应汇编代码为 \textbf{popq \%rax}。
                 \begin{figure*}[htbp]
-                    \includegraphics*[width = 10cm]{s4_0.png}
+                    \hspace*{1.5cm}
+                    \includegraphics*[width = 12cm]{s4_0.png}
                 \end{figure*}
-            \item 那接下来的任务就明了了，找到 \textbf{movq \%rax, \%rdi} 对应的小工具。通过查看手册，得到其机器码为 \textbf{48 89 c7}，故所需小工具为 \textbf{addval_241}。
+            \item 那接下来的任务就明了了，找到 \textbf{movq \%rax, \%rdi} 对应的小工具。通过查看手册，得到其机器码为 \textbf{48 89 c7}，故所需小工具为 \textbf{addval\_241}。
                 \begin{figure*}[htbp]
-                    \includegraphics*[width = 10cm]{s4_1.png}
+                    \hspace*{1.5cm}
+                    \includegraphics*[width = 12cm]{s4_1.png}
                 \end{figure*}
             \item 根据这两个小工具的地址和 \textbf{touch3()} 的地址编写 \textbf{Hex4.txt} 文件。
-                
-            \item 使用 \textbf{./hex2raw < Hex2.txt | ./ctarget} 命令运行程序，成功 \textbf{``touch"} 了 \textbf{touch2()}，\textbf{Phase 4} 完成。   
+                \begin{figure*}[htbp]
+                    \hspace*{1.5cm}
+                    \includegraphics*[width = 6cm]{s4_2.png}
+                \end{figure*}
+            \newpage
+            \item 使用 \textbf{./hex2raw < Hex4.txt | ./ctarget} 命令运行程序，成功 \textbf{``touch"} 了 \textbf{touch2()}，\textbf{Phase 4} 完成。   
+                \begin{figure*}[htbp]
+                    \hspace*{1.5cm}
+                    \includegraphics*[width = 10cm]{s4_3.png}
+                \end{figure*}
+        \end{enumerate}
+
+    \subsection{Phase 5}
+        \begin{enumerate}
+            \item 由于这次我们需要通过 \textbf{ROP} 解决 \textbf{Phase 3}，但这就意味着我们必须定位到字符串的位置并将其传到 \textbf{\%rdi} 寄存器中。而由于栈的随机化，我们并不能定位到字符串的绝对位置，更别提将其传给 \textbf{\%rdi} 了。
+            \item 就在我绞尽脑汁，即将放弃的时候，我在小工具农场中找到了梦寐以求的函数 \textbf{add\_xy}。由于之前一直是找片段的机器码构建功能，而忽略了函数本身。
+                \begin{figure*}[htbp]
+                    \hspace*{1.5cm}
+                    \includegraphics*[width = 12cm]{s5_0.png}
+                \end{figure*}
+            \item 这个函数告诉我们，虽然栈的位置是随机的，但有一样东西是恒定的：我们的字符串与栈帧的 \textbf{相对位置}。所以可以通过提取栈帧的位置，并通过 \textbf{add\_xy} 将其加上一个偏移量，让其指向我们的字符串。
+            \item 由 \textbf{add\_xy} 的汇编代码，我们这次需要实现以下功能：
+            \begin{itemize}
+                \item 将栈帧提取并保存在 \textbf{\%rdi} 或 \textbf{\%rsi} 中；
+                \item 拿到偏移量后将其保存在 \textbf{\%rdi} 或 \textbf{\%rsi} 中；
+                \item 执行 \textbf{add\_xy} 函数；
+                \item 将 \textbf{\%rax} 寄存器中的值复制到 \textbf{\%rdi} 中；
+                \item 返回至 \textbf{touch3()}。
+            \end{itemize}
+            \item 由于我们并不知道这些小工具能实现哪些功能，所以极大概率需要中间变量来帮我们完成某些步骤，而这涉及到大量的查阅、排除。所以我决定借助 \textbf{Pdf} 文件强大的搜索能力来减少工作量。
+            \item 经过一系列查找、排查，我最终确定了完整的汇编指令：
+            \begin{itemize}
+                \item movq \%rsp, \%rax
+                \item movq \%rax, \%rdi
+                \item popq \%rax (0x48)
+                \item movl \%eax, \%ecx
+                \item movl \%ecx, \%edx
+                \item movl \%edx, \%esi
+                \item lea (\%rdi, \%rsi, 1), \%rax
+                \item movq \%rax, \%rdi
+            \end{itemize}
+            \item 其中，由于没有直接或间接将 \textbf{0x48} 移动到 \textbf{rsi} 中的 \textbf{movq} 指令，所以我们转去寻找 \textbf{movl} 指令。选择 \textbf{movl} 的原因有两个：
+                \begin{itemize}
+                    \item \textbf{0x48} 可以被存放在 \textbf{32} 位寄存器中，不会被截断；
+                    \item 与其他的 \textbf{mov} 指令不同的是，\textbf{movl} 命令会自动将寄存器的高位置 \textbf{0}，这意味着我们不会因为最后执行对象是 \textbf{\%rsi}，而不是 \textbf{\%esi} 导致原本的 \textbf{0x48} 被修改成其他数。
+                \end{itemize}
+            \item 由于篇幅限制，这里就不给出对应的小工具具体是哪些了（会在压缩包中给出），我们直接编写 \textbf{Hex5.txt} 文件。
+                \begin{figure*}[htbp]
+                    \hspace*{1.5cm}
+                    \includegraphics*[width = 6cm]{s5_1.png}
+                \end{figure*}
+            \item 使用 \textbf{./hex2raw < Hex5.txt | ./ctarget} 命令运行程序，成功 \textbf{``touch"} 了 \textbf{touch3()}，\textbf{Phase 5} 完成。
+                \begin{figure*}[htbp]
+                    \hspace*{1.5cm}
+                    \includegraphics*[width = 10cm]{s5_2.png}
+                \end{figure*}
         \end{enumerate}
         
 
