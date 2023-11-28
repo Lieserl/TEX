@@ -23,6 +23,7 @@
 \definecolor{codered}{rgb}{0.8,0.25,0.33}
 
 \lstset{
+    backgroundcolor     =   \color{codegray},
     basicstyle          =   \sffamily,          % 基本代码风格
     keywordstyle        =   \bfseries,          % 关键字风格
     commentstyle        =   \rmfamily\itshape,  % 注释的风格，斜体
@@ -42,10 +43,10 @@
     language        =   C++, % 语言选Python
     basicstyle      =   \zihao{-5}\ttfamily,
     numberstyle     =   \zihao{-5}\ttfamily,
-    keywordstyle    =   \color{blue},
-    keywordstyle    =   [2] \color{teal},
+    keywordstyle    =   \color{codepurple},
+    keywordstyle    =   [2] \color{codegray},
     stringstyle     =   \color{magenta},
-    commentstyle    =   \color{red}\ttfamily,
+    commentstyle    =   \color{codegreen}\ttfamily,
     breaklines      =   true,   % 自动换行，建议不要写太长的行
     columns         =   fixed,  % 如果不加这一句，字间距就不固定，很丑，必须加
     basewidth       =   0.5em,
@@ -63,6 +64,24 @@
     columns         =   fixed,  % 如果不加这一句，字间距就不固定，很丑，必须加
     basewidth       =   0.5em,
 }
+
+\newlist{choices}{enumerate}{2}
+\setlist[choices,1]{
+  label = \Alph*.,       % 设置标签格式为大写字母后跟括号，例如 A)、B) 等
+  leftmargin = *,        % 设置左边距，使其与上层列表对齐
+  align = left,          % 设置标签对齐方式为左对齐
+  labelwidth = 1.5em,    % 设置标签宽度
+  itemsep = 0.5em        % 设置列表项之间的距离
+}
+
+\newmdenv[
+  leftmargin=0cm,
+  rightmargin=0cm,
+  skipabove=1em,
+  skipbelow=1em,
+  backgroundcolor=gray!20,
+  linewidth=0pt
+]{mquote}
 
 \usepackage{paralist}
 \let\itemize\compactitem
@@ -101,7 +120,7 @@
 		\includegraphics[width=3cm]{logo2.jpg}
 	\end{figure}
 		\begin{center}
-			\Huge\textbf{实验二：} \underline{\textbf{线性表-栈-串综合应用实验}} 
+			\Huge\textbf{实验三：} \underline{\textbf{树-哈夫曼编/译码器}} 
 		\end{center}
     \vspace*{5em}
 	\begin{table}[htbp]
