@@ -37,4 +37,6 @@ void destroyBmpHT(Bmptree* bmp);
 
 BCode* bmpCoding(Bmptree* bmp);
 
+void destroyBmpCode(BCode* bc);
+
 #endif /* bmp_hpp */

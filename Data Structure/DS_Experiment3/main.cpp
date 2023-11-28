@@ -4,27 +4,16 @@
 #include "huffman.hpp"
 #include "bmp.hpp"
 
-void testQueue()
-{
-    Priority_Queue* q = initQueue(20);
-   
-   int a[] = {2, 3, 2, 4 ,5 ,3 ,6 ,7 ,4, 9, 12 ,7 ,2};
-   
-   for (int i = 0; i < 13; i ++ )
-       enQueue(q, i, a[i]);
-   
-   for (int i = 1; i < 14; i ++ )
-       printf("%d ", deQueue(q));
-}
-
 void testSaveLoadFuction()
 {
-    // readText("ToBeTran.txt");
     int* w;
     char* ch;
     int n = statistic(&w, &ch, "ToBeTran.txt");
     
     HuffmanTree* source = buildHT(w, ch, n);
+    
+    if (w) free(w);
+    if (ch) free(ch);
     
     saveHT(source, "hfmTree.dat");
     
@@ -41,6 +30,9 @@ void testSaveLoadFuction()
     for (int i = 1; i <= 2 * n - 1; i ++ )
         if (i <= n) printf("char: %c parent: %d lchild: %d rchild: %d weight: %d\n", copy->data[i].ch, copy->data[i].parent, copy->data[i].lChild, copy->data[i].rChild, copy->data[i].weight);
         else printf("EMPTY   parent: %d lchild: %d rchild: %d weight: %d\n", copy->data[i].parent, copy->data[i].lChild, copy->data[i].rChild, copy->data[i].weight);
+    
+    destroyHT(source);
+    destroyHT(copy);
 }
 
 void testHT()
@@ -52,7 +44,12 @@ void testHT()
     HuffmanTree* ht = buildHT(w, ch, n);
     HCode* hc = huffmanCoding(ht);
     
+    if (w) free(w);
+    if (ch) free(ch);
+    
     for (int i = 1; i <= n; i ++ ) printf("%c: %s\n", hc->data[i].ch, hc->data[i].cd);
+    
+    destroyHT(ht);
 }
 
 void testCodeFunction()
@@ -61,6 +58,8 @@ void testCodeFunction()
     
     enCodeText(ht, "ToBeTran.txt", "CodeFile.txt");
     deCodeText(ht, "CodeFile.txt", "TextFile.txt");
+    
+    destroyHT(ht);
 }
 
 void testBmpCodeFunction()
@@ -74,7 +73,13 @@ void testBmpCodeFunction()
     
     for (int i = 1; i <= n; i ++ ) printf("pixel %d: weight: %d code:%s\n", bc->data[i].pixel, w[i], bc->data[i].cd);
     
-    printf("%d", bmp->data[2 * n - 1].weight);
+    printf("The sum of the pixel is %d\n", bmp->data[2 * n - 1].weight);
+    
+    if (w) free(w);
+    if (pixel) free(pixel);
+    
+    destroyBmpHT(bmp);
+    destroyBmpCode(bc);
 }
 
 int main()
@@ -85,7 +90,7 @@ int main()
     
     // testCodeFunction();
     
-    // testBmpCodeFunction();
+     testBmpCodeFunction();
     
     return 0;
 }

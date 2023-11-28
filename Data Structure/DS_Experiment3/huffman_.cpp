@@ -3,7 +3,6 @@
 
 #define MAX_CHAR_VAL 128
 
-
 typedef struct
 {
     int parent, lChild, rChild;
@@ -44,5 +43,7 @@ HCode* huffmanCoding(HuffmanTree* ht);
 void enCodeText(HuffmanTree* ht, const char* input_file_name, const char* output_file_name);
 
 void deCodeText(HuffmanTree* ht, const char* input_file_name, const char* output_file_name);
+
+void destroyHC(HCode* hc);
 
 #endif /* huffman_hpp */

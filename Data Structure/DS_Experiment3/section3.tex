@@ -1,5 +1,173 @@
 \section{实验步骤}
     \textbf{操作步骤+运行截图}
     \subsection{代码解释}
-        \par 由于这次实验涉及到对不同种文件的处理以及利用其他数据结构对哈夫曼编码进行优化, 因此仍采用分文件编写的方式.
-        \subsubsection{}
+        \par 由于这次实验涉及到利用哈夫曼树对不同种文件的处理以及利用其他数据结构对哈夫曼编码进行优化, 因此仍采用分文件编写的方式.
+        \subsubsection{Huffman}
+            \par 该文件实现了利用哈夫曼树对文本文件进行编码、解码的功能。
+            \begin{figure*}[htbp]
+                \hspace*{1.2cm}
+                \includegraphics*[width = 14cm]{s0_0.png}
+            \end{figure*}
+            \par 接下来我们对每个函数进行解释(虽然这么说但功能太简单的就直接跳过了)
+            \begin{itemize}
+                \item \textbf{int statistic(int** w, char** ch, const char* file\_name)}
+                    \par 该函数的作用是统计指定文本文件中各个字符出现的数量，并存放在 \textbf{w} 和 \textbf{ch} 数组中，用于在接下来的步骤中建立哈夫曼树。
+                    \par 由于每一步操作都是线性的，故总时间复杂度为 \textbf{O(n)}。
+                    \begin{figure*}[htbp]
+                        \hspace*{1.2cm}
+                        \includegraphics*[width = 10cm]{s1_0.png}
+                    \end{figure*}
+                \item \textbf{HuffmanTree* buildHT(int w[], char ch[], int n)}
+                    \par 该函数的作用是使用 \textbf{statistic} 函数中得到的数据为文本文件建立哈夫曼树。
+                    \par 哈夫曼树的建立过程为每次选取权重最小的两个根结点合并，在不优化的条件下，其每次迭代都需要遍历一遍所有结点，一共遍历 \textbf{n-1} 次，故总的时间复杂度为 $O(n^2)$。该步骤在处理结点数较多的情况时会使性能大幅下降。因此这里采用维护 \textbf{优先队列} 的方式对其进行优化。
+                    \par 我们首先将 \textbf{n} 个叶子结点入队，优先队列每次入队、出队的时间复杂度均为 $O(logn)$，故该步操作的时间复杂度为 \textbf{O(nlogn)}；在合并的过程中，我们每次迭代需要让队头出队两次，并将新的结点入队，一共迭代 \textbf{n-1}次，时间复杂度为 $O(3(n-1)logn)$；
+                    \par 故该函数整体的时间复杂度为 $O(nlogn)$。
+                    \begin{figure*}[htbp]
+                        \hspace*{1.2cm}
+                        \includegraphics*[width = 9cm]{s1_2.png}
+                    \end{figure*}
+                \item \textbf{HCode* huffmanCoding(HuffmanTree* ht)}
+                    \par 该函数用于通过已建立的哈夫曼树对每个字符进行哈夫曼编码。
+                    \par 不难发现，外层循环一共进行了 \textbf{n} 次，内层循环在最坏的情况下需要进行 \textbf{n} 次（因为哈夫曼树的最大高度为 \textbf{n}），故总的时间复杂度为 $O(n^2)$。
+                    \begin{figure*}[htbp]
+                        \hspace*{1.2cm}
+                        \includegraphics*[width = 11cm]{s1_3.png}
+                    \end{figure*}
+                \item \textbf{void enCodeText(HuffmanTree* ht, const char* input\_file\_name, const char* output\_file\_name)}
+                    \par 该函数的作用是通过之前得到的字符编码为整个文本文件进行编码并存储在指定文件中。
+                    \par 由于我们需要遍历整个文本文件，因此外层循环的时间复杂度为 $O(n)$，而在处理每一个字符时，我们需要通过遍历来找到指定的字符编码，因此总的时间复杂度就会来到 $O(nm)$，这显然不是我们希望看到的。
+                    \par 回顾之前我们 \textbf{statistic} 函数统计的过程，可以发现，最终得到的 \textbf{ch} 数组的字符是升序排列的，这意味着我们可以使用二分搜索来优化。此时总的时间复杂度为 $O(nlogm)$。
+                    \begin{figure*}[htbp]
+                        \hspace*{1.2cm}
+                        \includegraphics*[width = 12cm]{s1_4.png}
+                    \end{figure*}
+                \newpage
+                \item \textbf{void deCodeText(HuffmanTree* ht, const char* input\_file\_name, const char* output\_file\_name)}
+                    \par 该函数的作用是通过之前得到的哈夫曼树实现对编码后文件的解码工作。
+                    \par 和之前类似，外层循环一共进行了 \textbf{n} 次，内层循环在最坏的情况下需要进行 \textbf{m} 次（因为哈夫曼树的最大高度为 \textbf{m}），因此总的时间复杂度为 $O(nm)$。
+                    \begin{figure*}[htbp]
+                        \hspace*{1.2cm}
+                        \includegraphics*[width = 12cm]{s1_5.png}
+                    \end{figure*}
+                \end{itemize}
+        \newpage
+        \subsubsection{Queue}
+            \par 该文件实现了优先队列，并提供了基础的出入队功能。
+            \par 此处仿照 \textbf{STL}，使用 \textbf{小根堆 \ } 实现优先队列。
+            \begin{figure*}[htbp]
+                \hspace*{1.2cm}
+                \includegraphics*[width = 10cm]{ffff.png}
+            \end{figure*}
+            \begin{itemize}
+                \item \textbf{Priority\_Queue* initQueue(int capacity)}
+                    \par 该函数用于初始化优先队列。由于我们是使用该优先队列优化取最小结点的操作，因此我们只需要开辟 \textbf{n + 1} 结点大小的内存空间（因为优先队列下标从 \textbf{1} 开始）。
+                    \begin{figure*}[htbp]
+                        \hspace*{1.2cm}
+                        \includegraphics*[width = 13cm]{s2_0.png}
+                    \end{figure*}
+                \item \textbf{adjustDown(Priority\_Queue* q, int u)}
+                    \par 该函数实现的功能是将某一结点 \textbf{下沉}，直到满足小根堆的性质。
+                    \par 由小根堆的性质，某一结点的权重必须大于它的两个孩子结点，故我们需要在某一结点的权重不完全大于两个孩子时将其向小于它的权重的孩子结点 \textbf{下沉}；当两个孩子结点的权重均小于当前结点时，需要向较小的孩子结点 \textbf{下沉}，保证在执行完 \textbf{heapSwap} 操作后二叉堆的性质不会被破坏。
+                    \par 由于每次是从两个结点中选择一个，数据空间每次减少一半，故时间复杂度为 $O(logn)$。
+                    \begin{figure*}[htbp]
+                        \hspace*{1.2cm}
+                        \includegraphics*[width = 12cm]{s2_1.png}
+                    \end{figure*}
+                \item \textbf{adjustUp(Priority\_Queue* q, int u)}
+                    \par 该函数实现的功能是将某一结点 \textbf{上浮}，直到满足小根堆的性质。
+                    \par 和之前类似，我们需要维护小根堆的性质，因此需要在当前结点的权重小于其父节点的权重时将其 \textbf{上浮}。由于小根堆的性质保证 $child_1 < parent < child_2$（假设我们需要移动的结点为 $child_1$），故在交换之后仍能保证 $parent < child_2$，故不需要像 \textbf{下沉} 函数那样进行判断。
+                    \par 由于二叉堆是一棵完全二叉树，因此最大上浮次数为 \textbf{层数 - 1}，故时间复杂度也为 $O(logn)$
+                    \begin{figure*}[htbp]
+                        \hspace*{1.2cm}
+                        \includegraphics*[width = 12cm]{s2_2.png}
+                    \end{figure*}
+                \newpage
+                \item \textbf{void enQueue(Priority\_Queue* q, int idx, int weight)}
+                    \par 该函数用于实现将某一元素入队的操作。
+                    \par \textbf{adjustUp} 函数的时间复杂度为 $O(logn)$，其他操作均为 $O(1)$，故总的时间复杂度为 \textbf{O(logn)}。
+                    \begin{figure*}[htbp]
+                        \hspace*{1.2cm}
+                        \includegraphics*[width = 10cm]{s2_3.png}
+                    \end{figure*}
+                \item \textbf{int deQueue(Priority\_Queue* q)}
+                    \par 该函数用于实现将队头元素出队的操作，同时由于我们只需要获得权重最小的结点的索引，故返回值为 \textbf{int}，而不是 \textbf{QNode}。
+                    \par \textbf{adjustDown} 函数的时间复杂度为 $O(logn)$，其他操作均为 $O(1)$，故总的时间复杂度为 \textbf{O(logn)}。
+                    \begin{figure*}[htbp]
+                        \hspace*{1.2cm}
+                        \includegraphics*[width = 6cm]{s2_4.png}
+                    \end{figure*}
+            \end{itemize}
+        \subsubsection{Bmp}
+            \par 该文件实现了对 \textbf{bmp} 文件编码的支持，由于实际上只是把原来的 \textbf{char} 类型改成了 \textbf{unsigned char}，其他功能的实现基本一致，故此处不再赘述。
+    
+    \newpage
+    \subsection{运行截图}
+        \begin{enumerate}
+            \item \textbf{操作0：} 建立哈夫曼树。
+                \par 为了测试编写的哈夫曼树是否能正确工作，我们首先先在 \textbf{``ToBeTran.txt''} 中输入想要编码的文本：
+                \begin{figure*}[htbp]
+                    \centering
+                    \includegraphics*[width = 10cm]{s3_0.png}
+                \end{figure*}
+                \par 然后我们编写 \textbf{testHT} 函数。
+                \begin{figure*}[htbp]
+                    \hspace*{1.2cm}
+                    \includegraphics*[width = 12cm]{s3_1.png}
+                \end{figure*}
+                \par 调用 \textbf{testHT} 函数，查看输出，经过缜密的分析（\sout{手算}），发现构建出的哈夫曼树是正确的。
+                \begin{figure*}[h]
+                    \hspace*{1.2cm}
+                    \includegraphics*[width = 9cm]{s3_2.png}
+                \end{figure*}
+            \newpage
+            \item \textbf{操作1：} 哈夫曼树的存储与读取功能。
+                \par 编写 \textbf{testSaveLoadFuction} 函数，并输出存储之前的哈夫曼树的结点信息与存储后读取的哈夫曼树的结点信息。
+                \begin{figure*}[htbp]
+                    \hspace*{1.2cm}
+                    \includegraphics*[width = 12.3cm]{s3_3.png}
+                \end{figure*}
+                \par 两次输出完全一致，正确完成 \textbf{操作1}。
+                \begin{figure*}[htbp]
+                    \includegraphics*[width = 8cm]{s3_4_0.png}
+                    \includegraphics*[width = 8cm]{s3_4_1.png}
+                \end{figure*}
+            \newpage
+            \item \textbf{操作2：} 利用哈夫曼树进行编码和解码。（两个功能放一块了）
+                \par 编写 \textbf{testCodeFunction} 函数，调用 \textbf{enCodeText} 和 \textbf{deCodeText} 函数实现编解码功能。
+                \begin{figure*}[htbp]
+                    \hspace*{1.2cm}
+                    \includegraphics*[width = 11cm]{s3_5.png}
+                \end{figure*}
+                \par 查看 \textbf{``CodeFile.txt''} 和 \textbf{``TextFile.txt''} 文件，可以看出程序正确地完成了编解码的功能。
+                \begin{figure*}[htbp]
+                    \centering
+                    \includegraphics*[width = 7cm]{s3_6_0.png} \\
+                    \centering
+                    \includegraphics*[width = 7cm]{s3_6_1.png}
+                \end{figure*}
+            \newpage
+            \item \textbf{操作3：} 利用哈夫曼树对 \textbf{bmp} 文件进行编码。
+                \par 编写 \textbf{testBmpCodeFunction} 函数，并调用 \textbf{bmpStatistic}、 \textbf{buildBmpHT} 和 \textbf{bmpCoding} 函数实现建立哈夫曼树并求其哈夫曼编码。
+                \begin{figure*}[htbp]
+                    \hspace*{1.2cm}
+                    \includegraphics*[width = 10cm]{s3_7.png}
+                \end{figure*}
+                \par 输出每个灰度值对应的权重和编码，可以发现，权重越低的灰度值对应的编码越长。（为了美观把后面两张放到了前面）
+                \begin{figure*}[htbp]
+                    \centering
+                    \includegraphics*[width = 5.5cm]{s3_8_2.png}
+                    \includegraphics*[width = 6.9cm]{s3_8_3.png}
+                \end{figure*}
+                \begin{figure*}[htbp]
+                    \centering
+                    \includegraphics*[width = 7cm]{s3_8_0.png}
+                    \includegraphics*[width = 6cm]{s3_8_1.png}
+                \end{figure*}
+                
+                \newpage
+                \par 同时，总的权重之和为 $512^2 = 262144$，侧面说明了我们的编码过程是正确的。
+                \begin{figure*}[htbp]
+                    \centering
+                    \includegraphics*[width = 8cm]{s3_8_4.png}
+                \end{figure*}
+        \end{enumerate}

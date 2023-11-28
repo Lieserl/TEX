@@ -131,8 +131,8 @@ HCode* huffmanCoding(HuffmanTree* ht)
 
     for (int i = 1; i <= n; i ++ )
     {
-        int start           = n - 1;
-        temp->data[i].ch    = ht->data[i].ch;
+        int start        = n - 1;
+        temp->data[i].ch = ht->data[i].ch;
         
         for (int u = i, f = ht->data[i].parent; f; u = f, f = ht->data[f].parent)
         {
@@ -177,6 +177,8 @@ void enCodeText(HuffmanTree* ht, const char* input_file_name, const char* output
             fputs(hc->data[l].cd, output_file);
         }
     }
+    
+    destroyHC(hc);
  
     fclose(input_file);
     fclose(output_file);
@@ -209,4 +211,12 @@ void deCodeText(HuffmanTree* ht, const char* input_file_name, const char* output
 
     fclose(input_file);
     fclose(output_file);
+}
+
+void destroyHC(HCode* hc)
+{
+    if (hc == NULL) return;
+    
+    if (hc->data) free(hc->data);
+    free(hc);
 }

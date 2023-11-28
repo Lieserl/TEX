@@ -32,7 +32,7 @@ int bmpStatistic(int** w, unsigned char** pixel, const char* file_name)
         if (tw[i])
         {
             (*w)[ ++ idx] = tw[i];
-            (*pixel)[idx]    = i;
+            (*pixel)[idx] = i;
         }
 
     fclose(file);
@@ -108,4 +108,12 @@ BCode* bmpCoding(Bmptree* bmp)
     free(cd);
 
     return temp;
+}
+
+void destroyBmpCode(BCode* bc)
+{
+    if (bc == NULL) return;
+    
+    if (bc->data) free(bc->data);
+    free(bc);
 }

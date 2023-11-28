@@ -9,7 +9,7 @@ Priority_Queue* initQueue(int capacity)
     
     temp->base     = (QNode*)malloc((capacity + 1) * sizeof(QNode));
     temp->size     = 0;
-    temp->capacity = 2000;
+    temp->capacity = capacity + 1;
     
     return temp;
 }
