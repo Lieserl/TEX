@@ -83,7 +83,7 @@
                     \includegraphics*[width = 10cm]{s2_3.png}
                 \end{figure*}
             \newpage
-            \item 运行程序，并使用 \textbf{p \$rsp} 查看栈帧指向的地址，将其减去 \textbf{0x18} 即是栈底的位置。
+            \item 运行程序，并使用 \textbf{p \$rsp} 查看栈帧指向的地址，将其减去 \textbf{0x18} 即是栈顶的位置。
                 \begin{figure*}[htbp]
                     \hspace*{1.5cm}
                     \includegraphics*[width = 7cm]{s2_4.png}
@@ -107,7 +107,7 @@
             \item 和之前一样，我们先查阅官方文档获取 \textbf{hexmatch()} 和 \textbf{touch3()} 的源代码。
                 \lstinputlisting[style = C]{touch3.c}
             \item 可以看到，这次我们要将 \textbf{cookie} 以字符串的形式传递进 \textbf{touch3()} 中，除此之外并无任何差别(\sout{那不直接乱杀})。
-            \item 我们照葫芦画瓢，先选一个位置存放我们的字符串(没错又是栈底)，然后编写我们的 \textbf{Injected Code}(这里就不浪费空间再写一遍查看 \textbf{touch3()} 地址的操作了)。
+            \item 我们照葫芦画瓢，先选一个位置存放我们的字符串(没错又是栈顶)，然后编写我们的 \textbf{Injected Code}(这里就不浪费空间再写一遍查看 \textbf{touch3()} 地址的操作了)。
                 \begin{figure*}[htbp]
                     \hspace*{1.5cm}
                     \includegraphics*[width = 7cm]{s3_0.png}
@@ -145,8 +145,8 @@
                     \centering
                     \includegraphics*[width = 10cm]{magic.png}
                 \end{figure*}
-                \par 于是，我们需要将字符串放置在一个绝对安全的位置，回想一下，在程序正常运行的时候，哪个位置是绝对不会被覆盖的呢？俗话说得好，最安全的地方就是最安全的地方，也就是原来存放 \textbf{getbuf()} 返回地址的位置及其之上的位置(因为堆栈的存储是由高到低的)。
-            \item 依据上述想法，我们重新编写 \textbf{Injected Code}，因为返回地址长度是 \textbf{8} 字节，所以我们将字符串放到 \textbf{\%rsp + 0x8} (此处 \%rsp 指的是栈顶)的位置。
+                \par 于是，我们需要将字符串放置在一个绝对安全的位置，回想一下，在程序正常运行的时候，哪个位置是绝对不会被覆盖的呢？俗话说得好，最安全的地方就是最安全的地方，也就是原来存放 \textbf{getbuf()} 返回地址的位置及其之上的位置(因为堆栈由高地址向低地址增长)。
+            \item 依据上述想法，我们重新编写 \textbf{Injected Code}，因为返回地址长度是 \textbf{8} 字节，所以我们将字符串放到 \textbf{\%rsp + 0x8} (此处 \%rsp 指的是栈底)的位置。
                 \begin{figure*}[htbp]
                     \hspace*{1.5cm}
                     \includegraphics*[width = 7cm]{s3_5.png}
