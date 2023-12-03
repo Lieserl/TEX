@@ -4,3 +4,57 @@
         \item 建议：不可否认这次的实验同样十分有趣，但最后 \textbf{Phase 5} 时在那盯着眼找一堆指令确实有些枯燥乏味，希望可以就此进行改进。
         \item 写在最后：速速把下次实验搬上桌来。
     \end{itemize} 
+
+\section{Phase 5 小工具}
+    \begin{itemize}
+        \item movq \%rsp, \%rax
+        \par 48 89 e0 对应 movq \%rsp, \%rax
+        \par 90 对应 nop
+        \par c3 对应 retq
+        \begin{figure*}[htbp]
+            \centering
+            \includegraphics*[width = 10cm]{rsp_rax.png}
+        \end{figure*}
+        \item movq \%rax, \%rdi
+        \par 48 89 c7 对应 movq \%rax, \%rdi
+        \par 90 对应 nop
+        \par c3 对应 retq
+        \begin{figure*}[htbp]
+            \centering
+            \includegraphics*[width = 10cm]{rax_rdi.png}
+        \end{figure*}
+        \item popq \%rax (0x48)
+        \par 58 对应 popq \%rax
+        \par 90 对应 nop
+        \par c3 对应 retq
+        \begin{figure*}[htbp]
+            \centering
+            \includegraphics*[width = 10cm]{pop_rax.png}
+        \end{figure*}
+        \item movl \%eax, \%ecx
+        \par 89 c1 对应 movl \%eax, \%ecx
+        \par 90 90 对应 nop nop
+        \par c3 对应 retq
+        \begin{figure*}[htbp]
+            \centering
+            \includegraphics*[width = 10cm]{eax_ecx.png}
+        \end{figure*}
+        \item movl \%ecx, \%edx
+        \par 89 ca 对应 movl \%ecx, \%edx
+        \par 08 db 对应 orb \%bl
+        \par c3 对应 retq
+        \begin{figure*}[htbp]
+            \centering
+            \includegraphics*[width = 10cm]{ecx_edx.png}
+        \end{figure*}
+        \item movl \%edx, \%esi
+        \par 89 d6 对应 movl \%edx, \%esi
+        \par 08 d2 对应 orb  \%dl
+        \par c3 对应 retq
+        \begin{figure*}[htbp]
+            \centering
+            \includegraphics*[width = 10cm]{edx_esi.png}
+        \end{figure*}
+        \item movq \%rax, \%rdi
+        \par 和之前重复，不再赘述
+    \end{itemize}
