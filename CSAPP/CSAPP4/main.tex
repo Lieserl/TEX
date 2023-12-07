@@ -1,0 +1,156 @@
+\documentclass[UTF8, 12pt, a4paper, oneside]{ctexart}
+\usepackage{listing}
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{geometry}
+\usepackage{ulem}
+\usepackage[most]{tcolorbox}
+\usepackage[hidelinks]{hyperref}
+\usepackage{color}
+\usepackage{xcolor}
+\usepackage{framed}
+\usepackage{mdframed}
+\usepackage{mathtools,amssymb}
+\usepackage{bm}
+\usepackage{enumitem}
+
+\usepackage{listings}
+
+\definecolor{backcolour}{rgb}{0.18,0.18,0.18}
+\definecolor{codegray}{rgb}{0.93,0.93,0.93}
+\definecolor{codegreen}{rgb}{0.34,0.76,0.34}
+\definecolor{codeblue}{rgb}{0.27,0.35,0.69}
+\definecolor{codepurple}{rgb}{0.69,0.25,0.82}
+\definecolor{codeorange}{rgb}{0.8,0.6,0.2}
+\definecolor{codered}{rgb}{0.8,0.25,0.33}
+
+\lstset{
+    backgroundcolor     =   \color{codegray},
+    basicstyle          =   \sffamily,          % 基本代码风格
+    keywordstyle        =   \bfseries,          % 关键字风格
+    commentstyle        =   \rmfamily\itshape,  % 注释的风格，斜体
+    stringstyle         =   \ttfamily,  % 字符串风格
+    flexiblecolumns,                % 别问为什么，加上这个
+    numbers             =   left,   % 行号的位置在左边
+    showspaces          =   false,  % 是否显示空格，显示了有点乱，所以不现实了
+    numberstyle         =   \zihao{-5}\ttfamily,    % 行号的样式，小五号，tt等宽字体
+    showstringspaces    =   false,
+    captionpos          =   t,      % 这段代码的名字所呈现的位置，t指的是top上面
+    aboveskip           =   1em,
+    belowskip           =   1em,
+    frame               =   lrtb,   % 显示边框
+}
+
+\lstdefinestyle{C++}{
+    language        =   C++, % 语言选Python
+    basicstyle      =   \zihao{-5}\ttfamily,
+    numberstyle     =   \zihao{-5}\ttfamily,
+    keywordstyle    =   \color{blue},
+    keywordstyle    =   [2] \color{teal},
+    stringstyle     =   \color{magenta},
+    commentstyle    =   \color{red}\ttfamily,
+    breaklines      =   true,   % 自动换行，建议不要写太长的行
+    columns         =   fixed,  % 如果不加这一句，字间距就不固定，很丑，必须加
+    basewidth       =   0.5em,
+}
+
+\lstdefinestyle{C}{
+    language        =   C, % 语言选Python
+    basicstyle      =   \zihao{-5}\ttfamily,
+    numberstyle     =   \zihao{-5}\ttfamily,
+    keywordstyle    =   \color{codepurple},
+    keywordstyle    =   [2] \color{codegray},
+    stringstyle     =   \color{magenta},
+    commentstyle    =   \color{codegreen}\ttfamily,
+    breaklines      =   true,   % 自动换行，建议不要写太长的行
+    columns         =   fixed,  % 如果不加这一句，字间距就不固定，很丑，必须加
+    basewidth       =   0.5em,
+}
+
+\newlist{choices}{enumerate}{2}
+\setlist[choices,1]{
+  label = \Alph*.,       % 设置标签格式为大写字母后跟括号，例如 A)、B) 等
+  leftmargin = *,        % 设置左边距，使其与上层列表对齐
+  align = left,          % 设置标签对齐方式为左对齐
+  labelwidth = 1.5em,    % 设置标签宽度
+  itemsep = 0.5em        % 设置列表项之间的距离
+}
+
+\newmdenv[
+  leftmargin=0cm,
+  rightmargin=0cm,
+  skipabove=1em,
+  skipbelow=1em,
+  backgroundcolor=gray!20,
+  linewidth=0pt
+]{mquote}
+
+\usepackage{paralist}
+\let\itemize\compactitem
+\let\enditemize\endcompactitem
+\let\enumerate\compactenum
+\let\endenumerate\endcompactenum
+\let\description\compactdesc
+\let\enddescription\endcompactdesc
+
+\definecolor{shadecolor}{RGB}{241, 241, 255}
+\geometry{left=2.54cm,right=2.54cm,top=3.18cm,bottom=3.18cm}
+\linespread{1.5}
+
+\newcounter{problemname}[subsubsection]
+%\newenvironment{problem}{\begin{shaded}\stepcounter{problemname}\par\noindent\textbf{题目\arabic{problemname}. }}{\end{shaded}\par}
+\newenvironment{problem}{\begin{shaded}\stepcounter{problemname}\par\noindent\textbf{题目. }}{\end{shaded}\par}
+
+%\newenvironment{problem}{\begin{shaded}\par\noindent\textbf{题目. }}{\end{shaded}\par}
+\newenvironment{solution}{\par\noindent\textbf{解答. }}{\par}
+\newenvironment{note}{\par\noindent\textbf{题目\arabic{problemname}的注记. }}{\par}
+
+\begin{document}
+	\sloppy
+	\thispagestyle{empty}
+    \begin{figure}[t]
+		\centering
+		\includegraphics[width=13cm]{logo1.jpg}
+	\end{figure}
+
+    \begin{center}
+        \Huge\textbf{实验报告}
+    \end{center}
+	\vspace*{1em}
+    \begin{figure}[htbp]
+		\centering
+		\includegraphics[width=3cm]{logo2.jpg}
+	\end{figure}
+	\begin{center}
+		\Huge\textbf{题目:} \underline{\textbf{键盘驱动程序的分析与修改}} 
+	\end{center}
+    \vspace*{5em}
+	\begin{table}[htbp]
+		\centering
+		\large
+		\begin{tabular}{ll}
+        \textbf{班级:} & \underline{2022211320} \\
+		\textbf{学号:} & \underline{2022212408} \\
+		\textbf{姓名:} & \underline{胡宇杭} \\
+		\textbf{学院:} & \underline{计算机学院(国家示范性软件学院)} \\
+		\end{tabular}
+	\end{table}
+
+    \vspace*{2em}
+
+    \begin{center}
+        \Huge\textbf{\today} 
+    \end{center}
+
+    \newpage
+    \tableofcontents
+    \newpage
+
+    \input{section0.tex}
+    \input{section1.tex}
+    \include{section2.tex}
+    \include{section3.tex}
+    \include{section4.tex}
+    
+\end{document}

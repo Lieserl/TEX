@@ -1,0 +1,7 @@
+\section{源代码的分析及修改}
+    检测到键盘中断 -> keyboard.S -> 调用 keyboard\_interrupt -> 根据跳转表转跳至判断对应字符的function，这里 -> func, func 最后判断 是否为 f11, f12 中的一个，如果是 -> 判断缓冲队列空间是否足够，如果足够 -> 转跳至 put\_queue 函数
+    \subsection{源代码分析}
+        \subsubsection{keyboard.S}
+            \par 
+    \subsection{源代码修改}
+        \par 

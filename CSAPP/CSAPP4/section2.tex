@@ -1,0 +1,26 @@
+\section{实验内容}
+    \par 从网盘下载 \textbf{lab4.tar.gz} 文件，解压后进入 \textbf{lab4} 目录得到如下文件和目录：
+    \par 实验常用执行命令如下：
+    \begin{itemize}
+        \item 执行 \textbf{./run}，可启动 \textbf{bochs} 模拟器，进而加载执行 \textbf{linux-0.11} 目录下的 \textbf{Image} 文件启动 \textbf{Linux-0.11} 操作系统
+        \item 进入 \textbf{lab4/linux-0.11} 目录，执行 \textbf{make} 编译生成 \textbf{Image} 文件，每次重新编译 (\textbf{make}) 前需先执行 \textbf{make clean}
+        \item 如果对 \textbf{linux-0.11} 目录下的某些源文件进行了修改，执行 \textbf{./run init} 可把修改文件回复初始状态
+    \end{itemize}
+    \par 本实验包含2关，要求如下：
+    \begin{itemize}
+        \item \textbf{Phase 1}
+            \par 键入 \textbf{F12}，激活 \textbf{*} 功能，键入学生本人姓名拼音，首尾字母等显示 \textbf{*}
+            \par 比如：\textbf{zhangsan}，显示为：\textbf{*ha*gsa*}
+        \item \textbf{Phase 2}
+            \par 键入“学生本人学号” ：激活 \textbf{*} 功能，键入学生本人姓名拼音，首尾字母等显示 \textbf{*}
+            \par 比如： \textbf{zhangsan}，显示为：\textbf{*ha*gsa*}
+            \par 再次键入“学生本人学号-” ：取消显示 \textbf{*} 功能
+    \end{itemize}
+    \par 提示：完成本实验需要对 \textbf{lab4/linux-0.11/kernel/chr\_drv/} 目录下的 \textbf{keyboard.s}、\textbf{console.c}和 \textbf{tty\_io.c} 源文件进行分析，理解按下按键到回显到显示频上程序的执行过程，然后对涉及到的数据结构进
+    行分析，完成对前两个源程序的修改。修改方案有两种：
+    \begin{itemize}
+        \item 在 \textbf{C} 语言源程序层面进行修改
+        \item 在汇编语言源程序层面进行修改
+    \end{itemize}
+    \par 实验 \textbf{4} 的其他说明见 \textbf{lab4.pdf} 课件。\textbf{Linux内核完全注释(高清版).pdf} 一书中对源代码有详细的说明和注释
+    
