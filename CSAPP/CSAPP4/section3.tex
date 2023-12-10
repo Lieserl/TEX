@@ -1,7 +1,187 @@
 \section{源代码的分析及修改}
-    检测到键盘中断 -> keyboard.S -> 调用 keyboard\_interrupt -> 根据跳转表转跳至判断对应字符的function，这里 -> func, func 最后判断 是否为 f11, f12 中的一个，如果是 -> 判断缓冲队列空间是否足够，如果足够 -> 转跳至 put\_queue 函数
     \subsection{源代码分析}
+        \par 注：此处只给出针对一次按键
+        \par 通过查阅 \textbf{lab4} 课件，我们知道当敲击了一下键盘，键盘硬中断，进而调用 \textbf{keyboard.S} 中的 \textbf{keyboard\_interrupt} 函数，这就是我们分析的起点。
         \subsubsection{keyboard.S}
-            \par 
+            \begin{enumerate}
+                \item 首先查看 \textbf{keyboard\_interrupt} 函数的源代码，在一系列初始化和读取过程后，函数首先检查读取到的扫描码是不是 \textbf{0xe0} 或 \textbf{0xe1}。如果是，则转跳到设置标志代码处，由于本次实验要求的内容不涉及此处，故跳过此处，接着向下分析。
+                    \begin{figure*}[htbp]
+                        \hspace*{1.5cm}
+                        \includegraphics*[width = 3cm]{s0_0.png}
+                    \end{figure*}
+                    \par 其中，\textbf{inb \$0x60, \%al} 对应操作为读取扫描码。
+                \item 紧接着。函数通过跳转表调用对应的字符处理函数，我们向下查阅跳转表，根据注释找到对应的字符处理函数（以 \textbf{F12} 键为例）
+                    \begin{figure*}[htbp]
+                        \hspace*{1.5cm}
+                        \includegraphics*[width = 4cm]{s0_1_0.png} \\
+                        \hspace*{1.5cm}
+                        \includegraphics*[width = 10cm]{s0_1_1.png} 
+                    \end{figure*}
+                    \par 发现 \textbf{F12} 对应的字符处理函数为 \textbf{func}。
+                \newpage
+                \item \textbf{func} 函数：
+                    \begin{itemize}
+                        \item 查阅 \textbf{func} 函数。函数首先通过 \textbf{subb} 命令获得了功能键 \textbf{F1 - F10} 的索引。如果索引小于零，说明不合法，直接跳转至 \textbf{end\_func}；接下来判断是否属于 \textbf{F1 - F12}，此处由于 \textbf{F11、F12} 对应的扫描码和前几个功能键不连续，因此要单独判断。如果是，就调用 \textbf{ok\_func}。
+                            \begin{figure*}[htbp]
+                                \hspace*{2.3cm}
+                                \includegraphics*[width = 3cm]{s0_2.png}
+                            \end{figure*}
+                        \item 在函数 \textbf{ok\_func} 中，函数首先判断空间是否足够（因为对应转义字符是由4个字符组成的），然后根据跳转表取得相应的转义字符。
+                            \begin{figure*}[htbp]
+                                \hspace*{2.3cm}
+                                \includegraphics*[width = 12cm]{s0_3.png}
+                            \end{figure*}
+                        \item 查阅跳转表可知，\textbf{F12} 对应的转义字符序列为 \textbf{esc、'['、'['、'L'}(1b, 5b, 5b, 4c)
+                            \begin{figure*}[htbp]
+                                \hspace*{2.3cm}
+                                \includegraphics*[width = 10cm]{s0_4.png}
+                            \end{figure*}
+                    \end{itemize}
+                \item 字符处理函数结束后，程序跳转至 \textbf{put\_queue} 函数，将字符放入读队列中，接着返回继续执行 \textbf{keyboard\_interrupt} 函数。
+                \newpage
+                \item 紧接着是一段硬件处理语句，与本实验关系不大，不做赘述。接下来 \textbf{pushl \$0} 命令指定 \textbf{tty} 参数为 \textbf{0}，然后调用了 \textbf{tty\_io.c} 中的函数 \textbf{do\_keyboard\_interrupt}。
+                \begin{figure*}[htbp]
+                    \hspace*{2.3cm}
+                    \includegraphics*[width = 5cm]{s0_5.png}   
+                \end{figure*}
+            \end{enumerate}
+            \par 通过上述分析，我们得知，在按下键盘后，系统在 \textbf{keyboard.S} 中的执行顺序为 \textbf{检测到键盘中断 $\rightarrow$ keyboard.S $\rightarrow$ 调用 keyboard\_interrupt() $\rightarrow$ 根据跳转表跳转至判断对应字符处理函数 $\rightarrow$ 字符处理完毕后转跳至 put\_queue 函数 $\rightarrow$ 字符入队 $\rightarrow$ 返回 keyboard\_interrupt() 函数 $\rightarrow$ 调用 tty\_io.c 的 do\_tty\_interrupt()}，可得如下流程图：
+            \begin{figure*}[htbp]
+                \centering
+                \includegraphics*[width = 10cm]{s0_6.png}
+            \end{figure*}
+        \subsubsection{ttc\_io.c}
+            \begin{enumerate}
+                \item 在函数 \textbf{do\_tty\_interrupt} 中，执行的唯一语句是调用 \textbf{copy\_to\_cooked} 函数，参数为 \textbf{tty\_table + tty}，其中，\textbf{tty} 是之前传入的参数，用作偏移量来指定 \textbf{tty} 设备。
+                    \begin{figure*}[htbp]
+                        \hspace*{1.5cm}
+                        \includegraphics*[width = 7cm]{s1_0.png}
+                    \end{figure*}
+                \item \textbf{copy\_to\_cooked} 函数由一个 \textbf{while} 循环和依据唤醒语句组成，其中，\textbf{while} 循环主要涉及以下操作：
+                    \begin{itemize}
+                        \item 判断当前读缓冲队列是否为空以及辅助缓冲队列是否已满。如果都为否，则从读队列中提取一个字符。
+                            \begin{figure*}[htbp]
+                                \hspace*{2.3cm}
+                                \includegraphics*[width = 10cm]{s1_1.png}
+                            \end{figure*}
+                        \item 首先判断根据各标志置位状态对读入字符进行一系列的判断和处理，由于不涉及实验要求的核心部分，这里不做详细说明。
+                        \item 当前字符如果是换行符或文件结束符 \textbf{EOF}，说明一行已经读取完，让当前字符行数 \textbf{secondary.data} 增加 $1$，方便后续 \textbf{tty\_read} 函数判断是否进行读取。
+                            \begin{figure*}[htbp]
+                                \hspace*{2.3cm}
+                                \includegraphics*[width = 6cm]{s1_2.png}
+                            \end{figure*}
+                        \item 当 \textbf{tty} 设备回显标志在置位状态时，会对换行符以及控制字符做特殊处理，然后将字符放入写缓冲队列中。然后调用写函数 \textbf{tty->write()}。由于此处 \textbf{tty} 为控制台终端，因此会直接调用 \textbf{console.c} 中的 \textbf{con\_write} 函数。
+                            \begin{figure*}[htbp]
+                                \hspace*{2.3cm}
+                                \includegraphics*[width = 10cm]{s1_3.png}
+                            \end{figure*}
+                        \item 执行完以上步骤后将处理后的字符放入辅助缓冲队列中供便上级程序读入。最后，在函数结束前唤醒等待该辅助缓冲队列的进程。
+                            \includegraphics*[width = 8cm]{s1_4.png}
+
+                    \end{itemize}
+                \item 理论上来说我们现在应该顺着流程跳转到 \textbf{console.c} 中继续分析，但此处为了方便阅读（\sout{省事}），决定对 \textbf{tty\_io.c} 中的剩余部分分析完毕后再进入下一模块。
+                \item 上文提到，在 \textbf{copy\_to\_cooked} 函数中，程序会唤醒等待该辅助缓冲队列的进程。通过查阅相关资料可知，对于控制台终端而言，在系统启动时就会立刻创建一个 \textbf{read} 进程，然后调用 \textbf{tty\_read} 函数。但由于辅助队列为空，一直处于睡眠状态。唤醒后，进程继续执行函数 \textbf{tty\_read}。
+                \item 在 \textbf{tty\_read} 函数中，首先进行了一系列预操作，然后进行判断：如果辅助队列为空或当前规范模式标志为置位、当前字符行数为 $0$、空闲空间大于 $20$ 时会让进程睡眠，这也是上文 \textbf{read} 调用 \textbf{tty\_read} 后处于睡眠状态的原因。而当字符行数不为 $0$ 或行数为 $0$ 但是剩余空间小于等于 $20$ 时，会继续执行取字符操作。
+                    \begin{figure*}[htbp]
+                        \hspace*{1.5cm}
+                        \includegraphics*[width = 10cm]{s1_5.png}
+                    \end{figure*}
+                \item 字符被上级程序读取后会根据输入做出反馈，调用 \textbf{write}，进而调用 \textbf{tty\_write} 函数，将字符处理后放入写缓冲队列，并调用写函数 \textbf{tty->write()}，即 \textbf{con\_write} 函数。   
+                    \begin{figure*}[htbp]
+                        \hspace*{1.5cm}
+                        \includegraphics*[width = 7cm]{s1_6.png}
+                    \end{figure*}
+            \end{enumerate}
+            \par 至此，我们可以向之前一样总结出在 \textbf{tty\_io.c} 程序的执行顺序：\textbf{调用 copy\_to\_cooked函数，将缓冲区的字符替换为规范模式存到辅助队列中}；
+            \begin{itemize}
+                \item \textbf{若辅助缓冲区不为空或剩余空间小于等于20 $\rightarrow$ 唤醒进程，调用 tty\_read 函数 $\rightarrow$ 反馈 $\rightarrow$ 调用 tty\_write 函数，将字符放入写队列 $\rightarrow$ 调用写函数 con\_write 函数}
+                \item \textbf{如果 echo 置位，直接放入写队列中 $\rightarrow$ 调用写函数 con\_write 函数}
+            \end{itemize}
+            \begin{figure*}[htbp]
+                \hspace*{1.5cm}
+                \includegraphics*[width = 10cm]{s1_7.png}
+            \end{figure*}
     \subsection{源代码修改}
-        \par 
+        \subsubsection{Phase 1}
+            \par 要想实现本功能，我们需要完成两件事：
+            \begin{itemize}
+                \item 检测键盘键入了 \textbf{F12}
+                \item 当检测到键入后将对应字符输出更改为 \textbf{*}
+            \end{itemize}
+            \par 首先，我们可以设置全局变量 \textbf{f12Flag} 标志，当其置位时打开 \textbf{*} 功能，反之则关闭。接下来，我们分别实现检测和修改功能：
+            \par 由于不同方法对应的修改功能完全一致，所以先实现修改功能。
+            \begin{itemize}
+                \item 修改功能：根据流程图可知，控制台终端输出发生在函数 \textbf{con\_write} 函数中，因此我们的修改功能实现应该在其中。
+                    \begin{enumerate}
+                        \item 首先，我们发现该函数是由一个 \textbf{while} 循环以及一个 \textbf{set\_cursor} 函数组成，在循环中，依次取出写缓冲队列中的字符并进行对特殊字符进行处理，然后输出到控制台终端上。
+                        \item 因此，我们可以在其每次取出字符时判断我们的 \textbf{f12Flag} 是否处于置位。如果是，并且该字符是姓名的首尾字母，就将其赋值为 \textbf{*}。由于 \textbf{*} 不是需要处理的特殊字符，所以我们不需要做其他更改。
+                            \begin{figure*}[htbp]
+                                \hspace*{2.3cm}
+                                \includegraphics*[width = 13cm]{s2_0.png}
+                            \end{figure*}
+                        \item 同时，我们需要为检测功能预留修改接口，定义函数 \textbf{change\_f12Flag}，其功能为每次调用会改变一次 \textbf{f12Flag} 的状态。
+                            \begin{figure*}[htbp]
+                                \hspace*{2.3cm}
+                                \includegraphics*[width = 6cm]{s2_1.png}
+                            \end{figure*}
+                    \end{enumerate}
+                \item 检测功能：根据之前得到的流程图，我们知道检测需要在读入时执行。如此，我们的选择可以是在 \textbf{keyboard.S} 中读取字符的过程中检测或在 \textbf{tty\_io.c} 中 \textbf{copy\_to\_cooked} 读入辅助缓冲队列，抑或是 \textbf{con\_write} 从写辅助队列取出时进行检测。接下来会分别给出两种检测方式的实现。（最后一种在 \textbf{phase 2} 中给出）
+                    \begin{enumerate}
+                        \item 由之前的分析，我们知道在键入字符后 \textbf{keyboard.S} 会根据输入的字符调用对应的处理函数，我们根据专挑表找到 \textbf{F12} 对应的处理函数 \textbf{func}。
+                            \par 在 \textbf{func} 函数中，函数会判断是否功能键 \textbf{F1 - F12}，通过最后两个比较，我们发现其会将小于 $10$ 和大于 $11$ 的情况跳过，因此，这两个比较语句是用来判断键入的是否为 \textbf{F11或F12}，所以我们只需要再判断一次其是否为 \textbf{F12}，就能达到检测的目的，然后执行修改操作。
+                                \begin{figure*}[htbp]
+                                    \hspace*{2.3cm}
+                                    \includegraphics*[width = 5cm]{s2_2.png}
+                                \end{figure*}
+                            \par 因此，我们可以先判断其是不是 \textbf{F11}，如果是，就跳转到 \textbf{ok\_func}，否则调用之前定义的 \textbf{change\_f12Flag} 函数修改 \textbf{f12Flag} 标志状态。
+                                \begin{figure*}[htbp]
+                                    \hspace*{2.3cm}
+                                    \includegraphics*[width = 5cm]{s2_3.png}
+                                \end{figure*}
+                        \item 根据之前的分析，\textbf{F12} 对应的转义字符为 \textbf{esc、`['、`['、`L'}(1b, 5b, 5b, 4c)，因此我们可以在 \textbf{copy\_to\_cooked} 函数的循环前定义相应的字符串和指针，每次读到相应的字符就将指针指向下一个位置，否则指令。如果全部读完，说明此时输入为 \textbf{F12}，调用 \textbf{change\_f12Flag} 函数修改标识状态。接下来，我们对其进行实现。
+                            \par 首先，由于要调用外部函数，因此需要先声明 \textbf{extern void change\_f12Flag(void);}。
+                                \begin{figure*}[htbp]
+                                    \hspace*{2.3cm}
+                                    \includegraphics*[width = 8cm]{s2_4.png}
+                                \end{figure*}
+                            \newpage
+                            \par 接着，在循环外定义字符串和指针变量。注意，此处指针变量不能设置为全局变量，因为此时如果连续键入 \textbf{esc、'['、'['、'L'}，程序会误以为成 \textbf{F12} 导致错误。
+                                \begin{figure*}[htbp]
+                                    \hspace*{2.3cm}
+                                    \includegraphics*[width = 10cm]{s2_5.png}
+                                \end{figure*}
+                            \par 然后依据上述分析，判断当前字符是否与 \textbf{s[ptr]} 相等，如果相等，就将指针向后移动一位，否则置零，如果全检测完了说明此时键入的是 \textbf{F12}，调用 \textbf{change\_f12Flag} 函数。
+                                \begin{figure*}[htbp]
+                                    \hspace*{2.3cm}
+                                    \includegraphics*[width = 7cm]{s2_6.png}
+                                \end{figure*}
+                    \end{enumerate}
+            \end{itemize}
+            \par 经三次测试，第一次不开启 \textbf{*} 功能，正常输出；第二次键入 \textbf{F12}，开启 \textbf{*} 功能，输出被替换；第三次再次键入 \textbf{F12}，关闭 \textbf{*} 功能，正常输出。
+                \begin{figure*}[htbp]
+                    \hspace*{1.5cm}
+                    \includegraphics*[width = 10cm]{s2_10.png}
+                \end{figure*}
+        \newpage
+        \subsubsection{Phase 2}
+            \par \textbf{Phase 2} 与 \textbf{Phase 1} 的唯一区别是从检测字符 \textbf{F12} 变成了检测序列 \textbf{2022212408} 和 \textbf{2022212408-}。而对于序列的检测在 \textbf{Phase 1} 中已经实现，此处不在赘述。此处检测会使用第三种方案，在 \textbf{con\_write} 中进行。
+            \par 首先，定义指针变量 \textbf{ptr}，这里必须定义为全局变量，因为无法保证指定字符序列在同一次 \textbf{con\_write} 函数调用中被全部读取。
+                \begin{figure*}[htbp]
+                    \hspace*{1.5cm}
+                    \includegraphics*[width = 4cm]{s3_0.png}
+                \end{figure*}
+            \par 接着对读入字符进行检测，首先检测其是否为 \textbf{-}，若是，则继续判断此时 \textbf{ptr} 是否等于 $11$，如果等于，说明前面已经读取到了字符序列 \textbf{2022212408}，构成关闭序列，将 \textbf{f12Flag} 置为 $0$。内层判断结束后别忘了将 \textbf{ptr} 也置零。
+                \begin{figure*}[htbp]
+                    \hspace*{1.5cm}
+                    \includegraphics*[width = 8cm]{s3_1.png}
+                \end{figure*}
+            \par 然后与 \textbf{Phase 1} 类似，判断当前字符是否与 \textbf{s[ptr]} 相等，如果相等，就将指针向后移动一位，否则置零，如果全检测完了说明此时读取到了字符序列 \textbf{2022212408}，调用 \textbf{change\_f12Flag} 函数并让 \textbf{ptr} 加一。（由于需要在下次迭代判断是否为关闭指令，此处 \textbf{ptr} 不置零）
+                \begin{figure*}[htbp]
+                    \hspace*{1.5cm}
+                    \includegraphics*[width = 8cm]{s3_2.png}
+                \end{figure*}
+            \par 接下来，我们键入如下字符序列来判断可行性 \textbf{huyuhang2022212408huyuhang2022212408-huyuhang}。
+                \hspace*{0.5cm}
+                \includegraphics*[width = 10cm]{s3_10.png}
+                
+            \par 输出与预期一致，\textbf{Phase 2} 完成。
