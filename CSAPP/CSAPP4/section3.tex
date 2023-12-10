@@ -39,7 +39,7 @@
                     \end{itemize}
                 \item 字符处理函数结束后，程序跳转至 \textbf{put\_queue} 函数，将字符放入读队列中，接着返回继续执行 \textbf{keyboard\_interrupt} 函数。
                 \newpage
-                \item 紧接着是一段硬件处理语句，与本实验关系不大，不做赘述。接下来 \textbf{pushl \$0} 命令指定 \textbf{tty} 参数为 \textbf{0}，然后调用了 \textbf{tty\_io.c} 中的函数 \textbf{do\_keyboard\_interrupt}。
+                \item 紧接着是一段硬件处理语句，与本实验关系不大，不做赘述。接下来 \textbf{pushl \$0} 命令指定 \textbf{tty} 参数为 \textbf{0}，然后调用了 \textbf{tty\_io.c} 中的函数 \textbf{do\_tty \_interrupt}。
                 \begin{figure*}[htbp]
                     \hspace*{2.3cm}
                     \includegraphics*[width = 5cm]{s0_5.png}   
