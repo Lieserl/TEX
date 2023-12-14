@@ -1,0 +1,46 @@
+\section{模型优化}
+    \subsection{学习率}
+        \par 学习率是优化过程中最重要的超参数之一。它决定了每次参数更新的步长，对模型收敛速度和质量有显著影响。通过分别使用 \textbf{Adam} 和 \textbf{SGD} 优化器中分别测试了不同的学习率设置，目的是找到一个既能快速收敛又能避免过拟合的最佳值。由于 \textbf{Adam} 自身具有调整学习率的机制，因此对学习率的选择稍微宽容一些。相反，\textbf{SGD} 对学习率非常敏感，需要更加谨慎地选择。
+    \subsection{迭代次数}
+        \par 迭代次数决定了整个数据集被遍历的次数。太少的迭代次数可能导致模型未能充分学习数据，而过多的迭代则可能导致过拟合。通过测试不同的迭代次数，以确保模型既能学习到足够的特征，又能在合适的时候停止学习。
+        \subsection{隐藏层层数和大小}
+        \par 隐藏层对模型的性能、复杂度和学习能力有直接影响。增加隐藏层数量和大小，可以学习更复杂、更抽象的特征表示，使得模型能够捕捉更复杂的关系，但同时也会提高计算成本和时间；过度拟合训练数据，从而降低其在新数据上的泛化能力；可能会引起梯度消失或梯度爆炸问题，使训练变得困难。
+    \subsection{网格搜索与K折交叉验证}
+        \par 为了较精确的确定我们模型的超参数，我们采用了 \textbf{K} 折交叉验证和网格搜索方法\cite{ref14}。\textbf{K} 折交叉验证主要步骤是：
+        \par 1) 将含有 $N$ 个样本的数据集，分出 $K$ 份，每份含有 $\frac{N}{K}$ 个样本。选择其中一份作为验证集，另外 $K-1$ 份作为训练集，此时验证集有 $K$ 种情况。
+        \par 2)在每种情况中，用训练集训练模型，用验证集测试模型，计算模型的泛化误差。
+        \par 3) 交叉验证重复验证 $K$ 次，平均 $K$ 次的结果作为模型最终的泛化误差。
+        \par 网格搜索是在指定的参数范围内，按步长依次调整参数，利用调整的参数训练我们的模型，从而在所有的参数中找到在验证集上精度最高的参数。
+        \par 这些方法的综合应用能够使我们在多个超参数配置下全面评估模型的性能，并最终锁定最佳的学习率，迭代次数等关键参数。
+\section{实验测试}
+    \subsection{学习率和迭代次数选择}
+        \par 在实验中，我们选择了 $1e-1$ 和 $1e-2$ 作为 \textbf{Adam} 优化器的学习率，以及 $3e-2$ 和 $1e-2$ 作为 \textbf{SGD} 优化器的学习率，同时，\textbf{epoch} 设置为 $300$。这些选择基于对模型在不同学习率下的性能影响的分析。较高的学习率能加速初期收敛，但可能引起稳定性问题，而较低的学习率虽然训练过程缓慢，却能提供更稳定的收敛。
+        \begin{minipage}{\linewidth}
+            \begin{center}
+                \vspace*{1em}
+                \includegraphics*[width = 1\textwidth]{lr_epoch.jpg}
+                \captionof*{figure}{Fig.3 Loss under the different epoch and lr\\  图 3 不同 epoch 和 lr 组合下的损失}
+            \end{center}
+        \end{minipage} 
+        \begin{minipage}{\linewidth}
+            \begin{center}
+                \vspace*{1em}
+                \includegraphics*[width = 1\textwidth]{123.jpg}
+                \captionof*{figure}{Fig.4 Loss under the different layers number\\  图 4 不同 epoch 和 lr 组合下的损失}
+            \end{center}
+        \end{minipage} 
+    \vfill
+    \subsection{隐藏层层数}
+        \par 经过测试，如下图，隐藏层层数为 $2$ 时，模型的拟合小效果远小于其他情况，隐藏层层数为 $3, \ 4$ 时拟合效果相似，但考虑到增加隐藏层层数所带来的成本上升，我们最后确定隐藏层层数为 $3$ 层。
+        
+        \begin{minipage}{\linewidth}
+            \begin{center}
+                \vspace*{1em}
+                \includegraphics*[width = 1\textwidth]{layer_num.jpg}
+                \captionof*{figure}{Fig.5 Loss under the different layers number\\  图 5 不同隐藏层层数下的损失}
+            \end{center}
+        \end{minipage} 
+    \subsection{隐藏层大小}
+        \par 我们通过一系列实验和分析，确定了最佳的超参数配置。对于 \textbf{Adam} 优化器，我们设置三个隐藏层的大小分别为 $100, \ 30, \ 50$；而对于SGD，参数配置为 $100, \ 50, \ 50$。
+    \subsection{网格搜索与K折交叉验证}
+        \par 最终，我们通过网格搜索确定了与手动调整相似的最佳超参数，验证了我们的调整策略的有效性。此外，引入K折交叉验证后，模型在多样化数据上的泛化能力得到了提升，从而降低了过拟合的风险，并提高了模型的整体性能。

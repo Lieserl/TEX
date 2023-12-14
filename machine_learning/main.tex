@@ -1,0 +1,184 @@
+\documentclass[UTF8, 12pt, a4paper, oneside]{ctexart}
+\usepackage{listing}
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{geometry}
+\usepackage{ulem}
+\usepackage[most]{tcolorbox}
+\usepackage[hidelinks]{hyperref}
+\usepackage{multicol}
+\usepackage{color}
+\usepackage{xcolor}
+\usepackage{framed}
+\usepackage{mdframed}
+\usepackage{mathtools,amssymb}
+\usepackage{bm}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{hyperref}
+\usepackage{caption}
+
+\definecolor{backcolour}{rgb}{0.18,0.18,0.18}
+\definecolor{codegray}{rgb}{0.93,0.93,0.93}
+\definecolor{codegreen}{rgb}{0.34,0.76,0.34}
+\definecolor{codeblue}{rgb}{0.27,0.35,0.69}
+\definecolor{codepurple}{rgb}{0.69,0.25,0.82}
+\definecolor{codeorange}{rgb}{0.8,0.6,0.2}
+\definecolor{codered}{rgb}{0.8,0.25,0.33}
+
+\lstset{
+    backgroundcolor     =   \color{codegray},
+    basicstyle          =   \sffamily,          % 基本代码风格
+    keywordstyle        =   \bfseries,          % 关键字风格
+    commentstyle        =   \rmfamily\itshape,  % 注释的风格，斜体
+    stringstyle         =   \ttfamily,  % 字符串风格
+    flexiblecolumns,                % 别问为什么，加上这个
+    numbers             =   left,   % 行号的位置在左边
+    showspaces          =   false,  % 是否显示空格，显示了有点乱，所以不现实了
+    numberstyle         =   \zihao{-5}\ttfamily,    % 行号的样式，小五号，tt等宽字体
+    showstringspaces    =   false,
+    captionpos          =   t,      % 这段代码的名字所呈现的位置，t指的是top上面
+    aboveskip           =   1em,
+    belowskip           =   1em,
+    frame               =   lrtb,   % 显示边框
+}
+
+\lstdefinestyle{C++}{
+    language        =   C++, % 语言选Python
+    basicstyle      =   \zihao{-5}\ttfamily,
+    numberstyle     =   \zihao{-5}\ttfamily,
+    keywordstyle    =   \color{codepurple},
+    keywordstyle    =   [2] \color{codegray},
+    stringstyle     =   \color{magenta},
+    commentstyle    =   \color{codegreen}\ttfamily,
+    breaklines      =   true,   % 自动换行，建议不要写太长的行
+    columns         =   fixed,  % 如果不加这一句，字间距就不固定，很丑，必须加
+    basewidth       =   0.5em,
+}
+
+\lstdefinestyle{C}{
+    language        =   C, % 语言选Python
+    basicstyle      =   \zihao{-5}\ttfamily,
+    numberstyle     =   \zihao{-5}\ttfamily,
+    keywordstyle    =   \color{codepurple},
+    keywordstyle    =   [2] \color{codegray},
+    stringstyle     =   \color{magenta},
+    commentstyle    =   \color{codegreen}\ttfamily,
+    breaklines      =   true,   % 自动换行，建议不要写太长的行
+    columns         =   fixed,  % 如果不加这一句，字间距就不固定，很丑，必须加
+    basewidth       =   0.5em,
+}
+
+\newlist{choices}{enumerate}{2}
+\setlist[choices,1]{
+  label = \Alph*.,       % 设置标签格式为大写字母后跟括号，例如 A)、B) 等
+  leftmargin = *,        % 设置左边距，使其与上层列表对齐
+  align = left,          % 设置标签对齐方式为左对齐
+  labelwidth = 1.5em,    % 设置标签宽度
+  itemsep = 0.5em        % 设置列表项之间的距离
+}
+
+\newmdenv[
+  leftmargin=0cm,
+  rightmargin=0cm,
+  skipabove=1em,
+  skipbelow=1em,
+  backgroundcolor=gray!20,
+  linewidth=0pt
+]{mquote}
+
+\titleformat{\section}
+    {\fontsize{12pt}{14pt}\bfseries}
+    {\thesection} % 标签部分为空
+    {0.5em} % 标题与正文的距离
+    {} % 标题为空
+    
+\titleformat{\subsection}
+    {\fontsize{10.5pt}{12.6pt}\bfseries}
+    {\thesubsection} % 标签部分为空
+    {0.5em} % 标题与正文的距离
+    {} % 标题为空 
+
+\captionsetup[figure]{font=small}
+
+\usepackage{paralist}
+\let\itemize\compactitem
+\let\enditemize\endcompactitem
+\let\enumerate\compactenum
+\let\endenumerate\endcompactenum
+\let\description\compactdesc
+\let\enddescription\endcompactdesc
+
+\definecolor{shadecolor}{RGB}{241, 241, 255}
+\geometry{left=2.54cm,right=2.54cm,top=3.18cm,bottom=3.18cm}
+\linespread{1.5}
+
+\newcounter{problemname}[subsubsection]
+%\newenvironment{problem}{\begin{shaded}\stepcounter{problemname}\par\noindent\textbf{题目\arabic{problemname}. }}{\end{shaded}\par}
+\newenvironment{problem}{\begin{shaded}\stepcounter{problemname}\par\noindent\textbf{题目. }}{\end{shaded}\par}
+
+%\newenvironment{problem}{\begin{shaded}\par\noindent\textbf{题目. }}{\end{shaded}\par}
+\newenvironment{solution}{\par\noindent\textbf{解答. }}{\par}
+\newenvironment{note}{\par\noindent\textbf{题目\arabic{problemname}的注记. }}{\par}
+\setlength{\columnsep}{0.5cm}
+
+\begin{document}
+	\sloppy
+	\thispagestyle{empty}
+    \begin{figure}[t]
+		\centering
+		\includegraphics[width=13cm]{logo1.jpg}
+	\end{figure}
+
+    \begin{center}
+        \Huge\textbf{实验报告}
+    \end{center}
+	\vspace*{1em}
+    \begin{figure}[htbp]
+		\centering
+		\includegraphics[width=3cm]{logo2.jpg}
+	\end{figure}
+		\begin{center}
+			\Huge\textbf{实验题目一：} \underline{\textbf{基于机器学习的数据库基数估计任务}} 
+		\end{center}
+    \vspace*{5em}
+	\begin{table}[htbp]
+		\centering
+		\large
+		\begin{tabular}{ll}
+            \textbf{队长:} & \underline{\textbf{胡宇杭 2022212408}} \\
+		    \textbf{组员:} & \underline{\textbf{陈炳璇 2022211479}}\\
+		    \textbf{组员:} & \underline{\textbf{吴林涛 2022212036}} \\
+		    \textbf{学院:} & \underline{计算机学院(国家示范性软件学院)} \\
+            \textbf{时间:} & \underline{\today} \\
+        \end{tabular}
+		
+	\end{table}
+	\newpage
+	\tableofcontents
+    \newpage
+    \begin{multicols*}{2}
+        \input{section0.tex}
+        \input{section1.tex}
+        \input{section2.tex}
+        \input{section3.tex}
+    \end{multicols*}
+    \begin{thebibliography}{99}  
+        \bibitem{ref1} Yue Wenjing, Qu Wenwen, Lin Kuan, et al. A Review of Machine Learning-Based Cardinality Estimation Techniques. Journal of Computer Research and Development, 1-14 (in chinese) \par （岳文静, 屈稳稳, 林宽，等. 基于机器学习的基数估计技术综述. 计算机研究与发展 1-14）
+        \bibitem{ref2} Li Guoliang, Zhou Xuanhe, Sun Jie, et al. A Review of Database Technologies Based on Machine Learning. Journal of Computer Science and Technology, 2020, 43 (11): 2019-2049 (in chinese)\par （李国良, 周煊赫, 孙佶，等. 基于机器学习的数据库技术综述 [J]. 计算机学报, 2020, 43 (11): 2019-2049）
+        \bibitem{ref3} Zhang J,Xiao Z,Yang X,et al. Winslett, M. Differentially private histogram publication. Proceedings of the VLDB Endowment, 2013, 22: 797-822
+        \bibitem{ref4} J.Xu, Z.Zhang, X.Xiao, et al. Differentially private histo-gram publication[J]. The VLDB Journal, 2019, 22(6): 797-821.
+        \bibitem{ref5} Yin Xiangbing. Research on Database Query Optimization Based on AI Technology [J]. Journal of Anhui Vocational and Technical College, 2023, 22(02): 15-20+26 (in chinese) \par （尹向兵. 基于AI技术数据库查询优化的研究 [J]. 安徽职业技术学院学报, 2023, 22 (02): 15-20+26）
+        \bibitem{ref6} Alon N, Matias Y, Szegedy M. The space complexity ofapproximating the frequency moments. Journal of Computerand System Sciences, 1999, 58(1): 137-147
+        \bibitem{ref7} Papapetrou O, Siberski W, Nejdl W. Cardinality estimationand dynamic length adaptation for Bloom filters. Distributedand Parallel Databases, 2010, 28(2): 119-156
+        \bibitem{ref8} Anshuman Dutt, Chi Wang, Azade Nazi, Srikanth Kandula, Vivek R. Narasayya, Surajit Chaudhuri: Selectivity Estimation for Range Predicates using Lightweight Models. Proc. VLDB Endow. 12(9): 1044-1057 (2019)
+        \bibitem{ref9} Glorot X, Bordes A, Bengio Y. Deep sparse rectifier neural networks[C]//Proceedings of the fourteenth international conference on artificial intelligence and statistics. JMLR Workshop and Conference Proceedings, 2011: 315-323.
+        \bibitem{ref10} Aston Zhang, Li Mu, Zachary C. Lipton, et al. Hands-On Machine Learning with PyTorch [M]. Beijing: Posts \& Telecom Press, 2023.
+        \bibitem{ref11} Diederik P. Kingma , Jimmy Lei Ba. Adam: a Method for Stochastic Optimization. Interna tional Conference on Learning Representations, pages 1–13, 2015.
+        \bibitem{ref12} Ruder, Sebastian. "An overview of gradient descent optimization algorithms." arXiv preprint arXiv:1609.04747 (2016). 
+        \bibitem{ref13} Anshuman Dutt, Chi Wang, Azade Nazi, Srikanth Kandula, Vivek R. Narasayya, Surajit Chaudhuri: Selectivity Estimation for Range Predicates using Lightweight Models. Proc. VLDB Endow. 12(9): 1044-1057 (2019)
+        \bibitem{ref14} CSDN, Machine Learning: Detailed Explanation of K-Fold Cross-Validation (Deep Understanding Edition) (Most Detailed on the Internet) [2023-12-10] \url{https://blog.csdn.net/Rocky6688/article/details/107296546} (in chinese) \par CSDN, 机器学习\_K折交叉验证知识详解（深刻理解版）（全网最详细）[2023-12-10] \url{https://blog.csdn.net/Rocky6688/article/details/107296546}  
+    \end{thebibliography}
+        
+\end{document}
