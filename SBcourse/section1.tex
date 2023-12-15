@@ -1,0 +1,12 @@
+\section{实验七}
+    \subsection{代码修改}
+        \par 题目要求我们修改修改订单栏的 $css$ 效果，由于该页面在 $user$ 中实现，所以我们查看 $user/index.wxss$ 中是否有相关设置，发现可以找到如下设置：
+        \lstinputlisting[style = C++, title = {\bf 修改前的代码}]{1.cpp}
+        \par 经过尝试，发现修改 $right$ 的值可以实现左右移动数字图标：$right \uparrow$，图标向左移动；$right \downarrow$，图标向右移动。
+        \par 因此我们只要将 $right$ 值正向增大到合适的位置即可完成要求，经过测试，设置为 $67$
+        \lstinputlisting[style = C++, title = {\bf 修改后的代码}]{2.cpp}
+    \subsection{运行截图}
+        \begin{figure}[htbp]
+            \centering
+            \includegraphics*[width=0.8\textwidth]{shit_complete.jpg}
+        \end{figure}
