@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023) (preloaded format=xelatex 2023.8.27)  15 DEC 2023 20:17
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023) (preloaded format=xelatex 2023.8.27)  15 DEC 2023 20:23
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1133,24 +1133,22 @@ File: 4.jpg Graphic file (type bmp)
 ) (./section1.tex [4] [5] (./1.cpp) (./2.cpp [6])
 File: shit_complete.jpg Graphic file (type bmp)
 <shit_complete.jpg>
-
-
-LaTeX Warning: Float too large for page by 121.5268pt on input line 12.
-
 ) [7] [8]
 \openout2 = `section2.aux'.
 
- (./section2.tex) (./main.aux (./section2.aux))
+ (./section2.tex) [9
+
+] (./main.aux (./section2.aux))
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 9EFA0C89AFE78476DA73689AC8E25F84;474.
+(rerunfilecheck)             Checksum: 48C71841ECEA0DD91C51E2399453057E;549.
  ) 
 Here is how much of TeX's memory you used:
- 37190 strings out of 476683
- 825045 string characters out of 5804047
+ 37202 strings out of 476683
+ 825857 string characters out of 5804047
  1950018 words of memory out of 5000000
- 56768 multiletter control sequences out of 15000+600000
+ 56780 multiletter control sequences out of 15000+600000
  527460 words of font info for 120 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
  99i,11n,104p,531b,1919s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on main.pdf (8 pages).
+Output written on main.pdf (9 pages).
