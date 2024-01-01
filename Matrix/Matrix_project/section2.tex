@@ -1,0 +1,628 @@
+\section{预备知识}
+\fontsize{12pt}{14pt}\selectfont
+\songti
+    \subsection{欧氏空间与线性变换}
+        \subsubsection{欧氏空间与线性变换介绍}
+            \par 线性空间是线性代数最基本的概念之一，也是学习现代矩阵论的重要基础，现对线性空间做如下定义：
+            \par \textbf{线性空间：}设 $V$ 是一个非空集合，它的元素用 \textbf{\textit{x, y, z}} 等表示，并称之为向量； $K$ 是一个数域，它的元素用 $k, l, m$等表示。如果 $V$ 满足条件：
+            \begin{enumerate}
+                \item 在 $V$ 中定义一个加法运算，即当 $\textbf{\textit{x, y}} \in V$ 时，有唯一的和 $\textbf{\textit{x}} + \textbf{\textit{y}} \in V$，且加法运算满足以下性质：
+                    \begin{itemize}
+                        \item 结合律 $\textbf{\textit{x}} + (\textbf{\textit{y}} + \textbf{\textit{z}}) = (\textbf{\textit{x}} + \textbf{\textit{y}}) + \textbf{\textit{z}}$;
+                        \item 交换律 $\textbf{\textit{x}} + \textbf{\textit{y}} = \textbf{\textit{y}} + \textbf{\textit{x}}$;
+                        \item 存在 \textbf{零元素}$0$，使 $\textbf{\textit{x}} + 0 = \textbf{\textit{x}}$;
+                        \item 存在 \textbf{复元素}，即对任一向量 $\textbf{\textit{x}} \in V$，存在向量 $\textbf{\textit{y}} \in V$，使 $\textbf{\textit{x}} + \textbf{\textit{y}} = 0$，则称 $\textbf{\textit{y}}$ 为 $\textbf{\textit{x}}$ 的负元素，记为 $-\textbf{\textit{x}}$.
+                    \end{itemize}
+                \item 在 $V$ 中定义数乘运算，即当 $\textbf{\textit{x}} \in V$，$k \in K$ 时，有唯一的乘积 $k\textbf{\textit{x}} \in V$，且数乘运算满足以下性质：
+                    \begin{itemize}
+                        \item 数因子分配律 $k(\textbf{\textit{x}} + \textbf{\textit{y}}) = k\textbf{\textit{x}} + k\textbf{\textit{y}}$;
+                        \item 分配律 $(k + l)\textbf{\textit{x}} = k\textbf{\textit{x}} + l\textbf{\textit{x}}$;
+                        \item 结合律 $k(l\textbf{\textit{x}}) = (kl)\textbf{\textit{x}}$;
+                        \item $1 \ \textbf{\textit{x}} = \textbf{\textit{x}}$.
+                    \end{itemize}
+            \end{enumerate}
+            则称 $V$ 为数域 $K$ 上的 \textbf{线性空间} 或 \textbf{向量空间} \\
+            
+            \par 有了线性空间的定义后，我们可以继续定义变换。
+            \par \textbf{变换：}设 $V$ 是数域 $K$ 上的线性空间，$T$ 是 $V$ 到自身的一个映射，使对任意向量 $\textbf{\textit{x}} \in V$，$V$ 中都有唯一的向量 $\textbf{\textit{y}}$ 与之对应，则称 $T$ 是 $V$ 的一个变换或算子， 记为 $T\textbf{\textit{x}}=\textbf{\textit{y}}$，称 为 $\textbf{\textit{x}}$ 在 $T$ 下的象，而 $\textbf{\textit{x}}$ 是 $\textbf{\textit{y}}$ 的 \textbf{原象}(或\textbf{象源}). \\
+            
+            \par 线性变换描述了将一个向量空间映射到另一个向量空间的线性操作，接下来我们通过前两个定义对其进行描述.
+            \par \textbf{线性变换：}如果数域 $K$ 上的线性空间 $V$ 的一个变换 $T$ 具有以下性质：
+                \begin{align*}
+                    T(k\textbf{\textit{x}} + l\textbf{\textit{y}}) = k(T\textbf{\textit{x}}) + l(T\textbf{\textit{y}}) 
+                \end{align*}
+            其中 $\textbf{\textit{x}}, \ \textbf{\textit{y}} \in V$，$k, \ l \in K$. 则称 $T$ 为 $V$ 的一个 \textbf{线性变换} 或 \textbf{线性算子}，也就是变换 $T$  对向量的线性运算是封闭的. \\
+
+            \par 即使在引入线性变换后，在线性空间中向量的基本运算也仅是线性运算，不涉及长度、夹角等度量概念，故我们需要通过内积（类似于数量积）对这些量进行描述。因此我们可以在原本的线性空间上定义内积，即 \textbf{欧氏空间}.
+            \par \textbf{欧氏空间：}设 $V$ 是实数域 $R$ 上的线性空间，对于 $V$ 中任意两个向量 $\textbf{\textit{x}}$ 与 $\textbf{\textit{y}}$，按照某种规律定义一个实数，用 $(\textbf{\textit{x}}, \ \textbf{\textit{y}})$ 来表示，且他满足下述 $4$ 个条件：
+            \begin{enumerate}
+                \item 交换律 $(\textbf{\textit{x}}, \ \textbf{\textit{y}}) = (\textbf{\textit{y}}, \ \textbf{\textit{x}})$;
+                \item 分配律 $(\textbf{\textit{x}}, \ \textbf{\textit{y}} + \textbf{\textit{z}}) = (\textbf{\textit{x}}, \ \textbf{\textit{y}}) + (\textbf{\textit{x}}, \ \textbf{\textit{z}})$;
+                \item 齐次性 $(k\textbf{\textit{x}}, \ \textbf{\textit{y}}) = k(\textbf{\textit{x}}, \ \textbf{\textit{y}}) \quad (\forall k \in R)$;
+                \item 非负性 $(\textbf{\textit{x}}, \ \textbf{\textit{x}}) \geq 0$，当且仅当 $x = 0$ 时，$(\textbf{\textit{x}}, \ \textbf{\textit{x}}) = 0$.
+            \end{enumerate}
+            则称实数 $(\textbf{\textit{x}}, \ \textbf{\textit{y}})$ 为向量 $\textbf{\textit{x}}$ 与 $\textbf{\textit{y}}$ 的内积，而称 $V$ 为 \textbf{Eucild 空间}，简称 \textbf{欧氏空间} 或 \textbf{实内积空间}.
+        \subsubsection{若尔当标准形的求解}
+            \par 在介绍 \textbf{Jordan} 标准形之前，我们需要了解以下概念：
+            \par 虽然我们在 $2.1.1$ 中定义了向量内积的概念，但却没有定义向量的坐标，因此，我们在此定义线性空间的基（类似于坐标系）：
+            \par \textbf{线性空间的基：}设 $V$ 是数域 $K$ 上的线性空间，$\textbf{\textit{x}}_1, \ \textbf{\textit{x}}_2, \ \dots, \ \textbf{\textit{x}}_r \ \ (r \geq 1)$ 是属于 $V$ 的任意 $r$ 个向量，如果它满足：
+            \begin{enumerate}
+                \item $\textbf{\textit{x}}_1, \ \textbf{\textit{x}}_2, \ \dots, \ \textbf{\textit{x}}_r$ 线性无关;
+                \item $V$ 中任一向量 $\textbf{\textit{x}}$ 都是 $\textbf{\textit{x}}_1, \ \textbf{\textit{x}}_2, \ \dots, \ \textbf{\textit{x}}_r$ 的线性组合，或者说都可以被其线性表出.
+            \end{enumerate}
+            则称 $\textbf{\textit{x}}_1, \ \textbf{\textit{x}}_2, \ \dots, \ \textbf{\textit{x}}_r$ 为 $V$ 的一个 \textbf{基} 或 \textbf{基底}， 并称 $\textbf{\textit{x}}_i \ \ (i = 1, \ 2, \ \dots, \ r)$ 为 \textbf{基向量}.
+            \\
+            \par 在有了 $V^n$ 的基 $x_1, \ x_2, \ \dots, \ x_n$ 后，我们可以任意向量 $\textbf{\textit{x}} \in V^n$ 表示为如下形式：
+            \begin{align*}
+                \textbf{\textit{x}} = \xi_1\textbf{\textit{x}}_1 + \xi_2\textbf{\textit{x}}_2 + \dots + \xi_n\textbf{\textit{x}}_n
+            \end{align*}
+            则向量 $\textbf{\textit{x}}$ 的坐标即为 $\xi_1, \ \xi_2, \ \dots, \ \xi_n$，记为：
+            \begin{align*}
+                (\xi_1, \ \xi_2, \ \dots, \ \xi_n)^T
+            \end{align*}
+
+            \par \textbf{子空间：}设 $V_1$ 是数域 $K$ 上的线性空间 $V$ 的一个非空子集合，且对 $V$ 已有的线性运算满足以下条件：
+            \begin{enumerate}
+                \item 如果 $\textbf{\textit{x}}, \ \textbf{\textit{y}} \in V_1$，则 $\textbf{\textit{x}} + \textbf{\textit{y}} \in V_1$;
+                \item 如果 $\textbf{\textit{x}} \in V_1, \ k \in K$,则 $k\textbf{\textit{x}} \in V_1$.            
+            \end{enumerate}
+            也就是运算的封闭性，则称 $V_1$ 为 $V$ 的 \textbf{线性子空间} 或 \textbf{子空间}.
+            \par 相似的，如果 $T$ 是线性空间 $V$ 的线性变换，$V_1$ 是 $V$ 的子空间，对于任一 $\textbf{\textit{x}} \in V_1$，都有 $T\textbf{\textit{x}} \in V_1$，则称 $V_1$ 是 $T$ 的 \textbf{不变子空间}.
+            \\
+            \par \textbf{核空间：}设 $A \in R^{m \times n}$，称集合 $\{\textbf{\textit{x}} \ | \ \textbf{\textit{A}}\textbf{\textit{x}} = 0\}$ 为 $\textbf{\textit{A}}$ 的 \textbf{核空间}，记为 $N(\textbf{\textit{A}})$，即：
+            \begin{align*}
+                N(\textbf{\textit{A}}) = \{\textbf{\textit{x}} \ | \ \textbf{\textit{A}}\textbf{\textit{x}} = 0\}
+            \end{align*}
+            \par \textbf{核子空间：}对于线性空间 $V$ 的线性变换 $T$，如果 $N(T)$ 是 $V$ 的线性子空间，则称为 $T$ 的 \textbf{核子空间}
+            \par 我们知道，一切 $n$ 阶矩阵 $\textbf{\textit{A}}$ 可以分成许多相似类，今要在与 $\textbf{\textit{A}}$ 相似的全体矩阵中，找出一个较简单的矩阵来作为这个相似类的标准形. 当然以对角矩阵作为标准形最好，可惜不是每一个矩阵都能与对角矩阵相似. 为了解决标准形问题，我们引入 \textbf{Jordan} 标准形的概念：
+            \par \textbf{Jordan 标准型：}设 $T$ 是复数域 $\textbf{\textit{C}}$ 上的线性空间 $V^n$ 的线性变换，任取 $V^n$ 的一个基， $T$ 在该基下的矩阵是 $\textbf{\textit{A}}$，$T$（或 $\textbf{\textit{A}}$） 的特征多项式可分解因式为：
+            \begin{align*}
+                \varphi(\lambda) = (\lambda - \lambda_1)^{m_1}(\lambda - \lambda_2)^{m_2}\dots(\lambda - \lambda_s)^{m_s} \quad (m_1 + m_2 + \dots + m_s = n)
+            \end{align*}
+            则 $V^n$ 可分解成不变子空间的直和:
+            \begin{align*}
+                V^n = V_1 \oplus V_2 \oplus \dots \oplus V_s
+            \end{align*}
+            其中，$V_i = \{\textbf{\textit{x}} \ | \ (T - \lambda_iT_e)^{m_i}\textbf{\textit{x}} = 0, \ \ x \in V^n\}$ 是线性变换 $(T - \lambda_iT_e)^{m_i}$ 的核子空间
+            \par 为每个子空间 $V_i$ 选一适当的基，则每个子空间的基合并起来即为 $V^n$ 的基，且 $T$ 在该基下的矩阵为准对角矩阵：
+            \begin{align*}
+                \textbf{\textit{J}} = \begin{bmatrix}
+                    \textbf{\textit{J}}_1(\lambda_1) & & & \\ & \textbf{\textit{J}}_2(\lambda_2) & & \\ & & \ddots & \\ & & & \textbf{\textit{J}}_s(\lambda_s) \\
+                \end{bmatrix}
+            \end{align*}
+            其中
+            \begin{align*}
+                \textbf{\textit{J}}_i(\lambda_i) = \begin{bmatrix}
+                    \lambda_i & 1 & & & \\ & \lambda_i & 1 & & \\ & & \lambda_i & \ddots & \\ & & & \ddots & 1 \\ & & & & \lambda_i
+                \end{bmatrix}_{m_i \times m_i} \quad (i = 1, \ 2, \ \dots, \ s)
+            \end{align*}
+            则称矩阵 $\textbf{\textit{J}}$ 为矩阵 $\textbf{\textit{A}}$ 的 \textbf{Jordan} 标准形，$\textbf{\textit{J}}_i(\lambda_i)$ 称为因式 $(\lambda - \lambda_i)^{m_i}$ 对应的 \textbf{Jordan 块}.
+            \\
+            \par 在了解了 \textbf{Jordan 标准型} 的概念后，我们可以总结出在复数域 \textbf{C} 上，求 $n$ 阶矩阵 $\textbf{\textit{A}}_{n \times n}$ 的 Jordan 标准形：
+            \begin{enumerate}
+                \item 求特征矩阵的 $\lambda \textbf{\textit{I}} - \textbf{\textit{A}}$ 的初等因子组 $(\lambda - \lambda_i)^{m_i} \quad (i = 1, \ 2, \ \dots, s, \ m_1 + m_2 + \dots + m_s = n)$
+                \begin{enumerate}
+                    \item 定义 $\lambda$ 矩阵，令 $\textbf{\textit{A}}(\lambda) = \lambda \textbf{\textit{I}} - \textbf{\textit{A}}$
+                    \item 求 $\textbf{\textit{A}}(\lambda)$ 的不变因子，即将 $\textbf{\textit{A}}(\lambda)$ 转化为标准型后其对角线上的非零元素 $d_i(\lambda) \ \ (i = 1, \ 2, \ \dots, \ s)$
+                    \item 求 $\textbf{\textit{A}}(\lambda)$ 的初等因子，即将其每个次数大于零的不变因子 $d_i(\lambda)$ 分解为不可约因式的乘积，这些不可约因式即为初等因子
+                    \item $\textbf{\textit{A}}(\lambda)$ 的所有初等因子，称为 $\textbf{\textit{A}}(\lambda)$ 的初等因子组
+                \end{enumerate}
+                \item 写出每个初等因子 $(\lambda - \lambda_i)^{m_i} \ \ (i = 1, \ 2, \ \dots, \ s)$ 对应的 Jordan 块 
+                \item 写出以这些 Jordan 块构成的 Jordan 标准型
+            \end{enumerate}
+            
+            \par 现以矩阵论第五版 1.2 节课后习题 19 (1)作为样例对求解过程进行演示：
+            \\ 
+            \begin{problem}
+                求矩阵 $\begin{bmatrix}
+                    3 & 7 & -3 \\ -2 & -5 & 2 \\ -4 & -10 & 3 \\
+                \end{bmatrix}$ 的 Jordan 标准形
+            \end{problem}
+            \begin{solution}
+                \begin{enumerate}
+                    \item 求特征矩阵的 $\lambda \textbf{\textit{I}} - \textbf{\textit{A}}$ 的初等因子组 $(\lambda - \lambda_i)^{m_i}$
+                        \begin{enumerate}
+                            \item 定义 $\lambda$ 矩阵
+                                \begin{align*}
+                                    \lambda \textbf{\textit{I}} - \textbf{\textit{A}} = \begin{bmatrix}
+                                        \lambda - 3 & -7 & 3 \\ 2 & \lambda + 5 & -2 \\ 4 & 10 & \lambda - 3
+                                    \end{bmatrix}
+                                \end{align*}
+                            \item 求 $\textbf{\textit{A}}(\lambda)$ 的不变因子
+                            \begin{align*}
+                                \lambda \textbf{\textit{I}} - \textbf{\textit{A}} =& \begin{bmatrix}
+                                    \lambda - 3 & -7 & 3 \\ 2 & \lambda + 5 & -2 \\ 4 & 10 & \lambda - 3
+                                \end{bmatrix} \rightarrow \begin{bmatrix}
+                                    \lambda & 2 & 3 \\ 0 & \lambda - 1 & -2 \\ \lambda + 1 & 3\lambda + 1 & \lambda - 3
+                                \end{bmatrix} \rightarrow \begin{bmatrix}
+                                    \lambda & 2 & 3 \\ 0 & \lambda - 1 & -2 \\ 1 & 2 & \lambda
+                                \end{bmatrix} \\ \rightarrow& \begin{bmatrix}
+                                    0 & 2-2\lambda & 3 - \lambda^2 \\ 0 & \lambda - 1 & -2 \\ 1 & 2 & \lambda
+                                \end{bmatrix} \rightarrow \begin{bmatrix}
+                                    1 & 2 & \lambda \\ 0 & \lambda - 1 & -2 \\ 0 & 0 &  1 + \lambda^2 
+                                \end{bmatrix} \rightarrow \begin{bmatrix}
+                                    1 & 0 & 0 \\ 0 & \lambda - 1 & 0 \\ 0 & 0 &  1 + \lambda^2 
+                                \end{bmatrix}
+                            \end{align*}
+                            故 $\textbf{\textit{A}}(\lambda)$ 的不变因子为 $d_1(\lambda) = 1, \ d_2(\lambda) = \lambda - 1, \ d_3(\lambda) = 1 + \lambda^2 = (\lambda - i)(\lambda + i)$
+                            \item 求 $\textbf{\textit{A}}(\lambda)$ 的初等因子、初等因子组
+                                \par 易知，初等因子组为 $\lambda - 1, \ \lambda + i, \ \lambda - i$
+                        \end{enumerate}
+                        \item 写出每个初等因子对应的 Jordan 块
+                            \begin{align*}
+                                \textbf{\textit{J}}_1(\lambda_1) = \begin{bmatrix} 1 \end{bmatrix}, \ 
+                                \textbf{\textit{J}}_2(\lambda_2) = \begin{bmatrix} i \end{bmatrix}, \ 
+                                \textbf{\textit{J}}_3(\lambda_3) = \begin{bmatrix} -i \end{bmatrix} 
+                            \end{align*}
+                        \item 写出其构成的 Jordan 标准型
+                            \par 于是有
+                            \begin{align*}
+                                \textbf{\textit{A}} \sim \textbf{\textit{J}} = \begin{bmatrix}
+                                    \textbf{\textit{J}}_1(\lambda_1) & & \\ & \textbf{\textit{J}}_2(\lambda_2) & \\ & & \textbf{\textit{J}}_3(\lambda_3)
+                                \end{bmatrix} = \begin{bmatrix}
+                                    1 & & \\ & i & \\ & & -i
+                                \end{bmatrix}
+                            \end{align*}
+                \end{enumerate}
+            \end{solution}
+
+            \textbf{\# TODO 三种初等因子求法，求P矩阵}
+        \subsubsection{欧氏空间中线性变换的求法}
+            \par 在求解欧氏空间中的线性变换之前，我们需要先知道一些基础概念及其求法
+            \par \textbf{正交向量组：}如果欧氏空间中一组非零向量两两正交，则称为 \textbf{正交向量组}，易知这组向量之间线性无关.
+            \par \textbf{标准正交基：}在欧氏空间 $V^n$ 中，由 $n$ 个非零向量组成的正交向量组称为 $V^n$ 的正交基. 由单位向量组成的正交基称为 \textbf{标准正交基} 或 \textbf{法正交基}. 对于 $V^n$ 中任一基$x_1, \ x_2, \ \dots, \ x_n$，都可找到一个标准正交基 $y_1, \ y_2, \ \dots, \ y_n$. 换言之，任一非零欧氏空间都有正交基和标准正交基，且可以将任一基转化为标准正交基.
+            \par \textbf{Schimidt 正交化：}令 $y_1' = x_1$，则有 $y_{m+1}' = x_{m+1} + l_my_m' + l_{m-1}y_{m-1}' + \dots + l_2y_2' + y_1'$，其中 $l_i = -\frac{(x_{m+1}, \ y_i')}{(y_i' \ \cdot \ y_i')} \ \ (i = 1, \ 2, \ \dots, \ m)$. 我们可以通过递推的方式求得正交基 $(y_1', \ y_2', \ \dots, y_n')$，然后以 $|y_i'|$ 除 $y_i' \ \ (i = 1, \ 2, \ \dots, \ n)$，得到标准正交基 $(y_1, \ y_2, \ \dots, \ y_n)$，其中 $y_i = \frac{y_i'}{|y_i'|}$.
+            \\
+            \par 在了解了上述内容后，我们可以得出在欧氏空间中线性变换的系统性求解方法：
+            \par 设 $V$ 是欧氏空间， $T$ 是 $V$ 上的一个线性变换，求解 $\textbf{\textit{z}} = (\textbf{\textit{T}}^k)(\textbf{\textit{x}}), \ \ \textbf{\textit{x}} \in V$ 的方法如下：
+            \begin{enumerate}
+                \item 任意找一组基，利用 \textbf{Schimidt} 正交化方法得到 $V$ 的一组标准正交基 $e_1, \ \dots, e_n$，$\textbf{\textit{x}} = k_1e_1 + k_2e_2 + \dots + k_ne_n$，其中 $k_i = (\textbf{\textit{x}}, e_i)$
+                \begin{enumerate}
+                    \item 求 $T$ 在基 $e_1, \ \dots, \ e_n$ 下的矩阵 $\textbf{\textit{A}}_0$，即 $\textbf{\textit{T}}(e_1, \ \dots, \ e_n) = (e_1, \ \dots, \ e_n)\textbf{\textit{A}}_0$
+                    \item 求解 Jordan 标准形和 $\textbf{\textit{P}}, \ \textbf{\textit{P}}^{-1}$. 由于 $\textbf{\textit{A}}_0 = \textbf{\textit{P}}\textbf{\textit{J}}\textbf{\textit{P}}^{-1}$，有 $\textbf{\textit{T}}(e_1, \ \dots, \ e_n) = (e_1, \ \dots, \ e_n)\textbf{\textit{P}}\textbf{\textit{J}}\textbf{\textit{P}}^{-1}$
+                \end{enumerate}
+                \item 变换得到 $\textbf{\textit{T}}(e_1, \ \dots, \ e_n)\textbf{\textit{P}} = (e_1, \ \dots, \ e_n)\textbf{\textit{P}}\textbf{\textit{J}}$，可以得到一组新的基 $(E_1, \ \dots, \ E_n) = (e_1, \ \dots, \ e_n)\textbf{\textit{P}}$，则 $T$ 在新基下的矩阵的矩阵为 $\textbf{\textit{T}}(E_1, \ \dots, \ E_n) = (E_1, \ \dots, \ E_n)\textbf{\textit{J}}$
+                \item 通过坐标变换得到 $\textbf{\textit{x}} = (E_1, \ \dots, \ E_n)\textbf{\textit{P}}^{-1}\begin{bmatrix} k_1 \\ \vdots \\ k_n \end{bmatrix} = (E_1, \ \dots, \ E_n)\begin{bmatrix} l_1 \\ \vdots \\ l_n \end{bmatrix}$
+                \item 则变换 $T$ 可以表示为 $\textbf{\textit{T}}(x) = (E_1, \ \dots, \ E_n)\textbf{\textit{J}}\begin{bmatrix} l_1 \\ \vdots \\ l_n \end{bmatrix}$，此时 $(\textbf{\textit{T}}^k)(x) = (E_1, \ \dots, \ E_n)\textbf{\textit{J}}^k\begin{bmatrix} l_1 \\ \vdots \\ l_n \end{bmatrix}$
+            \end{enumerate}
+            
+            \par 接下来，我们通过例题来演示上述步骤：
+            \begin{problem}
+                设矩阵空间 $R^{2 \times 2}$ 的子空间为 $V = \{X = (x_{ij})_{2 \times 2} \ | \ x_{11} + x_{12} + x_{21} = 0,\ \ x_{ij} \in R\}$，$V$ 上的线性变换 $\textbf{\textit{T}}(X) = X + 2X^T$，求 $(\textbf{\textit{T}}^k)(X), \ \ \forall X \in V$.
+            \end{problem}
+            \begin{solution}
+                \begin{enumerate}
+                    \item 任意找一组基，利用 \textbf{Schimidt} 正交化方法得到 $V$ 的一组标准正交基 $e_1, \ \dots, e_n$，$\textbf{\textit{x}} = k_1e_1 + k_2e_2 + \dots + k_ne_n$，其中 $k_i = (\textbf{\textit{x}}, e_i)$
+                        \par 令 $x_{11} = - x_{12} - x_{21}$，则 
+                        \begin{align*}
+                            X = \begin{bmatrix}
+                                -x_{12}-x_{21} & x_{12} \\ x_{21} & x_{22}
+                            \end{bmatrix}, \quad Y = \begin{bmatrix}
+                                -y_{12}-y_{21} & y_{12} \\ y_{21} & y_{22}
+                            \end{bmatrix}
+                        \end{align*}
+                        \par 定义 $V$ 的内积为 $(X, Y) = tr(XY_T) = (x_{12} + x_{21})(y_{12} + y_{21} + x_{12}y_{12} + x_{21} y_{21} + x_{22}y_{22})$
+                        \par 任意找一组基 
+                            \begin{align*}
+                                X &= \begin{bmatrix}
+                                    -x_{12}-x_{21} & x_{12} \\ x_{21} & x_{22}
+                                \end{bmatrix} = x_{12}\begin{bmatrix}
+                                    -1 & 1 \\ 0 & 0
+                                \end{bmatrix} + x_{21}\begin{bmatrix}
+                                    -1 & 0 \\ 1 & 0
+                                \end{bmatrix} + x_{22}\begin{bmatrix}
+                                    0 & 0 \\ 0 & 1
+                                \end{bmatrix} \\ &= x_{12}X_1 + x_{21}X_2 + x_{22}X_3
+                            \end{align*}
+                        \par 下面利用 \textbf{Schimidt} 正交化求解标准正交基
+                            \begin{align*}
+                                Y_1' &= X_1 = \begin{bmatrix}
+                                    -1 & 1 \\ 0 & 0
+                                \end{bmatrix} \\ Y_2' &= X_2 - \frac{(X_2, Y_1')}{Y_1', Y_1'}Y_1' = \begin{bmatrix}
+                                    -1 & 0 \\ 1 & 0
+                                \end{bmatrix} - \frac{1}{2}\begin{bmatrix}
+                                    -1 & 1 \\ 0 & 0
+                                \end{bmatrix} = \begin{bmatrix}
+                                    -\frac{1}{2} & -\frac{1}{2} \\ 1 & 0
+                                \end{bmatrix} \\ Y_3' &= X_3 - \frac{(X_3, Y_2')}{Y_2', Y_2'}Y_2' - \frac{(X_3, Y_1')}{Y_1', Y_1'}Y_1' = \begin{bmatrix}
+                                    0 & 0 \\ 0 & 1
+                                \end{bmatrix} - \frac{0}{\frac{3}{2}}\begin{bmatrix}
+                                    -\frac{1}{2} & -\frac{1}{2} \\ 1 & 0
+                                \end{bmatrix} - \frac{0}{2}\begin{bmatrix}
+                                    -1 & 1 \\ 0 & 0
+                                \end{bmatrix} = \begin{bmatrix}
+                                    0 & 0 \\ 0 & 1
+                                \end{bmatrix}
+                            \end{align*}
+                            \par 得到 $V$ 的一组正交基 $Y_1', Y_2', Y_3'$ 
+                            \begin{align*}
+                                Y_1' = \begin{bmatrix}
+                                    -1 & 1 \\ 0 & 0
+                                \end{bmatrix}, Y_2' = \begin{bmatrix}
+                                    -\frac{1}{2} & -\frac{1}{2} \\ 1 & 0
+                                \end{bmatrix}, Y_3' = \begin{bmatrix}
+                                    0 & 0 \\ 0 & 1
+                                \end{bmatrix}
+                            \end{align*}
+                            \par 故标准正交基 $e_1, \ e_2, \ e_3$ 为
+                            \begin{align*}
+                                e_1 = \frac{1}{|Y_1'|}Y_1' = \frac{1}{\sqrt{2}}\begin{bmatrix}
+                                    -1 & 1 \\ 0 & 0
+                                \end{bmatrix}, e_2 = \frac{1}{|Y_2'|}Y_2' = \frac{\sqrt{2}}{\sqrt{3}}\begin{bmatrix}
+                                    -\frac{1}{2} & -\frac{1}{2} \\ 1 & 0
+                                \end{bmatrix}, e_3 = \frac{1}{|Y_3'|}Y_3' = \begin{bmatrix}
+                                    0 & 0 \\ 0 & 1
+                                \end{bmatrix}
+                            \end{align*}
+                            \begin{align*}
+                                \textbf{\textit{x}} = \begin{bmatrix}
+                                    4 & -4 \\ 0 & -3
+                                \end{bmatrix} = \begin{bmatrix}
+                                    e_1, e_2, e_3
+                                \end{bmatrix}\begin{bmatrix}
+                                    k_1 \\ k_2 \\ k_3
+                                \end{bmatrix}, k_1 = (\textbf{\textit{x}},e_1) = -4\sqrt{2}, k_2 = (\textbf{\textit{x}},e_2) = 0, k_3 = (\textbf{\textit{x}},e_3) = -3
+                            \end{align*}
+                    \begin{enumerate}
+                        \item 求 $T$ 在基 $e_1, \ \dots, \ e_n$ 下的矩阵 $\textbf{\textit{A}}_0$
+                            \begin{align*}
+                                Te_1 = \frac{1}{\sqrt{2}}\begin{bmatrix}
+                                    -3 & 1 \\ 2 & 0
+                                \end{bmatrix}, Te_2 = \frac{\sqrt{2}}{\sqrt{3}}\begin{bmatrix}
+                                    -\frac{3}{2} & -\frac{3}{2} \\ 0 & 0
+                                \end{bmatrix}, Te_3 = \begin{bmatrix}
+                                    0 & 0 \\ 0 & 3
+                                \end{bmatrix}
+                            \end{align*}
+                            \begin{align*}
+                                Te_1 &= \begin{bmatrix}
+                                    e_1, e_2, e_3
+                                \end{bmatrix}\begin{bmatrix}
+                                    2 \\ \sqrt{3} \\ 0
+                                \end{bmatrix}, Te_2 = \begin{bmatrix}
+                                    e_1, e_2, e_3
+                                \end{bmatrix}\begin{bmatrix}
+                                    \sqrt{3} \\ 0 \\ 0
+                                \end{bmatrix} \\ Te_3 &= \begin{bmatrix}
+                                    e_1, e_2, e_3
+                                \end{bmatrix}\begin{bmatrix}
+                                    0 \\ 0 \\ 3
+                                \end{bmatrix} \quad k_{ij} = (Te_i, e_j)
+                            \end{align*}
+                            \par 故有
+                            \begin{align*}
+                                T(e_1, \dots, e_n) = (e_1, \dots, e_n)\begin{bmatrix}
+                                    2 & \sqrt{3} & 0 \\ \sqrt{3} & 0 & 0 \\ 0 & 0 & 3
+                                \end{bmatrix} = (e_1, \dots, e_n)A_0
+                            \end{align*}
+                        \item 求解 Jordan 标准形和 $\textbf{\textit{P}}, \textbf{\textit{P}}^{-1}$
+                            \begin{align*}
+                                \lambda I - A_0 =& \begin{bmatrix}
+                                    \lambda - 2 & -\sqrt{3} & 0 \\ -\sqrt{3} & \lambda & 0 \\ 0 & 0 & \lambda - 3
+                                \end{bmatrix} \rightarrow \begin{bmatrix}
+                                      -\sqrt{3} & \lambda - 2 & 0 \\ \lambda & -\sqrt{3} & 0 \\ 0 & 0 & \lambda - 3
+                                \end{bmatrix} \\ \rightarrow& \begin{bmatrix}
+                                    -\sqrt{3} & 0 & 0 \\ \lambda & \frac{\lambda - 2}{\sqrt{3}}\lambda-\sqrt{3} & 0 \\ 0 & 0 & \lambda - 3
+                                \end{bmatrix} \rightarrow \begin{bmatrix}
+                                    -\sqrt{3} & 0 & 0 \\ 0 & \frac{1}{\sqrt{3}}(\lambda + 1)(\lambda - 3) & 0 \\ 0 & 0 & \lambda - 3
+                                \end{bmatrix} \\ \rightarrow& \begin{bmatrix}
+                                    1 & 0 & 0 \\ 0 & 0 & \lambda - 3 \\ 0 & (\lambda + 1)(\lambda - 3) & 0
+                                \end{bmatrix} \rightarrow \begin{bmatrix}
+                                    1 & 0 & 0 \\ 0 & \lambda - 3 & 0 \\ 0 & 0 & (\lambda + 1)(\lambda - 3)
+                                \end{bmatrix}
+                            \end{align*}
+                            \par 不变因子：$d_1(\lambda) = 1, \ d_2(\lambda) = \lambda - 3, \ d_3(\lambda) = (\lambda + 1)(\lambda - 3)$
+                            \par 初等因子组： $\lambda - 3, \ \lambda + 1, \ \lambda - 3$
+                            \par Jordan 块：$J_1(\lambda_1) = [3], \ J_2(\lambda_2) = [-1], \ J_3(\lambda_3) = [3]$
+                            \par Jordan 标准形为 
+                            \begin{align*}
+                                J = \begin{bmatrix}
+                                    3 & & \\ & -1 & \\ & & 3
+                                \end{bmatrix}
+                            \end{align*}                      
+                            \begin{align*}
+                                P = (x_1, \ x_2, \ x_3), PJ= A_0P \Rightarrow (3x_1, \ -x_2, \ 3x_3) = (A_0x_1, \ A_0x_2, \ A_0x_3) 
+                            \end{align*}
+                            \begin{align*}
+                                (3I - A_0)x_1 = \begin{bmatrix}
+                                    1 & -\sqrt{3} & \\ -\sqrt{3} & 3 & \\ & & 0 
+                                \end{bmatrix}x_1 = 0 \\ (-I - A_0)x_2 = \begin{bmatrix}
+                                    -3 & -\sqrt{3} & \\ -\sqrt{3} & -1 & \\ & & 4
+                                \end{bmatrix}x_2 = 0 \\ (3I - A_0)x_3 = \begin{bmatrix}
+                                    1 & -\sqrt{3} & \\ -\sqrt{3} & 3 & \\ & & 0 
+                                \end{bmatrix}x_3 = 0
+                        \end{align*}
+                            \begin{align*}
+                                \Rightarrow x_1 &= (\sqrt{3}, \ 1, \ 0)^T, \ x_2 = (-1, \ \sqrt{3}, \ 0)^T, \ x_3 = (0, \ 0, \ 1)^T \\
+                                P &= (x_1, \ x_2, \ x_3) = \begin{bmatrix}
+                                    \sqrt{3} & -1 & 0 \\ 1 & \sqrt{3} & 0 \\ 0 & 0 & 1
+                                \end{bmatrix}, \ P^{-1} = \begin{bmatrix}
+                                    \frac{\sqrt{3}}{4} & \frac{1}{4} & 0 \\ -\frac{1}{4} & \frac{\sqrt{3}}{4} & 0 \\ 0 & 0 & 1
+                                \end{bmatrix}
+                            \end{align*}
+                    \end{enumerate}
+                    \item 得到一组新的基 $(E_1, \ \dots, \ E_n) = (e_1, \ \dots, \ e_n)\textbf{\textit{P}}$
+                        \begin{align*}
+                            E_1 &= (e_1, e_2, e_3)\begin{bmatrix}
+                                \sqrt{3} \\ 1 \\ 0
+                            \end{bmatrix} = \frac{2}{\sqrt{6}}\begin{bmatrix}
+                                -2 & 1 \\ 1 & 0
+                            \end{bmatrix} \\ E_2 &= (e_1, e_2, e_3)\begin{bmatrix}
+                                -1 \\ \sqrt{3} \\ 0
+                            \end{bmatrix} = \sqrt{2}\begin{bmatrix}
+                                0 & -1 \\ 1 & 0
+                            \end{bmatrix} \\ E_3 &= (e_1, e_2, e_3)\begin{bmatrix}
+                                0 \\ 0 \\ 1
+                            \end{bmatrix} = \begin{bmatrix}
+                                0 & 0 \\ 0 & 1
+                            \end{bmatrix}
+                        \end{align*}
+                    \item 通过坐标变换得到 $\textbf{\textit{x}} = (E_1, \ \dots, \ E_n)\textbf{\textit{P}}^{-1}\begin{bmatrix} k_1 \\ \vdots \\ k_n \end{bmatrix} = (E_1, \ \dots, \ E_n)\begin{bmatrix} l_1 \\ \vdots \\ l_n \end{bmatrix}$
+                        \begin{align*}
+                            x = \begin{bmatrix}
+                                4 & -4 \\ 0 & -3
+                            \end{bmatrix} = (e_1, e_2, e_3)\begin{bmatrix}
+                                -4\sqrt{2} \\ 0 \\ -3
+                            \end{bmatrix} = (E_1, E_2, E_3)P^{-1}\begin{bmatrix}
+                                -4\sqrt{2} \\ 0 \\ -3
+                            \end{bmatrix} = (E_1, E_2, E_3)\begin{bmatrix}
+                                -\sqrt{6} \\ \sqrt{2} \\ -3
+                            \end{bmatrix}
+                        \end{align*}
+                    \item 则变换 $T$ 可以表示为 $\textbf{\textit{T}}(x) = (E_1, \ \dots, \ E_n)\textbf{\textit{J}}\begin{bmatrix} l_1 \\ \vdots \\ l_n \end{bmatrix}$
+                        \begin{align*}
+                            (T^k)(x) = (E_1, E_2, E_3)\begin{bmatrix}
+                                3^k & & \\ & (-1)^k & \\ & & 3^k
+                            \end{bmatrix}\begin{bmatrix}
+                                \frac{\sqrt{3}}{4} & \frac{1}{4} & 0 \\ -\frac{1}{4} & \frac{\sqrt{3}}{4} & 0 \\ 0 & 0 & 1
+                            \end{bmatrix}\begin{bmatrix}
+                                (x_1,e_1) \\ (x_2,e_2) \\ (x_3,e_3)
+                            \end{bmatrix}
+                        \end{align*}
+                \end{enumerate}
+            \end{solution}
+
+    \subsection{向量范数与矩阵范数}
+        \subsubsection{向量范数介绍}
+            \par \textbf{向量范数：}如果 $V$ 是数域 $K$ 上的线性空间，对任意的 $ \textbf{\textit{x}} \in V$，定义一个实值函数 $\Vert \textbf{\textit{x}} \Vert$，它满足以下三个条件：
+            \begin{enumerate}
+                \item 非负性：当 $\textbf{\textit{x}} \ne 0$ 时，$\Vert \textbf{\textit{x}} \Vert > 0$；当 $\textbf{\textit{x}} = 0$ 时，$\Vert \textbf{\textit{x}} \Vert = 0$;
+                \item 齐次性：$\Vert \textbf{\textit{x}} \Vert = |a| \ \Vert \textbf{\textit{x}} \Vert$ $(a \in K, \textbf{\textit{x}} \in V)$;
+                \item 三角不等式：$\Vert \textbf{\textit{x}} + \textbf{\textit{y}} \Vert \leq \Vert \textbf{\textit{x}} \Vert + \Vert y \Vert$ $(x, y \in V)$
+            \end{enumerate}
+            则称 $\Vert x \Vert$ 为 $V$ 上向量 $\textbf{\textit{x}}$ 的范数，简称 $\textbf{向量范数}$
+            \\
+            \par 下面介绍几种特殊的范数：
+            \begin{itemize}
+                \item \textbf{1-范数}在 $n$ 维酉空间 $C^n$ 上，复向量 $\textbf{\textit{x}} = (\xi_1, \ \xi_2, \ \dots, \ \xi_n) \in C^n$，有范数 $\Vert \textbf{\textit{x}} \Vert = \sum_{i=1}^{n}|\xi_i|$，称为 \textbf{1-范数}，记作 $\Vert \textbf{\textit{x}} \Vert_1$;
+                \item \textbf{2-范数：}在 $n$ 维酉空间 $C^n$ 或欧氏空间 $R^n$ 上，复向量 $\textbf{\textit{x}} = (\xi_1, \ \xi_2, \ \dots, \ \xi_n)$ 的长度 $\Vert \textbf{\textit{x}} \Vert = \sqrt{|\xi_1|^2 + |\xi_2|^2 + \dots + |\xi_n|^2}$ 是 $C^n$ 或 $R^n$ 上的一种范数，称为 \textbf{2-范数}，记作 $\Vert \textbf{\textit{x}} \Vert_2$;
+                \item \textbf{$\infty$-范数：}在 $n$ 维酉空间 $C^n$ 上，复向量 $\textbf{\textit{x}} = (\xi_1, \ \xi_2, \ \dots, \ \xi_n) \in C^n$，实值函数 $\Vert \textbf{\textit{x}} \Vert = \underset{i}\max |\xi_i|$ 是一种范数，称为 \textbf{$\infty$-范数}，记作 $\Vert \textbf{\textit{x}} \Vert_{\infty}$;
+                \item \textbf{p-范数：}对于不小于 $1$ 的任意实数 $p$ 及 $\textbf{\textit{x}} = (\xi_1, \ \xi_2, \ \dots, \xi_n) \in C^n$，实值函数 $\Vert \textbf{\textit{x}} \Vert = (\sum_{i=1}^{n}|\xi_i|^p)^{1/p} \ \ (1 \leq p < +\infty)$ 是一种范数，称为 \textbf{p-范数} 或 \textbf{$l_p$范数}，记作 $\Vert \textbf{\textit{x}} \Vert_p$.
+            \end{itemize}
+            \par 不难发现，令 \textbf{p-范数} 的 $p=1$，可以得到 $\Vert \textbf{\textit{x}} \Vert_1$；令 $p=2$，可得 $\Vert \textbf{\textit{x}} \Vert_2$；还有 $\Vert \textbf{\textit{x}} \Vert_{\infty} = \lim_{p\rightarrow\infty}\Vert \textbf{\textit{x}} \Vert_p$.
+        \subsubsection{矩阵范数介绍}
+            \par \textbf{矩阵范数：}设 $A \in C^{m\times n}$，定义一个实值函数 $\Vert A \Vert$，它满足以下三个条件：
+            \begin{enumerate}
+                \item 非负性：当 $A \ne O$ 时，$\Vert A \Vert > 0$；当 $A = O$ 时，$\Vert A \Vert = 0$;
+                \item 齐次性：$\Vert \alpha A \Vert = |\alpha| \ \Vert A \Vert \ (\alpha \in C)$;
+                \item 三角不等式：$\Vert A + B \Vert \leq \Vert A \Vert + \Vert B \Vert \ (B \in C^{m\times n})$;
+                \item 相容性：$\Vert AB \Vert \leq \Vert A \Vert \ \Vert B \Vert \ (B \in C^{m \times l})$ 
+            \end{enumerate}
+            如果满足前三条性质，则称 $\Vert A \Vert$ 为 $A$ 的 \textbf{广义矩阵范数}. 若对 $C^{m \times n}, \ C^{n \times l}$ 及 $C^{m \times l}$ 上的同类广义矩阵范数 $\Vert \cdot \Vert$，还满足第四条性质，则称 $\Vert A \Vert$ 为 $A$ 的 \textbf{矩阵范数}.
+            \\
+            \par 多数情况下，矩阵范数常与向量范数混合在一起使用，而矩阵经常是作为两个线性空间上的线性映射(变换)出现的. 因此，考虑一些矩阵范数时，应该使它能与向量范数联系起来，即 \textbf{相容}.
+            \par \textbf{相容：}对于 $C^{m \times n}$ 上的矩阵范数 $\Vert \cdot \Vert_M$ 和 $C^m$ 与 $C^n$ 上的同类向量范数 $\Vert \cdot \Vert_V$，如果 
+            \begin{align*}
+                \Vert A\textbf{\textit{x}} \Vert_V \leq \Vert A \Vert_M \Vert \textbf{\textit{x}} \Vert_V \ \ (\forall A \in C^{m \times n}, \ \forall \textbf{\textit{x}} \in C^n)
+            \end{align*}
+            则称矩阵范数 $\Vert \cdot \Vert_M$ 与向量范数 $\Vert \cdot \Vert_V$ 是相容的.
+            \\
+            \par 下面介绍几种常用的矩阵范数：
+            \begin{itemize}
+                \item \textbf{Frobenius范数：}$C^{m \times n}$ 上的函数 $\Vert A \Vert_F = (\sum_{i=1}^{m}\sum_{j=1}^{n}|a_{ij}|^2)^{1/2} = (tr(A^HA))^{1/2}$ 是矩阵范数，称为 \textbf{F-范数}，记作 $\Vert A \Vert_{m_2}$;
+                \item \textbf{从属范数：}设$A \in C^{m \times n}$，则函数 $\Vert A \Vert = \underset{\Vert \textbf{\textit{x}} \Vert = 1}\max \Vert A\textbf{\textit{x}} \Vert$ 是矩阵范数，称为 \textbf{由向量范数导出的矩阵范数}，简称为 \textbf{从属范数};
+                    \par 设 $A = (a_{ij})_{m \times n} \in C^{m \times n}$，$\textbf{\textit{x}} = (\xi_1, \ \xi_2, \ \dots, \ \xi_n)^T \in C^n$，则从属于向量 $\textbf{\textit{x}}$ 的三种范数 $\Vert \textbf{\textit{x}} \Vert_1, \ \Vert \textbf{\textit{x}} \Vert_2, \ \Vert \textbf{\textit{x}} \Vert_{\infty}$ 的矩阵范数分别为：
+                    \begin{enumerate}
+                        \item \textbf{列和范数：}$\Vert A \Vert_1 = \underset{j}\max \sum_{i=1}^{m}|a_{ij}|$;
+                        \item \textbf{谱范数：}$\Vert A \Vert_2 = \sqrt{\lambda_1}$，$\lambda_1$ 为 $A^HA$ 的最大特征值;
+                        \item \textbf{行和范数：}$\vert A \Vert_{\infty} = \underset{i}\max \sum_{j=1}^{n}|a_{ij}|$. 
+                    \end{enumerate}
+            \end{itemize}
+        \subsubsection{矩阵可逆性条件、条件数和谱半径介绍}
+            \par \textbf{矩阵的可逆性条件：}设 $A \in C^{n \times n}$，且对 $C^{n \times n}$ 上的某种矩阵范数 $\Vert \cdot \Vert$，有 $\Vert A \Vert < 1$，则矩阵 $I-A$ 可逆，且有
+            \begin{align*}
+                \Vert (I-A)^{-1} \Vert \leq \frac{\Vert I \Vert}{1 - \Vert A \Vert}
+            \end{align*}
+        
+            \par 假如 $A = (a_{ij})_{n \times n} \in C^{n \times n}$ 的元素 $a_{ij}$ 带有误差 $\delta a_{ij} \ \ (i, \ j = 1, \ 2, \ \dots, \ n)$，则其逆矩阵的近似程度可有下述摄动定理描述：
+            \par \textbf{摄动定理：}设 $A \in C^{n \times n}$ 可逆，$B \in C^{n \times n}$，且对 $C^{n \times n}$ 上的某种矩阵范数 $\Vert \cdot \Vert$，有 $\Vert A^{-1}B \Vert < 1$，有以下结论：
+            \begin{enumerate}
+                \item $A + B$ 可逆;
+                \item 记 $F = I - (I + A^{-1}B)^{-1}$，则 $\Vert F \Vert \leq \frac{\Vert A^{-1}B \Vert}{1 - \Vert A^{-1}B \Vert}$;
+                \item $\frac{\Vert A^{-1} - (A + B)^{-1} \Vert}{\Vert A^{-1} \Vert} \leq \frac{\Vert A^{-1}B \Vert}{1 - \Vert A^{-1}B \Vert}$
+            \end{enumerate}
+            \par 在上述定理中，若令 $cond(A) = \Vert A \Vert \ \Vert A^{-1} \Vert$，$d_A = \Vert \delta A \Vert \ \Vert A\Vert^{-1}$，则当 $\Vert A^{-1} \Vert \ \Vert \delta A \Vert < 1$ 时，由结论 $2, \ 3$ 可得：
+            \begin{align*}
+                \Vert I - (I + A^{-1} \delta A)^{-1} \Vert \leq \frac{d_Acond(A)}{1 - d_Acond(A)} \\ \frac{\Vert A^{-1} - (A + \delta A)^{-1} \Vert}{\Vert A^{-1} \Vert} \leq \frac{d_Acond(A)}{1 - d_Acond(A)}
+            \end{align*}
+            称 $cond(A)$ 为矩阵 $A$ 的 \textbf{条件数}.
+            \\
+            \par \textbf{谱半径：} 设 $A \in C^{n \times n}$ 的 $n$ 个特征值为 $\lambda_1, \ \lambda_2, \ \dots, \ \lambda_n$，称 
+            \begin{align*}
+                \rho(A) = \underset{i}\max|\lambda_i|
+            \end{align*}
+            为 $A$ 的 \textbf{谱半径}.
+            \par 谱半径有如下的性质：
+            \begin{enumerate}
+                \item 设 $A \in C^{n \times n}$，且对 $C^{n \times n}$ 上任何一种矩阵范数 $\Vert \cdot \Vert$，都有 
+                    \begin{align*}
+                        \rho(A) \leq \Vert A \Vert
+                    \end{align*}
+                \item 设 $A \in C^{n \times n}$，对于任意的正数 $\varepsilon$，存在某种矩阵范数 $\Vert \cdot \Vert_M$，使得
+                    \begin{align*}
+                        \Vert A \Vert_M \leq \rho(A) + \varepsilon
+                    \end{align*}
+            \end{enumerate}
+
+    \subsection{矩阵函数介绍}
+        \par 矩阵函数是以矩阵为自变量且取值为矩阵的一类函数，它是对一元函数概念的推广. 起先，矩阵函数是由一个收敛的矩阵幂级数的和来定义，之后根据计算矩阵函数值的 Jordan 标准形方法又对矩阵函数的概念进行了拓宽. 因此，矩阵函数的基础是矩阵序列与矩阵级数.
+        \subsubsection{矩阵序列介绍}
+            \par \textbf{矩阵序列：}指无穷多个依次排列的同阶矩阵，记为 $\{A^{(k)}\}$
+            \par \textbf{矩阵序列的敛散性：}设有矩阵序列 $\{A^{(k)}\}$，其中 $A^{(k)} = (a_{ij}^{(k)})_{m \times n}$，当 $a_{ij}^{(k)} \rightarrow a_{ij}(k \rightarrow \infty)$ 时，称 $\{A^{(k)}\}$ 收敛，或称矩阵 $A = (a_{ij}^{(k)})_{m \times n}$ 为 $\{A^{(k)}\}$ 的极限，或称 $\{A^{(k)}\}$ 收敛于 $A$，记为 
+            \begin{align*}
+                \lim_{k \rightarrow \infty}A^{(k)} = A \quad or \quad A^{(k)} \rightarrow A 
+            \end{align*}
+            不收敛的矩阵序列称为\textbf{发散}.
+            \par \textbf{矩阵序列的有界性：}如果存在常数 $M > 0$，使得对一切 $k$ 都有 
+            \begin{align*}
+                |a_{ij}^{(k)}| < M \quad (i = 1, \ 2, \ \dots, \ m; \ j = 1, \ 2, \ \dots, \ n)
+            \end{align*}
+            则称矩阵序列 $\{A^{(k)}\}$ 是 \textbf{有界} 的.
+            
+            \par 收敛的矩阵序列有许多类似于数列收敛的性质：
+            \begin{enumerate}
+                \item 设 $A^{(k)} \rightarrow A_{m \times n}, \ B^{(k)} \rightarrow B_{m \times n}$，则 
+                    \begin{align*}
+                        \lim_{k \rightarrow \infty}(\alpha A^{(k)} + \beta B^{(k)}) = \alpha A + \beta B \ \ (\forall \alpha, \ \beta \in C)
+                    \end{align*}
+                \item 设 $A^{(k)} \rightarrow A_{m \times n}, \ \ B^{(k)} \rightarrow B_{n \times l}$，则 
+                    \begin{align*}
+                        \lim_{k \rightarrow \infty} A^{(k)}B^{(B)} = AB 
+                    \end{align*}
+                \item 设 $A^{(k)}$ 与 $A$ 都是可逆矩阵，且 $A^{(k)} \rightarrow A$，则 
+                    \begin{align*}
+                        (A^{(k)})^{-1} \rightarrow A^{-1} 
+                    \end{align*}
+                \item 对于有界的矩阵序列 $\{A^{(k)}\}$，必有收敛的子序列 $\{A^{k_s}\}$.
+            \end{enumerate}
+
+            \par \textbf{矩阵序列收敛的充要条件：}设 $A^{(k)} \in C^{m \times n}$，则
+            \begin{enumerate}
+                \item $A^{(k)} \rightarrow O$ 的充要条件是 $\Vert A^{(k)} \Vert \rightarrow 0$;
+                \item $A^{(k)} \rightarrow A$ 的充要条件是 $\Vert A^{(k)} - A \Vert \rightarrow 0$.
+            \end{enumerate}
+            这里，$\Vert \cdot \Vert$ 是 $C^{m \times n}$ 上的任何一种矩阵范数
+            \\
+            \par 在矩阵序列中，最常见的是由一个方阵的幂构成的序列，关于这样的矩阵序列，有以下的概念和收敛定理：
+            \par \textbf{收敛矩阵：}设 $A$ 为方阵，且 $A^k \rightarrow O \ \ (k \rightarrow \infty)$，则称 $A$ 为 \textbf{收敛矩阵}.
+            \par \textbf{矩阵收敛的条件：}
+            \begin{itemize}
+                \item 充要条件：$\rho(A) < 1$;
+                \item 充分条件：存在一种矩阵范数 $\Vert \cdot \Vert$，使得 $\Vert A \Vert < 1$.
+            \end{itemize}
+
+        \subsubsection{矩阵级数介绍}
+            \par \textbf{矩阵级数：}对于矩阵序列 $\{A^{(k)}\}$，对其求和所形成的无穷和 $A^{(0)} + A^{(1)} + A^{(2)} + \dots + A^{(k)} + \dots$ 称为 \textbf{矩阵级数}，记为 $\sum_{k=0}^{\infty}A^{(k)}$，则有
+            \begin{align*}
+                \sum_{k=0}^{\infty}A^{(k)} = A^{(0)} + A^{(1)} + A^{(2)} + \dots + A^{(k)} + \dots
+            \end{align*}
+            \par \textbf{矩阵级数的敛散性：}记 $S^{(N)} = \sum_{k=0}^{N}A^{(k)}$，称其为矩阵级数式 $\sum_{k=0}^{\infty}A^{(k)}$ 的 \textbf{部分和}. 如果矩阵序列 $\{S^{(N)}\}$ 收敛，且有极限 $S$，则有 
+            \begin{align*}
+                \lim_{N \rightarrow \infty}S^{(N)} = S
+            \end{align*}    
+            那么就称矩阵级数式 $\sum_{k=0}^{\infty}A^{(k)}$ \textbf{收敛}，而且有 \textbf{和} $S$，记为 
+            \begin{align*}
+                S = \sum_{k=0}^{\infty}A^{(k)}
+            \end{align*}
+            不收敛的矩阵级数称为是 \textbf{发散} 的.
+            \par 也就是说，如果 $\sum_{k=0}^{\infty}a_{ij}^{(k)} = s_{ij} \ \ (i = 1, \ 2, \ \dots, \ m; \ j = 1, \ 2, \ \dots, \ n)$，则矩阵级数收敛.
+            \par \textbf{绝对收敛：}如果对于 $\sum_{k=0}^{\infty}a_{ij}^{(k)}$ 中的每一个数项级数，其都是绝对收敛的，则称矩阵级数式是 \textbf{绝对收敛} 的.
+            \par 收敛的矩阵级数有以下性质：
+            \begin{enumerate}
+                \item 若矩阵级数式 $\sum_{k=0}^{\infty}$ 是绝对收敛的，则它一定收敛，并且任意调换其项的顺序得到的级数还是收敛的，且和不变;
+                \item 矩阵级数 $\sum_{k=0}^{\infty}$ 为绝对收敛的充要条件是正项级数 $\sum_{k=0}^{\infty}\Vert A^{(k)} \Vert$ 收敛;
+                \item 如果 $\sum_{k=0}^{\infty}A^{(k)}$ 是收敛的（或绝对收敛）的，那么 $\sum_{k=0}^{\infty}PA^{(k)}Q$ 也是收敛（或绝对收敛）的，并且有 
+                    \begin{align*}
+                        \sum_{k=0}^{\infty}PA^{(k)}Q = P(\sum_{k=0}^{\infty}A^{(k)})Q
+                    \end{align*}
+                \item 设 $C^{n \times n}$ 中的两个矩阵级数
+                    \begin{align*}
+                        S_1: \quad A^{(1)} + A^{(2)} + \dots + A^{(k)} + \dots \\
+                        S_2: \quad B^{(1)} + B^{(2)} + \dots + B^{(k)} + \dots
+                    \end{align*}
+                    都绝对收敛，其和分别为 $A$ 与 $B$，则级数 $S_1$ 与 $S_2$ 按项相乘所得的矩阵级数 
+                    \begin{align*}
+                        S_3: \quad &A^{(1)}B^{(1)} + (A^{(1)}B^{(2)} + A^{(2)}B^{(1)}) + (A^{(1)}B^{(3)} + A^{(2)}B^{(2) + A^{(3)}B^{(1)}}) + \dots \\ &+ (A^{(1)}B^{(k)} + A^{(2)}B^{(k-1) + \dots + A^{(k)}B^{(1)}}) + \dots = \sum_{k=1}^{\infty}(\sum_{i=1}^{k}A^{(i)}B^{(k + 1 - i)})
+                    \end{align*}
+                    绝对收敛，且有和 $AB$
+            \end{enumerate}
+
+            \par 矩阵级数中，矩阵的幂级数是建立矩阵函数的理论基础，占有重要地位，因此我们单独讨论矩阵的幂级数.
+            \par \textbf{矩阵的幂级数收敛的充要条件：} 方阵 $A$ 的 \textbf{幂级数(Neumann 级数)}
+            \begin{align*}
+                \sum_{k=0}^{\infty}A^k = I + A + A^2 + \dots + A^k + \dots
+            \end{align*}
+            收敛的充要条件为 $A$ 是收敛矩阵，并且在其收敛时有 $\sum_{k=0}^{\infty}A^k = (I - A)^{-1}$.
+
+            \par 有了上述性质后，我们引出如下定理：
+            \par 设方阵 $A$ 对某一矩阵范数 $\Vert \cdot \Vert$ 有 $\Vert A \Vert < 1$，则对任何非负整数 $N$，以 $(I - A)^{-1}$ 为部分和 $I + A + A^2 + \dots + A^N$ 的近似矩阵时，其误差为 
+            \begin{align*}
+                \Vert (I - A)^{-1} - (I + A + A^2 + \dots + A^N) \Vert \leq \frac{\Vert A \Vert^{N + 1}}{1 - \Vert A \Vert}
+            \end{align*}
+            \par \textbf{矩阵幂级数式的敛散性：}设幂级数
+            \begin{align*}
+                f(z) = \sum_{k=0}^{\infty}c_kz^k
+            \end{align*}
+            的收敛半径为 $r$，如果方阵 $A$ 满足 $\rho(A) < r$，则矩阵幂级数 
+            \begin{align*}
+                \sum_{k=0}^{\infty}c_kA^k
+            \end{align*}    
+            时绝对收敛的；如果 $\rho(A) > r$，则上式是发散的.
+        \subsubsection{矩阵函数介绍}
+            \par \textbf{矩阵函数：}设一元函数 $f(z)$ 能够展开为 $z$ 的幂级数 
+            \begin{align*}
+                f(z) = \sum_{k=0}^{\infty}c_kz^k \quad (|z| < r)
+            \end{align*}
+            其中 $r > 0$ 表示该幂级数的收敛半径。当 $n$ 阶矩阵 $A$ 的谱半径 $\rho(A) < r$ 时，把收敛的矩阵幂级数 $\sum_{k=0}^{\infty}c_kA^k$ 的和称为矩阵函数，记为 $f(A)$，即
+            \begin{align*}
+                f(A) = \sum_{k=0}^{\infty}c_kA^k \tag{3.3.2}
+            \end{align*}
+
+            \textbf{代入规则：}若 $f(z) = g(z)$，则 $f(A) = g(A)$
+
+        \subsubsection{函数矩阵对矩阵的导数}
+            \par \textbf{函数矩阵的导数：}如果函数矩阵 $A(t) = (a_{ij}(t))_{m \times n}$ 的每一个元素 $a_{ij}(t)$ 是变量 $t$ 的可导函数，则称 $A(t)$ 可导，其\textbf{导数(微商)} 定义为 
+            \begin{align*}
+                A'(t) = \frac{d}{dt}A(t) = (\frac{d}{dt}a_{ij}(t))_{m \times n} 
+            \end{align*}
+            \par 有上述导数定义可以推出如下性质：
+            \begin{enumerate}
+                \item 设 $A(t), \ B(t)$ 时能够进行下面运算的两个可导的函数矩阵，则有
+                    \begin{align*}
+                        &\frac{d}{dt}(A(t) + B(t)) = \frac{d}{dt}A(t) + \frac{d}{dt}B(t) \\ &\frac{d}{dt}(A(t)B(t)) = \frac{d}{dt}A(t) \cdot B(t) + A(t) \cdot \frac{d}{dt}B(t) \\ &\frac{d}{dt}(aA(t)) = \frac{da}{dt} \cdot A(t) + a\frac{d}{dt}A(t)
+                    \end{align*}
+                    这里，$a = a(t)$ 为 $t$ 的可导函数
+                \item 设 $n$ 阶矩阵 $A$ 与 $t$ 无关，则有
+                    \begin{align*}
+                        &\frac{d}{dt}e^{tA} = Ae^{tA} = e^{tA}A \\ &\frac{d}{dt}cos(tA) = -A(sin(tA)) = -(sin(tA))A \\ &\frac{d}{dt}sin(tA) = A(cos(tA)) = (cos(tA))A
+                    \end{align*}
+            \end{enumerate}
+
+            \par 在定义函数矩阵对矩阵的导数之前，我们先给出函数对矩阵的导数的定义：
+            \par \textbf{函数对矩阵的导数：} 设 $X = (\xi_{ij})_{m \times n}$，$mn$ 元函数 $f(X) = f(\xi_{11}, \ \xi_{12}, \ \dots, \\ \ \xi_{1n}, \ \xi_{21}, \ \dots, \ \xi_{mn})$，定义 $f(X)$ 对矩阵 $X$ 的导数为
+            \begin{align*}
+                \frac{df}{dX} = \frac{\partial f}{\partial \xi_{ij}}_{m \times n} = \begin{bmatrix}
+                    \frac{\partial f}{\partial \xi_{11}} & \cdots & \frac{\partial f}{\partial \xi_{1n}} \\ \vdots & & \vdots \\ \frac{\partial f}{\partial \xi_{m1}} & \cdots & \frac{\partial f}{\partial \xi_{mn}}
+                \end{bmatrix}
+            \end{align*}
+
+            \par \textbf{函数矩阵对矩阵的导数：}设 $X = (\xi_{ij})_{m \times n}$，$mn$ 元函数 $f_{ij}(X) = f_{ij}(\xi_{11}, \ \xi_{12}, \ \dots, \\ \ \xi_{1n}, \ \xi_{21}, \ \dots, \ \xi_{mn}) \ \ (i = 1, \ 2, \ \dots, \ r; \ j = 1, \ 2, \ \dots, \ s)$. 定义函数矩阵
+            \begin{align*}
+                F(X) = \begin{bmatrix}
+                    f_{11}(X) & \cdots & f_{1s} \\ \vdots & & \vdots \\ f_{r1}(X) & \cdots & f_{rs}(X)
+                \end{bmatrix}
+            \end{align*}
+            与函数对矩阵的导数类似，有函数矩阵对矩阵 $X$ 的导数为
+            \begin{align*}
+                \frac{dF}{dX} = \begin{bmatrix}
+                    \frac{\partial F}{\partial \xi_{11}} & \frac{\partial F}{\partial \xi_{12}} & \cdots & \frac{\partial F}{\partial \xi_{1n}} \\ \frac{\partial F}{\partial \xi_{21}} & \frac{\partial F}{\partial \xi_{2}} & \cdots & \frac{\partial F}{\partial \xi_{2n}} \\ \vdots & \vdots & & \vdots \\ \frac{\partial F}{\partial \xi_{m1}} & \frac{\partial F}{\partial \xi_{m2}} & \cdots & \frac{\partial F}{\partial \xi_{mn}}
+                \end{bmatrix}
+            \end{align*}
+            其中 $\frac{\partial F}{\partial \xi_{ij}}$ 为 $f_{ab} \ \ (a = 1, \ 2, \ \dots, r; \ \ b = 1, \ 2, \ \dots, \ s)$ 对 $\xi_{ij}$ 的偏导数，即
+            \begin{align*}
+                \frac{\partial F}{\partial \xi_{ij}} = \begin{bmatrix}
+                    \frac{\partial f_{11}}{\partial \xi_{ij}} & \frac{\partial f_{12}}{\partial \xi_{ij}} & \cdots & \frac{\partial f_{1s}}{\partial \xi_{ij}} \\ \frac{\partial f_{21}}{\partial \xi_{ij}} & \frac{\partial f_{22}}{\partial \xi_{ij}} & \cdots & \frac{\partial f_{2s}}{\partial \xi_{ij}} \\ \vdots & \vdots & & \vdots \\ \frac{\partial f_{r1}}{\partial \xi_{ij}} & \frac{\partial f_{r2}}{\partial \xi_{ij}} & \cdots & \frac{\partial f_{rs}}{\partial \xi_{ij}}
+                \end{bmatrix}
+            \end{align*}
+
+            

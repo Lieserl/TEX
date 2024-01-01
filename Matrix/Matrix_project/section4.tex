@@ -1,0 +1,1122 @@
+\section{矩阵分解方法研究}
+\fontsize{12pt}{14pt}\selectfont
+\songti
+    \subsection{矩阵的 LU 分解}
+        \subsubsection{矩阵 LU 分解的步骤推导}
+            \par 矩阵的 LU 分解与 $Gauss$ 消元过程密切相关，因此我们先推导 $Gauss$ 消元的过程：
+            \par \textbf{Gauss 消元过程：}
+            \par 设 $A^{(0)} = A$，其元素 $a_{ij}^{(0)} = a_{ij}(i, \ j = 1, \ 2, \ \dots, \ n)$. 记 $A$ 的 $k$ 阶顺序主子式为 $\Delta_k(k = 1, \ 2, \ \dots, \ n)$. 如果 $\Delta_1 = a_{11}^{(0)} \ne 0$，令 $c_{i1} = \frac{a_{i1}^{(0)}}{a_{11}^{0}}(i = 2, \ 3, \ \dots, \ n)$，并构造 Frobenius 矩阵
+            \begin{equation*}
+                L_1 = \begin{bmatrix}
+                    1 & & & \\ c_{21} & 1 & & \\ \vdots & & \ddots & \\ c_{n1} & & & 1 
+                \end{bmatrix}, \quad L_1^{-1}\begin{bmatrix}
+                    1 & & & \\ -c_{21} & 1 & & \\ \vdots & & \ddots & \\ -c_{n1} & & & 1  
+                \end{bmatrix}
+            \end{equation*}
+            计算 
+            \begin{equation*}
+                L_1^{-1}A^{(0)} = \begin{bmatrix}
+                    a_{11}^{(0)} & a_{12}^{(0)} & \cdots & a_{1n}^{(0)} \\ & a_{22}^{(1)} & \cdots & a_{n}^{(1)} \\ & \vdots & & \vdots \\ & a_{n2}^{(1)} & \cdots & a_{nn}^{(1)}
+                \end{bmatrix} = A^{(1)}
+            \end{equation*}
+            由此可见，$A^{0} = A$ 的第一列除主元 $a_{11}^{(0)}$ 外，其余元素全被化为零. 故有
+            \begin{equation*}
+                A^{(0)} = L_1A^{(1)}
+            \end{equation*}
+            因为倍加初等变换不改变矩阵的行列式的值，所以由 $A^{(0)}$ 得 $A$ 的二阶顺序主子式为
+            \begin{equation*}
+                \Delta_2 = a_{11}^{(0)}a_{22}^{(11)}
+            \end{equation*}
+            若 $\Delta_2 \ne 0$，则 $a_{22}^{(1)} \ne 0$. 令 $c_{i2} = \frac{a_{i2}^{(1)}}{a_{22}^{(1)}}(i = 3, \ 4, \ \dots, \ n)$，并构造矩阵
+            \begin{equation*}
+                L_2 = \begin{bmatrix}
+                    1 & & & & \\ & 1 & & & \\ & c_{32} & 1 & & \\ & \vdots & & \ddots & \\ & c_{n2} & & & 1
+                \end{bmatrix}, \quad L_2^{-1} = \begin{bmatrix}
+                    1 & & & & \\ & 1 & & & \\ & -c_{32} & 1 & & \\ & \vdots & & \ddots & \\ & -c_{n2} & & & 1
+                \end{bmatrix}
+            \end{equation*}
+            计算，得到
+            \begin{equation*}
+                L_2^{-1}A^{(1)} = \begin{bmatrix}
+                    a_{11}^{(0)} & a_{12}^{(0)} & a_{13}^{(0)} & \cdots & a_{1n}^{(0)} \\ & a_{22}^{(1)} & a_{23}^{(1)} & \cdots & a_{n}^{(1)} \\ & & a_{33}^{(2)} & \cdots & a_{3n}^{(2)} \\ & & \vdots & & \vdots \\ & & a_{n3}^{(2)} & \cdots & a_{nn}^{(2)}
+                \end{bmatrix} = A^{(2)}
+            \end{equation*}
+            同理，$A^{(2)}$ 的前两列中主元以下的元素全为零，有
+            \begin{equation*}
+                A^{(1)} = L_2A^{(2)}
+            \end{equation*}
+            因为倍加初等变换不改变矩阵的行列式的值，所以由 $A^{(2)}$ 得 $A$ 的三阶顺序主子式为
+            \begin{equation*}
+                \Delta_3 = a_{11}^{(0)}a_{22}^{(1)}a_{33}^{(2)}
+            \end{equation*}
+            如此迭代至第 $r-1$ 步，得到
+            \begin{equation*}
+                A^{(r-1)} = \begin{bmatrix}
+                    a_{11}^{(0)} & \cdots & a_{1,r-1}^{(0)} & a_{1r}^{(0)} & \cdots & a_{1n}^{(0)} \\ & \ddots & \vdots & \vdots & & \vdots \\ & & a_{r-1,r-1}^{(r-2)} & a_{r-1,r}^{(r-2)} & \cdots & a_{r-1,n}^{(r-2)} \\ & & & a_{rr}^{(r-1)} & \cdots & a_{rn}^{(r-1)} \\ & & & \vdots & & \vdots \\ & & & a_{nr}^{(r-1)} & \cdots & a_{nn}^{(r-1)}
+                \end{bmatrix}
+            \end{equation*}
+            若 $\Delta_r \ne 0$，则 $a_{rr}^{(r-1)} \ne 0$. 令 $C_{ir} = \frac{a_{ir}^{(r-1)}}{a_{rr}^{(r-1)}}(i = r + 1, \ r + 2, \ \dots, \ n)$，并构造 Frobenius 矩阵
+            \begin{equation*}
+                L_r = \begin{bmatrix}
+                    1 & & & & & \\ & \ddots & & & & \\ & & 1 & & & \\ & & c_{r+1,r} & 1 & & \\ & & \vdots & & \ddots & \\ & & c_{nr} & & & 1
+                \end{bmatrix}, \quad L_r^{-1} = \begin{bmatrix}
+                    1 & & & & & \\ & \ddots & & & & \\ & & 1 & & & \\ & & -c_{r+1,r} & 1 & & \\ & & \vdots & & \ddots & \\ & & -c_{nr} & & & 1
+                \end{bmatrix}
+            \end{equation*}
+            计算可得
+            \begin{equation*}
+                L_r^{-1}A^{(r-1)} = \begin{bmatrix}
+                    a_{11}^{(0)} & \cdots & a_{1r}^{(0)} & a_{1,r+1}^{(0)} & \cdots & a_{1n}^{(0)} \\ & \ddots & \vdots & \vdots & & \vdots \\ & & a_{rr}^{(r-1)} & a_{r,r+1}^{(r-1)} & \cdots & a_{rn}^{(r-1)} \\ & & & a_{r+1,r+1}^{(r)} & \cdots & a_{r+1,n}^{(r)} \\ & & & \vdots & & \vdots \\ & & & a_{n,r+1}^{(r)} & \cdots & a_{nn}^{(r)}
+                \end{bmatrix}
+            \end{equation*}
+            同理，有
+            \begin{equation*}
+                A^{(r-1)} = L_rA^{(r)}
+            \end{equation*}
+            故 $A$ 的 $r+1$ 阶顺序主子式为 
+            \begin{equation*}
+                \Delta_{r+1} = a_{11}^{(0)}a_{22}^{(1)} \dots a_{rr}^{(r-1)}a_{r+1,r+1}^{(r)}
+            \end{equation*}
+            迭代至第 $n-1$ 步，有
+            \begin{equation*}
+                A^{(n-1)} = \begin{bmatrix}
+                    a_{11}^{0} & a_{12}^{0} & \cdots & a_{1,n-1}^{0} & a_{1n}^{0} \\ & a_{22}^{1} & \cdots & a_{2,n-1}^{1} & a_{2n}^{1} \\ & & \ddots & \vdots & \vdots \\ & & & a_{n-1,n-1}^{(n-2)} & a_{n-1,n}^{(n-2)} \\ & & & & a_{nn}^{(n-1)}
+                \end{bmatrix}
+            \end{equation*}
+            \par 以上便是 \textbf{Gauss 消元} 的全过程. 根据前面所述，由于消元过程中未使用行、列的交换，因此其进行到底的条件是 \\ $a_{11}^{(0)}, \ a_{22}^{(1)}, \ \dots, \ a_{n-1, n-1}^{(n-2)}$ 都不为零，即
+            \begin{equation*}
+                \Delta_r \ne 0 \quad (r = 1, \ 2, \ \dots, \ n-1)
+            \end{equation*}
+            \\
+            \par 从上述推导过程中不难发现，当 $\Delta_r \ne 0$ 时，有 
+            \begin{equation*}
+                A = A^{(0)} = L_1A^{(1)} = L_1L_2A^{(2)} = \dots = L_1L_2 \dots L_{n-1}A^{(n-1)}
+            \end{equation*}
+            令 $L = L_1L_2 \dots L_{n-1}$，有
+            \begin{equation*}
+                L = L_1L_2 \dots L_{n-1} = \begin{bmatrix}
+                    1 & & & & \\ c_{21} & 1 & & & \\ \vdots & \vdots & \ddots & & \\ c_{n-1,1} & c_{n-1,2} & \cdots & 1 & \\ c_{n1} & c_{n2} & \cdots & c_{n,n-1} & 1
+                \end{bmatrix}
+            \end{equation*}
+            $L$ 是一个对角元素都为 $1$ 的下三角矩阵，称为 \textbf{单位下三角矩阵}. 而由之前的推导，$A^{(n-1)}$ 是一个上三角矩阵，令 $U = A^{(n-1)}$，有
+            \begin{equation*}
+                A = LU
+            \end{equation*}
+            如此，矩阵 $A$ 就被分解成一个单位下三角矩阵与一个上三角矩阵的乘积. 现在，我们对 矩阵的 \textbf{LU 分解} 做如下定义：
+            \par \textbf{LU 分解：}如果方阵 $A$ 可分解成一个下三角矩阵 $L$ 和一个上三角矩阵 $U$ 的乘积，则称 $A$ 可作 \textbf{三角分解 \ } 或 \textbf{LU 分解}. 如果方阵 $A$ 可分解成 $A = LDU$，其中 $L$ 是单位下三角矩阵，$D$ 是对角矩阵，$U$ 是单位上三角矩阵，则称 $A$ 可作 \textbf{LDU 分解}.
+            \par 对于矩阵的 LU 分解有如下定理：
+            \begin{enumerate}
+                \item 设 $A = (a_{ij})_{n \times n}$ 是 $n$ 阶矩阵，则当且仅当 $A$ 的顺序主子式 $\Delta_k \ne 0 \ \ (k = 1, \ 2, \ \dots, \ n - 1)$ 时，$A$ 可唯一地分解为 $A = LDU$，其中 $L$ 是单位下三角矩阵，$U$ 是单位上三角矩阵，且
+                    \begin{equation*}
+                        D = diag(d_1, \ d_2, \ \dots, d_n)
+                    \end{equation*}
+                    其中 $d_k = \frac{\Delta_k}{\Delta_{k-1}}(k = 1, \ 2, \ \dots, \ n; \ \Delta_0 = 1)$.
+                \item $n$ 阶可逆矩阵 $A$ 有三角分解 $A = LU$ 的充要条件是 $A$ 的顺序主子式 $\Delta_k \ne 0 \ \ (k = 1, \ 2, \ \dots, \ n — 1)$.
+                \item 设 $A$ 是 $n$ 阶可逆矩阵，则存在置换矩阵 $P$ 使 $PA$ 的 $n$ 个顺序主子式非零，且有
+                    \begin{equation*}
+                        PA = L\hat{U} = LDU
+                    \end{equation*}
+            \end{enumerate}
+
+            \par 由上述过程，我们可以得出矩阵的 $LDU$ 分解方法：
+            \begin{enumerate}
+                \item 判断矩阵 $A$ 的 $k$ 阶顺序主子式都满足 $\Delta_k \ne 0$，如果不，可以参考定理 $3$ 构造 $PAx = Pb$ 并求其解
+                \item 根据 Gauss 消元过程递推地计算 $L_k, \ A^{(k)}$
+                \item 计算 $L = L_{1}L_{2} \dots L_{n-1}$
+                \item 根据 $A = L_{1}L_{2} \dots L_{n-1}A^{(n-1)} = LA^{(n-1)}$ 得到矩阵的 LDU 分解
+            \end{enumerate}
+
+            \par \textbf{Crout 分解：}设矩阵 $A$ 有唯一的 $LDU$ 分解. 若把 $A = LDU$ 中的 $L$ 与 $D$ 结合起来，并且用 $\hat{L}$ 来表示，就得到唯一的分解为
+            \begin{equation*}
+                A = (LD)U = \hat{L}U
+            \end{equation*}
+            \par 下面给出 Crout 分解的步骤推导. 设 
+            \begin{equation*}
+                \hat{L} = \begin{bmatrix}
+                    l_{11} & & & \\ l_{21} & l_{22} & & \\ \vdots & \vdots & \ddots & \\ l_{n1} & l_{n2} & \cdots & l_{nn}
+                \end{bmatrix}, \quad U = \begin{bmatrix}
+                    1 & u_{12} & \cdots & u_{1n} \\ & 1 & \cdots & u_{2n} \\ & & \ddots & \vdots \\ & & & 1
+                \end{bmatrix}
+            \end{equation*}
+            根据 $A = \hat{L}U$，可以得到
+            \begin{align*}
+                a_{i1} = l_{i1} \quad &or \quad l_{i1} = a_{i1} \quad (i = 1, \ 2, \ \dots, \ n)  \tag{4.1.1}\\
+                a_{1j} = l_{11}u_{1j} \quad &or \quad u_{1j} = \frac{a_{1j}}{l_{11}} \quad (j = 2, \ 3, \ \dots, \ n) \tag{4.1.2}
+            \end{align*}
+            对于 $k = 2, \ 3, \ \dots, \ n$，当 $i \geq k$ 时，有
+            \begin{align*}
+                \because a_{ik} &= l_{i1}u_{1k} + \dots + l_{i,k-1}u_{k-1,k} + l_{ik} \\
+                \therefore l_{ik} &= a_{ik} - (l_{i1}u_{1k} + \dots + l_{i,k-1}u_{k-1,k}) \tag{4.1.3}
+            \end{align*}
+            而当 $j > k$ 时，有
+            \begin{align*}
+                \because a_{kj} &= l_{k1}u_{1j} + \dots + l_{k,k-1}u_{k-1,j} + l_{kk}u_{kj} \\
+                \therefore u_{kj} &= \frac{1}{l_{kk}}[a_{kj} - (l_{k1}u_{1j} + \dots + l_{k,k-1}u_{k-1,j})] \tag{4.1.4}
+            \end{align*}
+            \par 在实际计算时，顺序如下
+            \begin{enumerate}
+                \item 利用式 $(4.1.1)$ 计算 $\hat{L}$ 的第一列
+                    \par 利用式 $(4.1.2)$ 计算 $U$ 的第一行
+                \item 利用式 $(4.1.3)$ 计算 $\hat{L}$ 的第二列
+                    \par 利用式 $(4.1.4)$ 计算 $U$ 的第二行 
+                \item $\cdots \cdots$
+                \item 利用式 $(4.1.3)$ 计算 $\hat{L}$ 的第 $n-1$ 列
+                    \par 利用式 $(4.1.4)$ 计算 $U$ 的第 $n-1$ 行
+                \item 利用式 $(4.1.3)$ 计算 $\hat{L}$ 的第 $n$ 列
+            \end{enumerate} 
+            \par \textbf{Doolittle 分解：}设矩阵 $A$ 有唯一的 $LDU$ 分解. 若把 $A = LDU$ 中的 $D$ 与 $U$ 结合起来，并且用 $\hat{U}$ 来表示，就得到唯一的分解为
+            \begin{equation*}
+                A = L(DU) = L \hat{U}
+            \end{equation*}
+            \par 与上述过程类似，我们可以得到 Doolittle 分解的计算公式为
+            \begin{equation*}
+                \begin{cases*}
+                    u_{ik} = a_{ik} - \sum_{r=1}^{i-1}l_{ir}u_{rk} \quad (k = i, \ i + 1, \ \dots, n) \\
+                    l_{ki} = \frac{1}{u_{ii}}(a_{ki} - \sum_{r=1}^{i-1}l_{kr}u_{ri}) \quad (k = i + 1, \ \dots, \ n)
+                \end{cases*}
+            \end{equation*}
+            \par \textbf{实对称矩阵的 Cholesky 分解：}当 $A$ 为实对称正定矩阵时，$\Delta_k > 0 \ \ (k = 1, \ 2, \ \dots, \ n)$. 于是 $A$ 有唯一的 LDU 分解 $A = LDU$，其中 $D = diag(d_1, \ d_2, \ \dots, \ n)$， 且 $d_i > 0 \ \ (i = 1, \ 2, \ \dots, \ n)$. 令
+            \begin{equation*}
+                \widetilde{D} = diag(\sqrt{d_1}, \ \sqrt{d_2}, \ \dots, \ \sqrt{d_n})
+            \end{equation*}
+            则有 $A = L\widetilde{D}^2U$. 由 $A^T = A$ 得到 $L\widetilde{D}^2U = U^T\widetilde{D}^2L^T$，再由分解的唯一性有 $L = U^T, \ U = L^T$，故有
+            \begin{equation*}
+                A = L\widetilde{D}^2L^T = LDL^T 
+            \end{equation*}
+            或者
+            \begin{equation*}
+                A = L\widetilde{D}^2L^T = (L\widetilde{D})(L\widetilde{D})^T = GG^T
+            \end{equation*}
+            其中，$G = L\widetilde{D}$ 是下三角矩阵.
+            \par 令 $G = (g_{ij})$，则由 $A = GG^T$ 两端相应元素相等可得
+            \begin{equation*}
+                a_{ij} = g_{i1}g_{j1} + g_{i2}g_{j2} + \dots + g_{ij}g_{ij} \quad (i > j), \quad a_{ii} = g_{i1}^2 + g_{i2}^2 + \dots + g_{ii}^2
+            \end{equation*}
+            从而得到计算 $g_{ij}$ 的递推关系式为
+            \begin{equation*}
+                g_{ij} = \begin{cases*}
+                    (a_{ii} - \sum_{k=1}^{i-1}g_{ik}^2)^{1/2} \quad &(i = j) \\
+                    \frac{1}{g_{jj}}(a_{ij} - \sum_{k=1}^{j-1}g_{ik}g_{jk}) \quad &(i > j) \\
+                    0 \quad &(i < j)
+                \end{cases*}
+            \end{equation*}
+            \par 实际求解过程是按照行优先原则对 $g_{ij}$ 进行求解.
+
+        \subsubsection{举例展示求法}
+            \begin{problem}
+                \par 求矩阵 $A$ 的 LDU 分解和 Doolittle 分解，其中
+                \begin{equation*}
+                    A = \begin{bmatrix}
+                        5 & 2 & -4 & 0 \\ 2 & 1 & -2 & 1 \\ -4 & -2 & 5 & 0 \\ 0 & 1 & 0 & 2
+                    \end{bmatrix}
+                \end{equation*}
+             \end{problem}
+             \begin{solution}
+                \\ \textbf{Gauss 消元法：}
+                \begin{enumerate}
+                    \item 判断矩阵 $A$ 的 $k$ 阶顺序主子式都满足 $\Delta_k \ne 0$，如果不，可以参考定理 $3$ 构造 $PAx = Pb$ 并求其解
+                        \par 因为 $\Delta_1 = 5, \ \Delta_2 = 1, \ \Delta_3 = 1$，所以 $A$ 有唯一的 LDU 分解.
+                    \item 根据 Gauss 消元过程递推地计算 $L_k, \ A^{(k)}$
+                        \par 对 $A$ 构造矩阵 
+                        \begin{equation*}
+                            L_1 = \begin{bmatrix}
+                                1 & & & \\ \frac{2}{5} & 1 & & \\ -\frac{4}{5} & 0 & 1 & \\ 0 & 0 & 0 & 1
+                            \end{bmatrix}, \quad L_1^{-1} = \begin{bmatrix}
+                                1 & & & \\ -\frac{3}{5} & 1 &  & \\ \frac{4}{5} & 0 & 1 & \\ 0 & 0 & 0 & 1
+                            \end{bmatrix}
+                        \end{equation*}
+                        计算，得 
+                        \begin{equation*}
+                            L_1^{-1}A = \begin{bmatrix}
+                                5 & 2 & -4 & 0 \\ 0 & \frac{1}{5} & -\frac{2}{5} & 1 \\ 0 & -\frac{2}{5} & \frac{4}{5} & 0 \\ 0 & 1 & 0 & 2
+                            \end{bmatrix} = A^{(1)}
+                        \end{equation*}
+                        对 $A^{(1)}$ 构造矩阵 
+                        \begin{equation*}
+                            L_2 = \begin{bmatrix}
+                                1 & & & \\ 0 & 1 & & \\ 0 & -2 & 1 & \\ 0 & 5 & 0 & 1
+                            \end{bmatrix}, \quad L_2^{-1} = \begin{bmatrix}
+                                1 & & & \\ 0 & 1 & & \\ 0 & 2 & 1 & \\ 0 & -5 & 0 & 1
+                            \end{bmatrix}
+                        \end{equation*}
+                        计算，得 
+                        \begin{equation*}
+                            L_2^{-1}A^{(1)} = \begin{bmatrix}
+                                5 & 2 & -4 & 0 \\ 0 & \frac{1}{5} & - \frac{2}{5} & 1 \\ 0 & 0 & 1 & 2 \\ 0 & 0 & 2 & -3
+                            \end{bmatrix} = A^{(2)}
+                        \end{equation*}
+                        对 $A^{(2)}$ 构造矩阵 
+                        \begin{equation*}
+                            L_3 = \begin{bmatrix}
+                                1 & & & \\ 0 & 1 & & \\ 0 & 0 & 1 & \\ 0 & 0 & 2 & 1
+                            \end{bmatrix}, \quad L_3^{-1} = \begin{bmatrix}
+                                1 & & & \\ 0 & 1 & & \\ 0 & 0 & 1 & \\ 0 & 0 & -2 & 1
+                            \end{bmatrix}
+                        \end{equation*}
+                        计算，得 
+                        \begin{equation*}
+                            L_3^{-1}A^{(2)} = \begin{bmatrix}
+                                5 & 2 & -4 & 0 \\ & \frac{1}{5} & -\frac{2}{5} & 1 \\ & & 1 & 2 \\ & & & -7
+                            \end{bmatrix} = A^{(3)}
+                        \end{equation*}
+                    \item 计算 $L = L_{1}L_{2} \dots L_{n-1}$
+                        \par 令 $L = L_1L_2L_3$，有
+                        \begin{equation*}
+                            L = L_1L_2L_3 = \begin{bmatrix}
+                                1 & & & \\ \frac{2}{5} & 1 & & \\ -\frac{4}{5} & -2 & 1 & \\ 0 & 5 & 2 & 1
+                            \end{bmatrix}
+                        \end{equation*}
+                    \item 根据 $A = L_{1}L_{2} \dots L_{n-1}A^{(n-1)} = LA^{(n-1)}$ 得到矩阵的 LDU 分解
+                        \par 于是，$A$ 的 LDU 分解为
+                        \begin{equation*}
+                            A = L_1L_2L_3A^{(3)} = \begin{bmatrix}
+                                1 & & & \\ \frac{2}{5} & 1 & & \\ -\frac{4}{5} & -2 & 1 & \\ 0 & 5 & 2 & 1
+                            \end{bmatrix}\begin{bmatrix}
+                                5 & & & \\ & \frac{1}{5} & & \\ & & 1 & \\ & & & 7
+                            \end{bmatrix}\begin{bmatrix}
+                                1 & \frac{2}{5} & -\frac{4}{5} & 0 \\ & 1 & -2 & 5 \\ & & 1 & 2 \\ & & & 1
+                            \end{bmatrix}
+                        \end{equation*}
+                \end{enumerate}
+                \textbf{Doolittle 分解：}
+                \par 这里我们使用 Crout 分解来求 Doolittle 分解.
+                \begin{enumerate}
+                    \item 利用式 $(4.1.1)$ 计算 $\hat{L}$ 的第一列
+                        \par 利用式 $(4.1.2)$ 计算 $U$ 的第一行
+                        \begin{align*}
+                            l_{11} &= a_{11} = 5, \quad l_{21} = a_{21} = 2, \quad l_{31} = a_{31} = -4, \quad l_{41} = a_{41} = 0 \\
+                            u_{12} &= \frac{a_{12}}{l_{11}} = \frac{2}{5}, \quad u_{13} = \frac{a_{13}}{l_{11}} = -\frac{4}{5}, \quad u_{14} = \frac{a_{14}}{l_{11}} = 0
+                        \end{align*}
+                    \item 利用式 $(4.1.3)$ 计算 $\hat{L}$ 的第二列
+                        \par 利用式 $(4.1.4)$ 计算 $U$ 的第二行
+                        \begin{align*}
+                            l_{22} &= a_{22} - l_{21}u_{12} = \frac{1}{5}, \quad  l_{32} = a_{32} - l_{31}u_{12} = -\frac{2}{5}, \quad  l_{42} = a_{42} - l_{41}u_{12} = 1 \\
+                            u_{23} &= \frac{1}{l_{22}}[a_{23} - l_{21}u_{13}] = -2, \quad u_{24} = \frac{1}{l_{24}}[a_{24} - l_{21}u_{14}] = 5        
+                        \end{align*} 
+                    \item 利用式 $(4.1.3)$ 计算 $\hat{L}$ 的第三列
+                        \par 利用式 $(4.1.4)$ 计算 $U$ 的第三行
+                        \begin{align*}
+                            l_{33} &= a_{33} - (l_{31}u_{13} + l_{32}u_{23}) = 1, \quad  l_{43} = a_{43} - (l_{41}u_{13} + l_{42}u_{23}) = 2 \\
+                            u_{34} &= \frac{1}{l_{33}}[a_{34} - (l_{31}u_{14} + l_{32}u_{24})] = 2
+                        \end{align*}
+                    \item 利用式 $(4.1.3)$ 计算 $\hat{L}$ 的第四列
+                        \begin{equation*}
+                            l_{44} = a_{44} - (l_{41}u_{14} + l_{42}u_{24} + l_{43}u_{34}) = 7
+                        \end{equation*}
+                \end{enumerate} 
+                    \par 求得
+                    \begin{equation*}
+                        \widetilde{L} = \begin{bmatrix}
+                            5 & & & \\ 2 & \frac{1}{5} & & \\ -4 & -\frac{2}{5} & 1 & \\ 0 & 1 & 2 & 7
+                        \end{bmatrix}, \quad U = \begin{bmatrix}
+                            1 & \frac{2}{5} & -\frac{4}{5} & 0 \\ & 1 & -2 & 5 \\ & & 1 & 2 \\ & & & 1
+                        \end{bmatrix}
+                    \end{equation*}
+                    \par 故 Doolittle 分解为 
+                    \begin{equation*}
+                        A = \widetilde{L}U = LDU = L\widetilde{U} = \begin{bmatrix}
+                            1 & & & \\ \frac{2}{5} & 1 & & \\ -\frac{4}{5} & -2 & 1 & \\ 0 & 5 & 2 & 1
+                        \end{bmatrix}\begin{bmatrix}
+                            5 & 2 & -4 & 0 \\ & \frac{1}{5} & -\frac{2}{5} & 1 \\ & & 1 & 2 \\ & & & -7
+                        \end{bmatrix}
+                    \end{equation*}
+            \end{solution}
+            \begin{problem}
+                求对称正定矩阵 $A$ 的 Cholesky 分解，其中
+                \begin{equation*}
+                    A = \begin{bmatrix}
+                        5 & 2 & -4 \\ 2 & 1 & -2 \\ -4 & -2 & 5
+                    \end{bmatrix}
+                \end{equation*}
+            \end{problem} 
+            \begin{solution}
+                \\ \textbf{Cholesky 分解：}
+                \par 容易验证 $A$ 式对称正定矩阵.
+                \begin{align*}
+                    g_{11} &= \sqrt{a_{11}} = \sqrt{5} \\
+                    g_{21} &= \frac{a_{21}}{g_{11}} = \frac{2}{\sqrt{5}}, \quad g_{22} = (a_{22} - g_{21}^2)^{1/2} = \frac{1}{\sqrt{5}} \\
+                    g_{31} &= \frac{a_{31}}{g_{11}} = -\frac{4}{\sqrt{5}}, \quad g_{32} = \frac{a_{32} - g_{31}g_{21}}{g_{22}} = -\frac{2}{\sqrt{5}}, \quad g_{33} = (a_{33} - g_{31}^2 - g_{32}^2)^{1/2} = 1
+                \end{align*}
+                从而，得
+                \begin{equation*}
+                    A = \begin{bmatrix}
+                        \sqrt{5} & & \\ \frac{2}{\sqrt{5}} & \frac{1}{\sqrt{5}} \\ -\frac{4}{\sqrt{5}} & -\frac{2}{\sqrt{5}} & 1
+                    \end{bmatrix}\begin{bmatrix}
+                        \sqrt{5} & \frac{2}{\sqrt{5}} & -\frac{4}{\sqrt{5}} \\  & \frac{1}{\sqrt{5}} & -\frac{2}{\sqrt{5}} \\  &  & 1
+                    \end{bmatrix}
+                \end{equation*}
+            \end{solution}
+
+    \subsection{矩阵的 QR 分解}
+        \subsubsection{矩阵 QR 分解的步骤推导}
+            \par \textbf{Givens 矩阵：}设实数 $c$ 和 $s$ 满足 $c^2 + s^2 = 1$，对应的 $Givens$ 矩阵为 $T_{ij}(c, \ s)(i \ne j)$，则
+            \begin{enumerate}
+                \item $T_{ij}(c, \ s)$ 是正交矩阵;
+                \item $[T_{ij}(c, \ s)]^{-1} = T_{ij}(c, \ -s)$;
+                \item $det[T_{ij}(c, \ s)] = 1$;
+                \item 设实向量 $\textbf{textit{x}} = (\xi_1, \ \xi_2, \ \dots, \ \xi_n)^T, \ y = T_{ij}(c, \ s)\textbf{\textit{x}} = (\eta_1, \ \eta_2, \ \dots, \ eta_n)^T$，则
+                    \begin{align*}
+                        \eta_i &= c\xi_i + s\xi_j, \quad \eta_j = -s\xi_i + c\xi_j \\
+                        \eta_k &= \xi_k \quad (k \ne i, \ j; \ k = 1, \ 2, \ \dots, \ n)
+                    \end{align*}
+                \item 设 $\textbf{\textit{x}} = (\xi_1, \ \xi_2, \ \dots, \ \xi_n)^T \ne 0$，则存在有限个 Givens 矩阵的乘积，记作 $T$，使得 $T\textbf{\textit{x}} = |\textbf{\textit{x}}|e_1$
+            \end{enumerate}
+            \par \textbf{Householder 矩阵：}设 $u \in R^n$ 是单位列向量，对应 Householder 矩阵为 $H_u = I_n - 2uu^T$，则
+            \begin{enumerate}
+                \item $H_u$ 是对称$(H^T=H)$、正交$(H^TH=I)$、自逆$(H^2=I)$、对合矩阵$H^{-1}=H$
+                \item $detH = -1$
+                \item 任意给定非零列向量 $\textbf{\textit{z}} \in R^n(n > 1)$ 及单位列向量 $\textbf{\textit{z}} \in R^n$，则存在 Householder 矩阵 $H$，使得 $H\textbf{\textit{x}} = |\textbf{\textit{x}}|\textbf{\textit{z}}$
+                \item 一个 Givens 矩阵可以表示为两个 Householder 矩阵的乘积
+            \end{enumerate}
+            \par \textbf{矩阵的 QR 分解：}如果实（复）可逆矩阵 $A$ 能够化成正交（酉）矩阵 $Q$ 与实（复）可逆上三角矩阵 $R$ 的乘积，即
+            \begin{equation*}
+                A = QR
+            \end{equation*}
+            则称 $A = QR$ 为 $A$ 的 \textbf{QR 分解}.
+            \\
+            \textbf{Schimidt 正交化求 QR 分解：}
+            \par 记矩阵 $A$ 的 $n$ 个列向量依次为 $a_1, \ a_2, \ \dots, \ a_n$. 因为 $A$ 可逆，所以这 $n$ 个列向量线性无关. 将它们按 Schmidt 正交化方法正交化之，可得到 $n$ 个标准正交列向量 $q_1, \ q_2, \ \dots, \ q_n$.
+            \par 对 $a_1, \ a_2, \ \dots, \ a_n$ 正交化，可得
+            \begin{equation*}
+                \begin{cases*}
+                    \begin{aligned}
+                        b_1 &= a_1 \\ b_2 &= a_2 - k_{21}b_1 \\ &\cdots \cdots \\ b_n &= a_n - k_{n,n-1}b_{n-1} - \dots - k_{n1}b_1
+                    \end{aligned}
+                \end{cases*}
+            \end{equation*}
+            其中 $k_{ij} = \frac{a_i, \ b_j}{(b_j, \ b_j)} \ \ (j < i)$. 将上式改写为
+            \begin{equation*}
+                \begin{cases*}
+                    \begin{aligned}
+                        a_1 &= b_1 \\ a_2 &= k_{21}b_1 + b_2 \\ &\cdots \cdots \\ a_n &= k_{n1}b_1 + k_{n2}b_2 + \dots + k{n,n-1}b_{n-1} + b_n
+                    \end{aligned}
+                \end{cases*}
+            \end{equation*}
+            用矩阵形式表示为 
+            \begin{equation*}
+                (a_1, \ a_2, \ \dots, \ a_n) = (b_1, \ b_2, \ \dots, \ b_n)C
+            \end{equation*}
+            其中
+            \begin{equation*}
+                C = \begin{bmatrix}
+                    1 & k_{21} & \cdots & k_{n1} \\ & 1 & \cdots & k_{n2} \\ & & \ddots & \vdots \\ & & & 1
+                \end{bmatrix}
+            \end{equation*}
+            对 $b_1, \ b_2, \ \dots, \ b_n$ 单位化，可以得到
+            \begin{equation*}
+                q_i = \frac{1}{|b_i|}b_i \quad (i = 1, \ 2, \ \dots, \ n)
+            \end{equation*}
+            于是有 
+            \begin{equation*}
+                (a_1, \ a_2, \ \dots, \ a_n) = (b_1, \ b_2, \ \dots, b_n)C = (q_1, \ q_2, \ \dots, \ q_n)\begin{bmatrix}
+                    |b_1| & & & \\ & |b_2| & & \\ & & \ddots & \\ & & & |b_n|
+                \end{bmatrix}C
+            \end{equation*}
+            令 
+            \begin{equation*}
+                \begin{cases*}
+                    Q = (q_1, \ q_2, \ \dots, \ q_n) \\ R = diag(|b_1|, \ |b_2|, \ \dots, \ |b_n|) \cdot C
+                \end{cases*}
+            \end{equation*}
+            则 $Q$ 是正交（酉）矩阵，$R$ 是可逆上三角矩阵，且有 $A = QR$.
+            \par 总结求解流程如下：
+            \begin{enumerate}
+                \item 对 $A$ 的列向量组 $a_1, \ a_2, \ \dots, a_n$ 正交化得正交向量组 $b_1, \ b_2, \ \dots, \ b_n$
+                \item 构造正交矩阵 $Q = (q_1, \ q_2, \ \dots, \ q_n)$，其中 $q_j = \frac{b_j}{|b_j|}$
+                \item 构造上三角矩阵 $R = diag(|b_1|, \ |b_2|, \ \dots, \ |b_n|)\cdot C$，那么 $A = QR$
+            \end{enumerate}
+
+            \par \textbf{Givens 变换求 QR 分解：}
+            \par 由 $det A \ne 0$ 知，$A$ 的第 $1$ 列 $b^{(1)} = (a_{11}, \ a_{21}, \ \dots, \ a_{n1})^T \ne 0$. 存在有限个 Gievns 矩阵的乘积，记作 $T_1$， 使得
+            \begin{equation*}
+                T_1b^{(1)} = |b^{(1)}|e_1 \quad (e_1 \in R^n)
+            \end{equation*}
+            令 $a_{11}^{(1)} = |b^{(1)}|$，则有
+            \begin{equation*}
+                T_1A = \begin{bmatrix}
+                    a_{11}^{(1)} &  a_{12}^{(1)} & \cdots &  a_{1n}^{(1)} \\ 0 & & & \\ \vdots & & A^{(1)} & \\ 0 & & & 
+                \end{bmatrix}
+            \end{equation*}
+            由 $detA^{(1)} \ne 0$ 知，$A^{(1)}$ 的第 $1$ 列 $b^{(2)} = (a_{22}^{(1)}, \ a_{23}^{(1)}, \ \dots, \ a_{n2}^{(1)})$. 存在有限个 Givens 矩阵的乘积，记作 $T_2$，使得
+            \begin{equation*}
+                T_2b^{(2)} = |b^{(2)}|e_1 \quad (e_1 \in R^{(n-1)})
+            \end{equation*}
+            令 $a_{22}^{(2)} = |b^{(2)}|$，则有
+            \begin{equation*}
+                T_2A^{(1)} = \begin{bmatrix}
+                    a_{22}^{(2)} &  a_{23}^{(2)} & \cdots &  a_{24}^{(2)} \\ 0 & & & \\ \vdots & & A^{(2)} & \\ 0 & & & 
+                \end{bmatrix}
+            \end{equation*} 
+            以此类推，最后有 
+            \begin{equation*}
+                T_{n-1}b^{(n-1)} = |b^{(n-1)}|e_1 \quad (e_1 \in R^2)
+            \end{equation*}
+            令 $a_{n-1,n-1}^{n-1} = |b^{(n-1)}|$，则有
+            \begin{equation*}
+                T_{n-1}A^{(n-2)} = \begin{bmatrix}
+                    a_{n-1,n-1}^{(n-1)} & a_{n-1,n}^{(n-1)} \\ 0 & a_{nn}^{(n-1)}
+                \end{bmatrix}
+            \end{equation*}
+            最后，令
+            \begin{equation*}
+                T = \begin{bmatrix}
+                    I_{n-2} & O \\ O & T_{n-1} 
+                \end{bmatrix} \dots \begin{bmatrix}
+                    I_2 & O \\ O & T_3
+                \end{bmatrix} \begin{bmatrix}
+                    1 & O \\ O & T_2
+                \end{bmatrix} T_1
+            \end{equation*}
+            则 $T$ 是有限个 Givens 矩阵的乘积，使得
+            \begin{equation*}
+                TA = \begin{bmatrix}
+                    a_{11}^{(1)} & a_{12}^{(1)} & \cdots & a_{1,n-1}^{(1)} & a_{1n}^{(1)} \\ & a_{22}^{(2)} & \cdots &a_{2,n-1}^{(2)} & a_{2n}^{(2)} \\ & & \ddots & \vdots & \vdots \\ & & & a_{n-1,n-1}^{(n-1)} & a_{n-1,n}^{(n-1)} \\ & & & & a_{nn}^{(n-1)}
+                \end{bmatrix}
+            \end{equation*}
+            记为 $R$，有 $A = QR$，其中 $Q = T^{-1}$. 因为 $T$ 是有限个 Givens 矩阵的乘积，而 Givens 矩阵都是正交矩阵，所以 $T$ 是正交矩阵，于是 $Q = T^{-1} = T^T$ 也是正交矩阵.
+            \par 总结求解流程如下：
+            \begin{enumerate}
+                \item 对 $A$ 的第 $1$ 列 $b^{(1)}$ 构造有限个 Givens 矩阵的乘积 $T_1$，使得
+                    \begin{align*}
+                        T_1b^{(1)} = |b^{(1)}|e_1 \quad (e_1 \in R^n)
+                        T_1A = \begin{bmatrix}
+                            a_{11}^{(1)} &  a_{12}^{(1)} & \cdots &  a_{1n}^{(1)} \\ 0 & & & \\ \vdots & & A^{(1)} & \\ 0 & & & 
+                        \end{bmatrix}
+                    \end{align*}
+                \item 对 $A^{(1)}$ 的第 $1$ 列 $b^{(2)}$ 构造 $T_2$
+                \item $\cdots \cdots$
+                \item 对 $A^{(n-2)}$ 的第 $1$ 列 $b^{(n-1)}$ 构造 Givens 矩阵 $T_{n-1}$
+                \item 构造上三角矩阵 $R$，计算正交矩阵 $Q$，那么 $A = QR$.
+            \end{enumerate}
+            \par \textbf{Householder 变换求 QR 分解：}
+            \par Householder 变化求解过程与 Givens 类似，这里不再赘述重复部分.
+            \par 最后得出 
+            \begin{equation*}
+                S = \begin{bmatrix}
+                    I_{n-2} & O \\ O & H_{n-1} 
+                \end{bmatrix} \dots \begin{bmatrix}
+                    I_2 & O \\ O & H_3
+                \end{bmatrix} \begin{bmatrix}
+                    1 & O \\ O & H_2
+                \end{bmatrix} H_1
+            \end{equation*}
+            并注意到，若 $H_n$ 是 $n-l$ 阶 Householder 矩阵，即
+            \begin{equation*}
+                H_u = I_{n-1} - 2uu^T \quad (u \in R^{n-l}, \ u^Tu = 1)
+            \end{equation*}
+            令 $v = \begin{bmatrix} 0 \\ u \end{bmatrix} \in R^n$，则 $v^Tv = u^Tu = 1$，且
+            \begin{equation*}
+                \begin{bmatrix}
+                    I_l & O \\ O & H_u 
+                \end{bmatrix} = \begin{bmatrix}
+                    I_l & O \\ O & I_{n-l}
+                \end{bmatrix} - 2\begin{bmatrix}
+                    O & O \\ O & uu^T
+                \end{bmatrix} = I_n - 2\begin{bmatrix}
+                    0 \\ u
+                \end{bmatrix}\begin{bmatrix}
+                    0^T | u^T
+                \end{bmatrix} = I_n - 2vv^T
+            \end{equation*}
+            是 $n$ 阶 Householder 矩阵. 因此，$S$ 是有限个 Householder 矩阵的乘积，且使得 $SA$ 等于上述上三角矩阵，记为 $R$，则 $Q = S^{-1} = S^T$，有 $A = QR$.
+        \subsubsection{举例展示求法}
+            \begin{problem}
+                \par 用 Schmidt 正交化方法求矩阵
+                \begin{equation*}
+                    A = \begin{bmatrix}
+                        0 & 1 & 1 \\ 1 & 1 & 0 \\ 1 & 0 & 1
+                    \end{bmatrix}
+                \end{equation*}
+                的 QR 分解
+            \end{problem}
+            \begin{solution}
+                \begin{enumerate}
+                    \item 对 $A$ 的列向量组 $a_1, \ a_2, \ \dots, a_n$ 正交化得正交向量组 $b_1, \ b_2, \ \dots, \ b_n$
+                        \par 令 $a_1 = (0, \ 1, \ 1)^T, \ a_2 = (1, \ 1, \ 0)^T, \ a_3 = (1, \ 0, \ 1)^T$，正交化可得
+                        \begin{align*}
+                            b_1 &= a_1 = (0, \ 1, \ 1)^T \\ b_2 &= a_2 - \frac{1}{2}b_1 = (1, \ \frac{1}{2}, \ -\frac{1}{2})^T \\ b_3 &= a_3 - \frac{1}{3}b_2 - \frac{1}{2}b_1 = (\frac{2}{3}, \ -\frac{2}{3}, \ \frac{2}{3})^T
+                        \end{align*}
+                    \item 构造正交矩阵 $Q = (q_1, \ q_2, \ \dots, \ q_n)$，其中 $q_j = \frac{b_j}{|b_j|}$
+                        \par 根据给定方法构造矩阵
+                        \begin{equation*}
+                            Q = \begin{bmatrix}
+                                0 & \frac{2}{\sqrt{6}} & \frac{1}{\sqrt{3}} \\ \frac{1}{\sqrt{2}} & \frac{1}{\sqrt{6}} & -\frac{1}{\sqrt{3}} \\ \frac{1}{\sqrt{2}} & -\frac{1}{\sqrt{6}} & \frac{1}{\sqrt{3}}
+                            \end{bmatrix}
+                        \end{equation*}
+                    \item 构造上三角矩阵 $R = diag(|b_1|, \ |b_2|, \ \dots, \ |b_n|)\cdot C$，那么 $A = QR$
+                        \begin{equation*}
+                            R = \begin{bmatrix}
+                                \sqrt{2} & \frac{1}{\sqrt{2}} & \frac{1}{\sqrt{2}} \\ & \frac{3}{\sqrt{6}} & \frac{1}{\sqrt{6}} \\ & & \frac{2}{\sqrt{3}}
+                            \end{bmatrix}
+                        \end{equation*}
+                        则有 $A = QR$
+                \end{enumerate}
+            \end{solution}
+            \begin{problem}
+                \par 用 Givens 变换求矩阵 
+                \begin{equation*}
+                    A = \begin{bmatrix}
+                        2 & 2 & 1 \\ 0 & 2 & 2 \\ 2 & 1 & 2
+                    \end{bmatrix}
+                \end{equation*}
+                的 QR 分解
+            \end{problem}
+            \begin{solution}
+                \begin{enumerate}
+                    \item 对 $A$ 的第 $1$ 列 $b^{(1)}$ 构造有限个 Givens 矩阵的乘积 $T_1$
+                       \par 对 $A$ 的第 $1$ 列 $b^{(1)} = (2, \ 0, \ 2)^T$，构造 $T_1$ 使得 $T_1b^{(1)} = |b^{(1)}|e_1$ 
+                       \begin{align*}
+                            T_{12} = \begin{bmatrix}
+                                \frac{1}{\sqrt{2}} & 0 & \frac{1}{\sqrt{2}} \\ 0 & 1 & 0 \\ -\frac{1}{\sqrt{2}} & 0 & \frac{1}{\sqrt{2}}
+                            \end{bmatrix}, \quad T_{13}b^{(1)} = \begin{bmatrix}
+                                2\sqrt{2} \\ 0 \\ 0
+                            \end{bmatrix} \\
+                            T_1 = T_{13}, \quad T_1A = \begin{bmatrix}
+                                2\sqrt{2} & \frac{3}{\sqrt{2}} & \frac{3}{\sqrt{2}} \\ 0 & 2 & 2 \\ 0 & -\frac{1}{\sqrt{2}} & \frac{1}{\sqrt{2}}
+                            \end{bmatrix}
+                       \end{align*}
+                    \item 对 $A^{(1)}$ 的第 $1$ 列 $b^{(2)}$ 构造 $T_2$
+                        \par 对 $A^{(1)} = \begin{bmatrix}
+                            2 & 2 \\ -\frac{1}{\sqrt{2}} & \frac{1}{\sqrt{2}}
+                        \end{bmatrix}$ 的第 $1$ 列 $b^{(2)} = \begin{bmatrix}
+                            2 \\ -\frac{1}{\sqrt{2}}
+                        \end{bmatrix}$，构造 $T_2$，使得 $T_2b^{(2)} = |b^{(2)}|e_1$
+                        \begin{align*}
+                            T_{12} = \begin{bmatrix}
+                                \frac{2\sqrt{2}}{3} & -\frac{1}{3} \\ \frac{1}{3} & \frac{2\sqrt{2}}{3}
+                            \end{bmatrix}, \quad T_{12}b^{(2)} = \begin{bmatrix}
+                                \frac{3}{\sqrt{2}} \\ 0
+                            \end{bmatrix} \\
+                            T_2 = T_{12}, \quad T_2A^{(1)} = \begin{bmatrix}
+                                \frac{3}{\sqrt{2}} & \frac{7}{3\sqrt{2}} \\ 0 & \frac{4}{3}
+                            \end{bmatrix}
+                        \end{align*}
+                    \item 构造上三角矩阵 $R$，计算正交矩阵 $Q$，那么 $A = QR$.
+                        \par 最后，令 $T = \begin{bmatrix}
+                            1 & \\ & T_2
+                        \end{bmatrix}T_1$，则有
+                        \begin{equation*}
+                            Q = T^T = \begin{bmatrix}
+                                \frac{1}{\sqrt{2}} & \frac{1}{3\sqrt{2}} & -\frac{2}{3} \\ 0 & \frac{4}{3\sqrt{2}} & \frac{1}{3} \\ \frac{1}{\sqrt{2}} & -\frac{1}{3\sqrt{2}} & \frac{2}{3}
+                            \end{bmatrix}, \quad R = \begin{bmatrix}
+                                2\sqrt{2} & \frac{3}{\sqrt{2}} & \frac{3}{\sqrt{2}} \\ & \frac{3}{\sqrt{2}} & \frac{7}{3\sqrt{2}} \\ & & \frac{4}{3}
+                            \end{bmatrix}
+                        \end{equation*}
+                        则有 $A = QR$
+                \end{enumerate}
+            \end{solution}
+
+    \subsection{矩阵的满秩分解}
+        \subsubsection{矩阵满秩分解的步骤推导}
+            \par \textbf{满秩分解：}设 $A \in C_r^{m \times n}(r > 0)$，如果存在矩阵 $F \in C_r^{m \times r}$ 和 $G \in C_r^{r \times n}$，使得
+            \begin{equation*}
+                A = FG
+            \end{equation*}
+            则称其为矩阵 $A$ 的 \textbf{满秩分解}.
+            \par 当 $A$ 是满秩（列满秩或行满秩）矩阵时，$A$ 可分解为一个因子是单位矩阵，另一个因子是 $A$ 本身，称此满秩分解为 \textbf{平凡分解}.
+            \par 设 $A \in C_R^{m \times n}(r > 0)$. $rankA = r$ 时，根据矩阵的初等变换理论，对 $A$ 进行初等行变换，可将 $A$ 化为阶梯形矩阵 $B$，即
+            \begin{equation*}
+                A \stackrel{\text{行}}{\longrightarrow} B = \begin{bmatrix}
+                    G \\ O
+                \end{bmatrix}, \quad G \in C_r^{r \times n}
+            \end{equation*}
+            于是存在有限个 $m$ 阶初等矩阵的乘积，记作 $P$，使得 $PA = B$，或者 $A = P^{-1}B$. 将 $P^{-1}$ 分块为
+            \begin{equation*}
+                P^{-1} = \left[\begin{array}{c:c} F & S \end{array}\right] \quad (F \in C_r^{m \times r}, \ S \in C_{m-r}^{m \times (m-r)})
+            \end{equation*}
+            则有
+            \begin{equation*}
+                A = P^{-1}B = \left[\begin{array}{c:c} F & S \end{array}\right]\begin{bmatrix}
+                    G \\ O
+                \end{bmatrix} = FG
+            \end{equation*}
+            其中 $F$ 是列满秩矩阵，$G$ 是行满秩矩阵.
+            \par 故可以使用矩阵的初等行变换方法求矩阵的满秩分解：
+            \begin{enumerate}
+                \item $\left[\begin{array}{c:c} A & I \end{array}\right] \stackrel{\text{行}}{\longrightarrow} \left[\begin{array}{c:c} B & P \end{array}\right]$，其中 $B$ 为阶梯形矩阵
+                \item 计算 $P^{-1}$（或者 $P^{-1}$ 的前 $r$ 列）
+                \item 取 $F$ 为 $P^{-1}$ 的前 $r$ 列构成的列满秩矩阵，$G$ 为 $B$ 的前 $r$ 行构成的行满秩矩阵，那么 $A = FG$
+            \end{enumerate}
+            \par 除此之外，我们还可以通过 \textbf{Hermite 标准形 \ } 求解满秩分解.
+            \\
+            \par \textbf{Hermite 标准形：}设 $B \in C_r^{m \times n} \ (r > 0)$，且满足：
+            \begin{enumerate}
+                \item $B$ 的前 $r$ 行中每一行至少含一个非零元素，且第一个非零元素是 $1$，而后 $m-1$ 行元素均为零;
+                \item 若 $B$ 中第 $i$ 行的第一个非零元素 $1$ 在第 $j_i$ 列 $(i = 1, \ 2, \ \dots, \ r)$，则 $j_1 < j_2 < \dots < j_r$;
+                \item $B$ 中的 $j_1, \ j_2, \ \dots, \ j_r$ 列为单位矩阵 $I_m$ 的前 $r$ 列;
+            \end{enumerate}
+            那么就称 $B$ 为 \textbf{Hermite 标准形}，即为初等变换意义下的行最简形.
+            \par \textbf{拟 Hermite 标准形：}设 $B \in C_r^{m \times n} \ (r > 0)$，且满足：
+            \begin{enumerate}
+                \item $B$ 的后 $m-r$ 行元素均为零;
+                \item $B$ 中的 $j_1, \ j_2, \ \dots, \ j_r$ 列为单位矩阵 $I_m$ 的前 $r$ 列;
+            \end{enumerate}
+            那么就称 $B$ 为 \textbf{拟 Hermite 标准形}.
+            \par \textbf{Hermite 标准形求解满秩分解：}设 $A \in C_r^{m \times n} \ (r > 0)$ 的 (拟)Hermite 标准形 为$B$，那么，在 $A$ 的满秩分解式中，可取 $F$ 为 $A$ 的 $j_1, \ j_2, \ \dots , \ j_r$ 列构成的 $m \times r$ 矩阵，$G$ 为 $B$ 的前 $r$ 行构成的 $r \times n$ 矩阵.
+            \par 由 $A \stackrel{\text{行}}{\longrightarrow} B$ 知，存在 $m$ 阶可逆矩阵 $P$，使得 $PA = B$，或者 $A = P^{-1}B$，可将 $P^{-1}$ 分块为
+            \begin{equation*}
+                P^{-1} = \left[\begin{array}{c:c}
+                    F & S
+                \end{array}\right], \quad (F \in C_r^{m \times r}, \quad S \in C_{m-r}^{m \times (m-r)})
+            \end{equation*}
+            可得满秩分解 $A = FG$，其中 $G$ 为 $B$ 的前 $r$ 行构成的 $r \times n$ 矩阵.
+            \par 下面确定列满秩矩阵 $F$. 参照 $A$ 的 (拟)Hermite 标准形 $B$，构造 $n \times r$ 矩阵，有
+            \begin{equation*}
+                P_1 = (e_{j_1}, \ \dots, \ e_{j_r})
+            \end{equation*}
+            其中 $e_j$ 表示单位矩阵 $I_n$ 的第 $j$ 个列向量，则有
+            \begin{equation*}
+                GP_1 = I_r, \quad AP_1 = (FG)P_1 = F(GP_1) = F
+            \end{equation*}
+            即 $F$ 为 $A$ 的 $j_1, \ j_2, \ \dots, \ j_r$ 列构成的矩阵.
+            \par 具体步骤如下所示：
+            \begin{enumerate}
+                \item $A \stackrel{\text{行}}{\longrightarrow} B$，其中 $B$ 为 Hermite 标准形矩阵，且 $B$ 的 $j_1, \ j_2, \ \dots, \ j_r$ 列为单位矩阵 $I_m$ 的前 $r$ 列;
+                \item 取 $F$ 为 $A$ 的 $j_1, \ j_2, \ \dots, \ j_r$ 列构成的列满秩矩阵，$G$ 为 $B$ 的前 $r$ 行构成的行满秩矩阵，那么 $A = FG$.
+            \end{enumerate}
+
+        \subsubsection{举例展示求法}
+            \begin{problem}
+                \par 求下列各矩阵的满秩分解：
+                \begin{equation*}
+                    (1) \quad \begin{bmatrix}
+                        1 & 2 & 3 & 0 \\ 0 & 2 & 1 & -1 \\ 1 & 0 & 2 & 1 \\
+                    \end{bmatrix}; \quad (2) \quad \begin{bmatrix}
+                        1 & -1 & 1 & 1 \\ -1 & 1 & -1 & -1 \\ -1 & -1 & 1 & 1 \\ 1 & 1 & -1 & -1
+                    \end{bmatrix}
+                \end{equation*}
+            \end{problem}
+            \begin{solution}
+                \\ \textbf{逆矩阵方法：}
+                \begin{enumerate}
+                    \item $\left[\begin{array}{c:c} A & I \end{array}\right] \stackrel{\text{行}}{\longrightarrow} \left[\begin{array}{c:c} B & P \end{array}\right]$，其中 $B$ 为阶梯形矩阵
+                        \begin{equation*}
+                            \left[\begin{array}{c:c} A & I \end{array}\right] = \left[\begin{array}{cccc:ccc}
+                                1 & 2 & 3 & 0 & 1 & 0 & 0 \\ 0 & 2 & 1 & -1 & 0 & 1 & 0 \\ 1 & 0 & 2 & 1 & 0 & 0 & 1
+                            \end{array}\right] \rightarrow \left[\begin{array}{cccc:ccc}
+                                1 & 0 & 2 & 1 & 1 & -1 & 0 \\ 0 & 1 & \frac{1}{2} & -\frac{1}{2} & 0 & \frac{1}{2} & 0 \\ 0 & 0 & 0 & 0 & -1 & 1 & 1
+                            \end{array}\right]
+                        \end{equation*}
+                        \par 则有 
+                        \begin{equation*}
+                            B = \begin{bmatrix}
+                                1 & 0 & 2 & 1 \\ 0 & 1 & \frac{1}{2} & -\frac{1}{2} \\ 0 & 0 & 0 & 0
+                            \end{bmatrix}, \quad P = \begin{bmatrix}
+                                1 & -1 & 0 \\ 0 & \frac{1}{2} & 0 \\ -1 & 1 & 1
+                            \end{bmatrix}
+                        \end{equation*}
+                    \item 计算 $P^{-1}$（或者 $P^{-1}$ 的前 $r$ 列）
+                        \begin{equation*}
+                            P^{-1} = \begin{bmatrix}
+                                1 & 2 & 0 \\ 0 & 2 & 0 \\ 1 & 0 & 1
+                            \end{bmatrix}
+                        \end{equation*}
+                    \item 取 $F$ 为 $P^{-1}$ 的前 $r$ 列构成的列满秩矩阵，$G$ 为 $B$ 的前 $r$ 行构成的行满秩矩阵，那么 $A = FG$
+                        \begin{equation*}
+                            F = \begin{bmatrix}
+                                1 & 2 \\ 0 & 2 \\ 1 & 0
+                            \end{bmatrix}, \quad G = \begin{bmatrix}
+                                1 & 0 & 2 & 1 \\ 0 & 1 & \frac{1}{2} & -\frac{1}{2}
+                            \end{bmatrix}
+                        \end{equation*}
+                        故有
+                        \begin{equation*}
+                            A = FG = \begin{bmatrix}
+                                1 & 2 \\ 0 & 2 \\ 1 & 0
+                            \end{bmatrix}\begin{bmatrix}
+                                1 & 0 & 2 & 1 \\ 0 & 1 & \frac{1}{2} & -\frac{1}{2}
+                            \end{bmatrix}
+                        \end{equation*}
+                \end{enumerate}
+                \textbf{Hermite 标准形方法：}
+                \begin{enumerate}
+                    \item $A \stackrel{\text{行}}{\longrightarrow} B$，其中 $B$ 为 Hermite 标准形矩阵，且 $B$ 的 $j_1, \ j_2, \ \dots, \ j_r$ 列为单位矩阵 $I_m$ 的前 $r$ 列;
+                        \begin{equation*}
+                            A \stackrel{\text{行}}{\longrightarrow} \begin{bmatrix}
+                                1 & 0 & 0 & 0 \\ 0 & 1 & -1 & -1 \\ 0 & 0 & 0 & 0 \\ 0 & 0 & 0 & 0
+                            \end{bmatrix} = B
+                        \end{equation*}
+                    \item 取 $F$ 为 $A$ 的 $j_1, \ j_2, \ \dots, \ j_r$ 列构成的列满秩矩阵，$G$ 为 $B$ 的前 $r$ 行构成的行满秩矩阵，那么 $A = FG$.
+                        \par $rankB = 2$ 且 $B$ 中的第 $1$ 列和第 $2$ 列为单位矩阵的前两列，故
+                        \begin{equation*}
+                            A = \begin{bmatrix}
+                                1 & -1 \\ -1 & 1 \\ -1 & -1 \\ 1 & 1
+                            \end{bmatrix}\begin{bmatrix}
+                                1 & 0 & 0 & 0 \\ 0 & 1 & -1 & -1
+                            \end{bmatrix}
+                        \end{equation*}
+                \end{enumerate}
+            \end{solution}
+
+
+    \subsection{矩阵的奇异值分解}
+        \subsubsection{矩阵奇异值分解的步骤推导}
+            \textbf{奇异值：}设 $A \in C_r^{m \times n}(r > 0)$，$A^HA$ 的特征值为 
+            \begin{equation*}
+                \lambda_1 \geq \lambda_2 \geq \dots \geq \lambda_r \> \lambda_{r+1} = \dots = \lambda_n = 0
+            \end{equation*}
+            则称 $\sigma_i = \sqrt{\lambda_i}(i = 1, \ 2, \ \dots, \ n)$ 为 $A$ 的 \textbf{奇异值}. 当 $A$ 为零矩阵时，它的奇异值都是 $0$.
+            \par 设 $A \in C_r^{m \times n}(r > 0)$，则存在 $m$ 阶酉矩阵 $U$ 和 $n$ 阶酉矩阵 $V$，使得
+            \begin{equation*}
+                U^HAV = \begin{bmatrix}
+                    \varSigma & O \\ O & O
+                \end{bmatrix}
+            \end{equation*}
+            其中 $\varSigma = diag(\sigma_1, \ \sigma_2, \ \dots, \ \sigma_r)$，而 $\sigma_i(i = 1, \ 2, \ \dots, \ r)$ 为矩阵 $A$ 的全部非零奇异值.
+            \par 记 Hermite 矩阵 $A^HA$ 的特征值为
+            \begin{equation*}
+                \lambda_1 \geq \lambda_2 \geq \dots \geq \lambda_r \> \lambda_{r+1} = \dots = \lambda_n = 0
+            \end{equation*}
+            存在 $n$ 阶酉矩阵 $V$，使得
+            \begin{equation*}
+                V^H(A^HA)V = \begin{bmatrix}
+                    \lambda_1 & & \\ & \ddots & \\ & & \lambda_n
+                \end{bmatrix} = \begin{bmatrix}
+                    \varSigma^2 & O \\ O & O
+                \end{bmatrix}
+            \end{equation*}
+            将 $V$ 分块为 
+            \begin{equation*}
+                V = [V_1 | V_2], \quad V_1 \in C_r^{n \times r}, \ V_2 \in C_{n-r}^{n \times (n-r)}
+            \end{equation*}
+            这样，可以将上式改写为
+            \begin{equation*}
+                A^HAV = V \begin{bmatrix}
+                    \varSigma & O \\ O & O
+                \end{bmatrix}
+            \end{equation*}
+            则有
+            \begin{equation*}
+                A^HAV_1 = V_1\varSigma^2, \quad A^HAV_2 = O 
+            \end{equation*}
+            故有
+            \begin{align*}
+                V_1^HA^HAV_1 = \varSigma^2 \quad &or \quad (AV_1\varSigma^{-1})(AV_1\varSigma^{-1}) = I_r \\
+                (AV_2)^H(AV_2) = O \quad &or \quad AV_2 = O
+            \end{align*}
+            令 $U_1 = AV_1\varSigma^{-1}$，则 $U_1^HU_1 = I_r$，即 $U_1$ 的 $r$ 个列是两两正交的单位向量，记作 $U_1 = (u_1, \ u_2, \ \dots, \ u_r)$. 将其扩充为 $C^m$ 的标准正交基，记增添的向量为 $u_{r+1}, \ \dots, \ u_m$，并构造矩阵 $U_2 = (u_{r+1}, \ \dots, \ u_m)$，则
+            \begin{equation*}
+                U = \left[\begin{array}{c:c} U_1 & U_2 \end{array}\right] = (u_1, \ u_2, \ \dots, \ u_r, \ u_{r+1}, \ \dots, \ u_m)
+            \end{equation*}
+            是 $m$ 阶酉矩阵，且有
+            \begin{equation*}
+                U_1^HU_1 = I_r, \quad U_2^HU_1 = O
+            \end{equation*}
+            于是可得
+            \begin{equation*}
+                U^HAV = U^H \left[\begin{array}{c:c}
+                     AV_1 & AV_2 \end{array}\right] = \begin{bmatrix}
+                    U_1^H \\ U_2^H
+                \end{bmatrix}\left[\begin{array}{c:c}
+                    U_1\varSigma & O
+                \end{array}\right] = \begin{bmatrix}
+                    U_1^HU_1\varSigma & O \\ U_2^HU_1\varSigma & O
+                \end{bmatrix} = \begin{bmatrix}
+                    \varSigma & O \\ O & O
+                \end{bmatrix}
+            \end{equation*}
+            故有
+            \begin{equation*}
+                A = U\begin{bmatrix}
+                    \varSigma & O \\ O & O 
+                \end{bmatrix}V^H
+            \end{equation*}
+            称上式为矩阵 $A$ 的 \textbf{奇异值分解}
+
+            \par 总结求解过程如下：
+            \begin{enumerate}
+                \item 求酉矩阵 $V_{n \times n}$，使得
+                    \begin{equation*}
+                        V^H(A^HA)V = diag(\lambda_1, \ \dots, \ \lambda_r, \ 0, \ \dots, 0)
+                    \end{equation*}
+                \item 计算 $U_1 = AV_1\varSigma^{-1}$，其中 $V_1$ 为 $V$ 的前 $r$ 列构成的矩阵
+                \item 扩充 $U_1$ 的 $r$ 个列向量为 $C^m$ 的标准正交基，并记由增加的 $m-r$ 个列向量构成的矩阵为 $U_2$，那么 $U = \left[\begin{array}{c:c}
+                    U_1 & U_2
+                \end{array}\right]$ 是酉矩阵
+                \item 写出 $A$ 的奇异值分解 $A = U \begin{bmatrix}
+                    \varSigma & O \\ O & O 
+                \end{bmatrix}V^H$ 
+            \end{enumerate}
+
+        \subsubsection{举例展示求法}
+            \begin{problem}
+                \par 求 $A = \begin{bmatrix}
+                    1 & 0 \\ 0 & 1 \\ 1 & 1
+                \end{bmatrix}$ 的奇异值分解.
+            \end{problem}
+            \begin{solution}
+                \begin{enumerate}
+                    \item 求酉矩阵 $V_{n \times n}$，使得 $V^H(A^HA)V = diag(\lambda_1, \ \dots, \ \lambda_r, \ 0, \ \dots, 0)$
+                    \par 计算 
+                        \begin{equation*}
+                            B = A^TA = \begin{bmatrix}
+                                2 & 1 \\ 1 & 2
+                            \end{bmatrix}
+                        \end{equation*}
+                        
+                    求得 $B$ 的特征值为 $\lambda_1 = 3, \ \lambda_2 = 1$，对应的特征向量依次为 
+                    \begin{equation*}
+                        \xi_1 = \begin{bmatrix}
+                            1 \\ 1
+                        \end{bmatrix}, \quad \xi_2 = \begin{bmatrix}
+                            -1 \\ 1
+                        \end{bmatrix}
+                    \end{equation*}
+                    于是可得 
+                    \begin{equation*}
+                        rankA = 2, \quad \varSigma = \begin{bmatrix}
+                            \sqrt{3} & 0 \\ 0 & 1
+                        \end{bmatrix}, \quad V = \begin{bmatrix}
+                            \frac{1}{\sqrt{2}} & -\frac{1}{\sqrt{2}} \\ \frac{1}{\sqrt{2}} & \frac{1}{\sqrt{2}}
+                        \end{bmatrix}
+                    \end{equation*}
+                    \item 计算 $U_1 = AV_1\varSigma^{-1}$，其中 $V_1$ 为 $V$ 的前 $r$ 列构成的矩阵
+                        \par 有 $V_1 = V$，计算
+                        \begin{equation*}
+                            U_1 = AV_1\varSigma^{-1} = \begin{bmatrix}
+                                \frac{1}{\sqrt{6}} & -\frac{1}{\sqrt{2}} \\ \frac{1}{\sqrt{6}} & \frac{1}{\sqrt{2}} \\ \frac{2}{\sqrt{6}} & 0
+                            \end{bmatrix}
+                        \end{equation*}
+                    \item 扩充 $U_1$ 的 $r$ 个列向量为 $C^m$ 的标准正交基，并记由增加的 $m-r$ 个列向量构成的矩阵为 $U_2$，那么 $U = \left[\begin{array}{c:c} U_1 & U_2 \end{array}\right]$ 是酉矩阵
+                        \par 取 $U_2 = \begin{bmatrix}
+                            -\frac{1}{\sqrt{3}} \\ -\frac{1}{\sqrt{3}} & \frac{1}{\sqrt{3}}
+                        \end{bmatrix}$
+                        构造正交矩阵
+                        \begin{equation*}
+                            U = \left[\begin{array}{c:c}
+                                U_1 & U_2
+                            \end{array}\right] = \begin{bmatrix}
+                                \frac{1}{\sqrt{6}} & -\frac{1}{\sqrt{2}} & -\frac{1}{\sqrt{3}} \\ \frac{1}{\sqrt{6}} & \frac{1}{\sqrt{2}} & -\frac{1}{\sqrt{3}} \\ \frac{2}{\sqrt{6}} & 0 & \frac{1}{\sqrt{3}}
+                            \end{bmatrix}
+                        \end{equation*}
+                    \item 写出 $A$ 的奇异值分解 $A = U \begin{bmatrix}
+                        \varSigma & O \\ O & O 
+                    \end{bmatrix}V^H$ 
+                    \begin{equation*}
+                        A = U\begin{bmatrix}
+                            \sqrt{3} & 0 \\ 0 & 1 \\ 0 & 0
+                        \end{bmatrix}V^T
+                    \end{equation*}
+                \end{enumerate} 
+            \end{solution}
+
+    \subsection{利用矩阵分解求矩阵广义逆}
+        \subsubsection{矩阵广义逆介绍}
+            \par 逆矩阵的概念只是对可逆矩阵才有意义. 但是在实际问题中，遇到的矩阵不一 定是方阵，即便是方阵也不一定可逆，这就需要考虑，可否将逆矩阵概念进一步推 广，为此，引进下列条件：
+            \begin{enumerate}
+                \item 该矩阵对于不可逆矩阵甚至长方矩阵都存在;
+                \item 它具有通常逆矩阵的一些性质;
+                \item 当矩阵可逆时，它还原到通常的逆矩阵.
+            \end{enumerate}
+            称满足以上三个条件的矩阵为 \textbf{广义逆矩阵}.
+            \\
+            \par \textbf{Penrose 的广义逆矩阵：} 设矩阵 $A \in C^{m \times n}$，若矩阵 $X \in C^{n \times m}$ 满足以下 $4$ 个 Penrose 方程
+            \begin{table}[htbp]
+                \centering
+                \begin{tabular}{ll}
+                    (1)$AXA = A$; & (2)$XAX = X$; \\
+                    (3)$(AX)^H = AX$; & (4)$(XA)^H = XA$ \\
+                \end{tabular}
+            \end{table}
+            则称 $X$ 为 $A$ 的 \textbf{Moore-Penrose 逆}，记为 $A^{+}$.
+            \par 易知一下特例：
+            \begin{enumerate}
+                \item 若 $A$ 是可逆矩阵，则 $A^{+} = A^{-1}$;
+                \item 若 $A = O_{m \times n}$，则 $A^{+} = O_{n \times m}$;
+                \item 若 $A = \begin{bmatrix}
+                    1 \\ 1
+                \end{bmatrix}$，则 $A^{+} = \begin{bmatrix}
+                    \frac{1}{2} & \frac{1}{2}
+                \end{bmatrix}$
+            \end{enumerate}
+            \par \textbf{矩阵 Moore-Penrose 逆的存在性：}
+            \begin{enumerate}
+                \item 对于任意 $A \in C^{m \times n}$，$A^{+}$ 存在并且唯一;
+                \item 设 $A \in C_r^{m \times n}$ 的不可逆值分解为 
+                    \begin{equation*}
+                        A = U \begin{bmatrix}
+                            \varSigma_r & O \\ O & O 
+                        \end{bmatrix}_{m \times n} V^H
+                    \end{equation*}
+                    那么 
+                    \begin{equation*}
+                        A^{+} = V \begin{bmatrix}
+                            \varSigma_r^{-1} & O \\ O & O
+                        \end{bmatrix}_{n \times m} U^H
+                    \end{equation*}
+            \end{enumerate}
+
+        \subsubsection{利用矩阵满秩分解求矩阵广义逆}
+            \par 通过证明上述存在性定理一，我们可以完成利用矩阵满秩分解求矩阵广义逆的推导.
+            \par 设 $rankA = r$. 若 $r = 0$，则 $A = O_{m \times n}$，则 $A^{+} = O_{n \times m}$；若 $r > 0$，由矩阵满秩分解的存在性定理（设 $A \in C_r^{m \times n}(r > 0)$，则 $A$ 有满秩分解式），$A$ 可进行满秩分解：
+            \begin{equation*}
+                A = FG \quad (F \in C_r^{m \times r}, \ G \in C_r^{r \times n})
+            \end{equation*}
+            令 $X = G^{+}F^{+}$，则有 
+            \begin{align*}
+                AXA &= FG \cdot G^{+}F^{+} \cdot FG = FG = A \\ XAX &= G^{+}F^{+} \cdot FG \cdot G^{+}F^{+} = G^{+}F^{+} = X \\ (AX)^H &= (FG \cdot G^{+}F^{+})^H = (FF^{+})^H = FF^{+} = F \cdot GG^{+} \cdot F^{+} = AX \\ (XA)^H &= (G^{+}F^{+} \cdot FG)^H = (G^{+}G)^H = G^{+}G = G^{+} \cdot F^{+}F \cdot G = XA
+            \end{align*}
+            故
+            \begin{equation*}
+                A^{+} = G^{+}F^{+} = G^H(F^HAG^H)^{-1}F^H
+            \end{equation*}
+            \\
+            \par 由上式我们可以总结出求矩阵的 Moore-Penrose 逆的满秩分解方法：
+            \begin{enumerate}
+                \item 求 $A$ 的满秩分解 $A = FG$
+                \item 计算 $F^{+} = (F^HF)^{-1}F^H$ 和 $G^{+} = G^H(GG^H)^{-1}$
+                \item 计算 $A^{+} = G^{+}F^{+}$
+            \end{enumerate}
+
+        \subsubsection{利用矩阵奇异值分解求矩阵广义逆}
+            \par 由上述存在性定理二，我们可以得出利用矩阵奇异值分解求矩阵广义逆的推导：
+            \par 令 $\varSigma = \begin{bmatrix}
+                \varSigma_r & O \\ O & O
+            \end{bmatrix}$，则 $\varSigma^{+} = \begin{bmatrix}
+                \varSigma_r^{-1} & O \\ O & O
+            \end{bmatrix}$
+            \begin{align*}
+                A^{+} &= A^H(AA^H)^{+} = (U\varSigma V^H)^H(U\varSigma V^HV\varSigma^HU^H) \\ &= V\varSigma^HU^H[(U\varSigma\varSigma^HU^H)^{+} \\ &= V[(U\varSigma)^H)(U\varSigma(U\varSigma)^H)^{+}] \\ &= V(U\varSigma)^{+} = V\varSigma^{+}U^H
+            \end{align*}
+            \par 由此可以总结出求矩阵的 Moore-Penrose 逆的奇异值分解方法：
+            \begin{enumerate}
+                \item 求 $A$ 的奇异值分解 $A = U\begin{bmatrix}
+                    \varSigma_r & O \\ O & O
+                \end{bmatrix}_{m \times n}V^H$
+                \item 计算 $A^{+} = V\begin{bmatrix}
+                    \varSigma_r^{-1} & O \\ O & O
+                \end{bmatrix}_{n \times m}U^H$
+            \end{enumerate}
+            \par 矩阵的 Moore-Penrose 逆是一种广义逆矩阵，它满足 $4$ 个 Penrose 方程.下面介绍满足一个或几个 Penrose 方程的广义逆矩阵：
+            \par 设矩阵 $A \in C^{m \times n}$，矩阵 $X \in C^{n \times m}$
+            \begin{enumerate}
+                \item 若 $X$ 满足 Penrose 方程中的第 $(i)$ 个方程，则称 $X$ 为 $A$ 的 $\{i\}$-逆，记作 $A^{(i)}$，全体 $\{i\}$-逆 的集合记作 $A\{i\}$. 这种广义逆矩阵共有 $4$ 类;
+                \item 若 $X$ 满足 Penrose 方程中的第 $(i), \ (j)$ 个方程 $(i \ne j)$，称 $X$ 为 $A$ 的 $\{i,j\}$-逆，记作 $A^{(i,j)}$，全体 $\{i, j\}$-逆 的集合记作 $A\{i,j\}$. 这种广义逆矩阵共有 $6$ 类;
+                \item 若 $X$ 满足 Penrose 方程中的第 $(i), \ (j)，(k)$ 个方程 $(i, \ j, \ k \ \textbf{互异})$， 称 $X$ 为 $A$ 的 $\{i,j,k\}$-逆，记作 $A^{(i,j,k)}$，全体 $\{i,j,k\}$-逆 的集合记作 $A\{i,j,k\}$. 这种广义逆矩阵共有 $4$ 类;
+            \end{enumerate}
+            \par 其中，应用较为广泛的广义逆矩阵有以下 $5$ 种：
+            \begin{equation*}
+                A\{1\}, \quad A\{1,2\}, \quad A\{1,3\}, \quad A\{1,4\}, \quad A^{+}
+            \end{equation*}
+            \par 由于任意矩阵 $A \in C_r^{m \times n}(r > 0)$ 都可通过初等行变换化为(拟) Hermite 标准形 $B$，即存在有限个初等矩阵的乘积，记作 $Q$，使得 $QA = B$. 根据矩阵 $B$，构造置换矩阵(交换单位矩阵的列向量构成的矩阵) $P$，使得
+            \begin{equation*}
+                QAP = \begin{bmatrix}
+                    I_r & K \\ O & O
+                \end{bmatrix}
+            \end{equation*}
+            其中 $K$ 是 $r \times (n-r)$ 子矩阵.
+            \par 利用矩阵的(拟) Hermite 标准形，容易求得矩阵的 $\{1\}$-逆 和 $\{1,2\}$-逆.
+            \\
+            \par 由上式可知
+            \begin{equation*}
+                QAP = \begin{bmatrix}
+                    I_r & K \\ O & O
+                \end{bmatrix}, \quad A = Q^{-1}\begin{bmatrix}
+                    I_r & K \\ O & O
+                \end{bmatrix}P^{-1}
+            \end{equation*}
+            则有 
+            \begin{equation*}
+                X = P\begin{bmatrix}
+                    I_r & O \\ O & L
+                \end{bmatrix}Q, \quad X = P\begin{bmatrix}
+                    I_r & O \\ O & O
+                \end{bmatrix}Q
+            \end{equation*}
+            分别为 $A$ 的 $\{1\}$-逆 和 $\{1,2\}$-逆.
+            \\
+            \par 总结方法如下：
+            \begin{enumerate}
+                \item $\left[\begin{array}{c:c}
+                    A & I
+                \end{array}\right] \stackrel{\text{行}}{\longrightarrow} \left[\begin{array}{c:c}
+                    B & Q
+                \end{array}\right]$，其中 $B$ 为 Hermite 标准形矩阵
+                \item 构造置换矩阵 $P$，使得 $BP = \begin{bmatrix}
+                    I_r & K \\ O & O
+                \end{bmatrix}_{m \times n}$
+                \item 计算 $X = P\begin{bmatrix}
+                    I_r & O \\ O & L
+                \end{bmatrix}_{n \times m}Q$ 或 $X_0 = P\begin{bmatrix}
+                    I_r & O \\ O & O
+                \end{bmatrix}_{n \times m}Q$
+                那么 $X \in A\{1\}, \ X_0 \in A\{1,2\}$.
+            \end{enumerate}
+        \subsubsection{举例展示求法}
+            \begin{problem}
+                \par 设 $A = \begin{bmatrix}
+                    2 & 1 & 0 & 2 \\ 0 & 0 & 1 & 2 \\ 2 & 1 & 1 & 4
+                \end{bmatrix}$，分别求 $A^{(1)}, A^{(1,2)}$ 及 $A^{+}$.
+            \end{problem}
+            \begin{solution}
+                \begin{enumerate}
+                    \item $\left[\begin{array}{c:c}
+                        A & I
+                    \end{array}\right] \stackrel{\text{行}}{\longrightarrow} \left[\begin{array}{c:c}
+                        B & Q
+                    \end{array}\right]$ 
+                    \begin{equation*}
+                        \left[\begin{array}{c:c}
+                            A & I
+                        \end{array}\right] \stackrel{\text{行}}{\longrightarrow} \begin{array}{cccc:ccc}
+                            2 & 1 & 0 & 2 & 1 & 0 & 0 \\ 0 & 0 & 1 & 2 & 0 & 1 & 0 \\ 0 & 0 & 0 & 0 & -1 & -1 & -1
+                        \end{array}
+                    \end{equation*} 故 $A$ 的拟 Hermite 标准形为 
+                    \begin{equation*}
+                        B = \begin{bmatrix}
+                            2 & 1 & 0 & 2 \\ 0 & 0 & 1 & 2 \\ 0 & 0 & 0 & 0
+                        \end{bmatrix}
+                    \end{equation*}
+                    \item 构造置换矩阵 $P$，使得 $BP = \begin{bmatrix}
+                        I_r & K \\ O & O
+                    \end{bmatrix}_{m \times n}$
+                    \par 构造可逆矩阵 
+                    \begin{equation*}
+                        Q = \begin{bmatrix}
+                            1 & 0 & 0 \\ 0 & 1 & 0 \\ -1 & -1 & 1
+                        \end{bmatrix}, \quad P = (e_2, \ e_3, \ e_1, \ e_4) = \begin{bmatrix}
+                            0 & 0 & 1 & 0 \\ 1 & 0 & 0 & 0 \\ 0 & 1 & 0 & 0 \\ 0 & 0 & 0 & 1
+                        \end{bmatrix}
+                    \end{equation*}
+                    \item 计算 $X = P\begin{bmatrix}
+                        I_r & O \\ O & L
+                    \end{bmatrix}_{n \times m}Q$ 或 $X_0 = P\begin{bmatrix}
+                        I_r & O \\ O & O
+                    \end{bmatrix}_{n \times m}Q$
+                    \begin{equation*}
+                        A^{(1)} = P\left[\begin{array}{cc:c}
+                            1 & 0 & 0 \\ 0 & 1 & 0 \\ \hdashline 0 & 0 & a \\ 0 & 0 & b
+                        \end{array}\right]Q = \begin{bmatrix}
+                            -a & -a & a \\ 1 & 0 & 0 \\ 0 & 1 & 0 \\ -b & -b & b
+                        \end{bmatrix}, \quad A^{(1,2)} = \begin{bmatrix}
+                            0 & 0 & 0 \\ 1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 0
+                        \end{bmatrix}
+                    \end{equation*}
+                \end{enumerate}
+                \par 下面求 $A^{+}$
+                \begin{enumerate}
+                    \item 求 $A$ 的满秩分解 $A = FG$
+                        \par 因为拟 Hermite 标准形 $B$ 的第 $2$ 列和第 $3$ 列构成 $I_3$ 的前两列，所以 $F$ 为 $A$ 的第 $2$ 列和第 $3$ 列构成的 $3 \times 2$ 矩阵，从而有 
+                        \begin{equation*}
+                            A = \begin{bmatrix}
+                                1 & 0 \\ 0 & 1 \\ 1 & 1
+                            \end{bmatrix}\begin{bmatrix}
+                                2 & 1 & 0 & 2 \\ 0 & 0 & 1 & 2
+                            \end{bmatrix} = FG
+                        \end{equation*}
+                    \item 计算 $F^{+} = (F^HF)^{-1}F^H$ 和 $G^{+} = G^H(GG^H)^{-1}$
+                        \begin{align*}
+                            F^{+} &= (F^HF)^{-1}F^H = \frac{1}{3}\begin{bmatrix}
+                                2 & -1 & 1 \\ -1 & 2 & 1
+                            \end{bmatrix} \\ G^{+} &= G^H(GG^H)^{-1} = \frac{1}{29}\begin{bmatrix}
+                                10 & -8 \\ 5 & -4 \\ -4 & 9 \\ 2 & 10
+                            \end{bmatrix}
+                        \end{align*} 
+                    \item 计算 $A^{+} = G^{+}F^{+}$
+                        \begin{equation*}
+                            A^{+} = G^{+}F^{+} = \frac{1}{87}\begin{bmatrix}
+                                28 & -26 & 2 \\ 14 & -13 & 1 \\ -17 & 22 & 5 \\ -6 & 18 & 12
+                            \end{bmatrix}
+                        \end{equation*}
+                \end{enumerate}
+            \end{solution}

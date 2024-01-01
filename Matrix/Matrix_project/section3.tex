@@ -1,0 +1,366 @@
+\section{矩阵函数的求法研究}
+\fontsize{12pt}{14pt}\selectfont
+\songti
+    \subsection{待定系数法}
+        \subsubsection{待定系数法求矩阵函数的步骤推导}
+            \par 设 $n$ 阶矩阵 $A$ 的特征多项式为 $\varphi(\lambda) = det(\lambda I - A)$. 如果首 $1$（首项系数为 $1$）多项式
+            \begin{align*}
+                \psi(\lambda) = \lambda^m + b_1\lambda^{m-1} + \dots + b_{m-1}\lambda + b_m \quad (1 \leq m \leq n)
+            \end{align*}
+            满足 $\psi(A) = O$ 且 $\psi(\lambda)$ 整除 $\varphi(\lambda)$(矩阵 $A$ 的最小多项式与特征多项式均满足这些条件). 那么，$\psi(\lambda)$ 的零点都是 $A$ 的特征值. 记 $\psi(\lambda)$ 的互异零点为 $\lambda_1, \ \lambda_2, \ \dots, \ \lambda_s$，相应的重数为 $r_1, \ r_2, \ \dots, \ r_s \ \ (r_1 + r_2 + \dots + r_s = m)$，则有
+            \begin{align*}
+                \psi^{(l)}(\lambda_i) = 0 \quad (l = 0, \ 1, \ \dots, \ r_i - 1; \ i = 1, \ 2, \ \dots, \ s)
+            \end{align*}
+            这里，$\psi^{(l)}(\lambda)$ 表示 $\psi(\lambda)$ 的 $l$ 阶导数(下同). 设
+            \begin{align*}
+                f(z) = \sum_{k=0}^{\infty}c_kz^k = \psi(z)g(z) + r(z)
+            \end{align*}
+            其中 $r(z)$ 是次数低于 $m$ 的多项式，于是可由 
+            \begin{align*}
+                f^{(l)}(\lambda_i) = r^{(l)}(\lambda_i) \quad (l = 0, \ 1, \ \dots, \ r_i - 1; \ i = 1, \ 2, \ \dots, \ s)
+            \end{align*}
+            确定出 $r(z)$. 利用 $\psi(A) = O$，可得
+            \begin{align*}
+                f(A) = \sum_{k=0}^{\infty}c_kA^k = r(A) 
+            \end{align*}
+            \\
+            \par 按上述方法，在实际使用待定系数法求解函数矩阵时，我们通常遵循以下步骤：
+            \begin{enumerate}
+                \item 求出满足 $\psi(A) = O, \ \psi(A) | \varphi(A)$ 的首$1$多项式(通常是最小多项式或特征多项式)
+                \item 构造多项式 $r(\lambda) = b_0 + b_1\lambda + \dots + b_{m-1}\lambda^{m-1}$($m$ 为 $\psi(\lambda)$ 的最高次数)
+                \item 由方程 $f^{(l)}(\lambda_i) = r^{(l)}(\lambda_i) \ \ (l = 0, \ 1, \ \dots, \ r_i - 1)$($r_i$ 为 $\lambda_i$ 对应的重数) 求出每一项的系数
+                \item 计算 $f(A) = r(A) = b_0I + b_1A + \dots + b_{m-1}A^{m-1}$
+            \end{enumerate}
+            \par 下面一章节将通过 《矩阵论第五版》习题3.3.5 演示该过程.
+        \subsubsection{举例展示求法}
+            \begin{problem}
+                \par 设 $A = \begin{bmatrix}
+                    2 & 1 & 0 \\ 0 & 0 & 1 \\ 0 & 1 & 0
+                \end{bmatrix}$，求 $e^A, \ e^{tA}(t \in R), \ sinA$ 
+            \end{problem}
+            \begin{solution}
+                \begin{enumerate}
+                    \item 求出满足 $\psi(A) = O, \ \psi(A) | \varphi(A)$ 的首$1$多项式(通常是最小多项式或特征多项式)
+                        \begin{align*}
+                            \lambda I - A = &\begin{bmatrix}
+                                \lambda - 2 & -1 & 0 \\ 0 & \lambda & -1 \\ 0 & -1 & \lambda
+                            \end{bmatrix} \rightarrow \begin{bmatrix}
+                                \lambda - 2 & -1 & -\lambda \\ 0 & \lambda & \lambda^2 - 1 \\ 0 & -1 & 0
+                            \end{bmatrix} \rightarrow \begin{bmatrix}
+                                \lambda - 2 & -\lambda & 0 \\ 0 & \lambda^2 - 1 & 0 \\ 0 & 0 & 1 
+                            \end{bmatrix} \\ \rightarrow &\begin{bmatrix}
+                                \lambda - 2 & 0 & 0 \\ 0 & \lambda^2 - 1 & 0 \\ 0 & 0 & 1 
+                            \end{bmatrix}
+                        \end{align*}
+                        \par $\varphi(\lambda) = det(\lambda I - A) = (\lambda - 1)(\lambda + 1)(\lambda - 2)$，易知没有最小多项式，取 $\psi(A) = (\lambda-1)(\lambda + 1)(\lambda - 2)$.
+                    \item 构造多项式 $r(\lambda) = b_0 + b_1\lambda + \dots + b_{m-1}\lambda^{m-1}$($m$ 为 $\psi(\lambda)$ 的最高次数)
+                        \par 取 $f(\lambda) = e^{\lambda}$，$r(\lambda) = a + b\lambda + c\lambda^2$，设 $f(\lambda) = \psi(\lambda)g(\lambda) + (a + b\lambda + c\lambda^2)$
+                    \item 由方程 $f^{(l)}(\lambda_i) = r^{(l)}(\lambda_i) \ \ (l = 0, \ 1, \ \dots, \ r_i - 1)$($r_i$ 为 $\lambda_i$ 对应的重数) 求出每一项的系数
+                        \begin{equation*}
+                            \begin{cases}
+                                f(2) = e^2 \\ f'(2) = e^2 \\ f''(2) = e^2
+                            \end{cases} \quad or \quad \begin{cases} \begin{aligned}
+                                a + 2b + 4c &= e^2 \\ b + 4c &= e^2 \\  c &= e^2 
+                                \end{aligned}    
+                            \end{cases}
+                        \end{equation*}
+                        解此方程组可得 $a = 3e^2, \ b = -3e^2, \ c = e^2$. 于是 $r(\lambda) = e^2(\lambda^2 - 3\lambda + 3)$
+                    \item 计算 $f(A) = r(A) = b_0I + b_1A + \dots + b_{m-1}A^{m-1}$
+                        \begin{equation*}
+                            e^A = f(A) = r(A) = e^2(A^2 - 3A + 3) = e^2\begin{bmatrix}
+                                -1 & 2 & 1 \\ 0 & 1 & 0 \\ 0 & 0 & 1
+                            \end{bmatrix}
+                        \end{equation*}
+                \end{enumerate}
+                \par 同理，我们重复上述步骤 $3 \sim 4$，计算 $e^{tA}$ 和 $sinA$
+                \begin{itemize}
+                    \item 求解 $e^{tA}$：
+                        \begin{itemize}
+                            \item 由方程 $f^{(l)}(\lambda_i) = r^{(l)}(\lambda_i) \ \ (l = 0, \ 1, \ \dots, \ r_i - 1)$($r_i$ 为 $\lambda_i$ 对应的重数) 求出每一项的系数
+                                \begin{equation*}
+                                    \begin{cases}
+                                        f(2) = e^{2t} \\ f'(2) = te^{2t} \\ f''(2) = (t^2 + 1)e^{2t}
+                                    \end{cases} \quad or \quad \begin{cases} \begin{aligned}
+                                        a + 2b + 4c &= e^{2t} \\ b + 4c &= te^{2t} \\  c &= (t^2 + 1)e^{2t} 
+                                        \end{aligned}    
+                                    \end{cases}
+                                \end{equation*}
+                                解此方程组可得 $a = (4t^2 - 2t + 5)e^{2t}, \ b = (- 4t^2 + t - 4)e^{2t}, \ c = (t^2 + 1)e^{2t}$. 于是 $r(\lambda) = e^{2t}[(4t^2 - 2t + 5) + (- 4t^2 + t - 4)\lambda + (t^2 + 1)\lambda^2]$
+                            \item 计算 $f(A) = r(A) = b_0I + b_1A + \dots + b_{m-1}A^{m-1}$
+                                \begin{align*}
+                                    e^{tA} = f(A) = r(A) &= e^{2t}[(4t^2 - 2t + 5)I + (-4t^2 + t - 4)A + (t^2 + 1)A^2] \\ &= e^{2t}\begin{bmatrix}
+                                       1 & -2t^2 + t - 2 & t^2 + 1 \\ 0 & 5t^2 - 2t + 6 & -4t^2 + t - 4 \\ 0 & -4t^2 + t - 4 & 5t^2 - 2t + 6
+                                    \end{bmatrix}
+                                \end{align*}
+                        \end{itemize}
+                    \item 求解 $sinA$：
+                        \begin{itemize}
+                            \item 由方程 $f^{(l)}(\lambda_i) = r^{(l)}(\lambda_i) \ \ (l = 0, \ 1, \ \dots, \ r_i - 1)$($r_i$ 为 $\lambda_i$ 对应的重数) 求出每一项的系数
+                                \begin{equation*}
+                                    \begin{cases}
+                                        f(2) = sin2 \\ f'(2) = cos2 \\ f''(2) = -sin2
+                                    \end{cases} \quad or \quad \begin{cases} \begin{aligned}
+                                        a + 2b + 4c &= sin2 \\ b + 4c &= cos2 \\  c &= -sin2 
+                                        \end{aligned}    
+                                    \end{cases}
+                                \end{equation*}
+                                解此方程组可得 $a = -3sin2 - 2cos2, \ b = 4sin2 + cos2, \ c = -sin2$. 于是 $r(\lambda) = -3sin2 - 2cos2 + (4sin2 + cos2)\lambda + (-sin2)\lambda^2$
+                            \item 计算 $f(A) = r(A) = b_0I + b_1A + \dots + b_{m-1}A^{m-1}$
+                                \begin{align*}
+                                    sinA = f(A) = r(A) &= (-3sin2 - 2cos2)I + (4sin2 + cos2)A + (-sin2)A^2 \\ &= \begin{bmatrix}
+                                        sin2 & sin2 + cos2 & -sin2 \\ 0 & 2sin2 - 2cos2 & 4sin2 + cos2 \\ 0 & 4sin2 + cos2 & -4sin2 - 2cos2
+                                    \end{bmatrix}
+                                \end{align*}
+                        \end{itemize}
+                \end{itemize}
+            \end{solution}
+
+    \subsection{数项级数求和法}
+        \subsubsection{数项级数求和法求矩阵函数的步骤推导}
+            \par 设首 $1$ 多项式 $\psi(\lambda)$
+            \begin{equation*}
+                \psi(\lambda) = \lambda^m + b_1\lambda^{m-1} + \dots + b_{m-1}\lambda + b_m
+            \end{equation*}
+            满足 $\psi(A) = O$，有
+            \begin{equation*}
+                A^m = k_0I + k_1 + \dots + k_{m-1}A^{m-1} \quad (k_i = -b_{m-i})
+            \end{equation*}
+            由此可以求出
+            \begin{equation*}
+                \begin{cases*}
+                    \begin{aligned}
+                        A^{m+1} &= k_0A + k_1A^2 + \dots + k_{m-1}A^{m} =  k_0k_{m-1}I + (k_0 + k_1k_{m-1})A + \dots + (k_{m-2} + k_{m-1}^2)A^{m-1} \\
+                                &= k_0^{(1)}I + k_1^{(1)}A + \dots + k_{m-1}^{(1)}A^{m-1} \\
+                        \qquad &\cdots \cdots \\ 
+                        A^{m+l} &= k_0I + k_1A + \dots + k_{m+l-1}A^{m+l-1} =  k_0^{(l)}I + k_1^{(l)}A + \dots + k_{m-1}^{(l)}A^{m-1} \\
+                        \qquad &\cdots \cdots
+                    \end{aligned}
+                \end{cases*} 
+            \end{equation*}
+            其中，$k_0^{(l)} = k_0^{(l-1)}k_{m-1}^{(l-1)}, \ \ k_i^{(l)} = k_{i-1}^{(l-1)} + k_i^{(l-1)}k_{m-1}^{(l-1)}(i \geq 1)$，于是有
+            \begin{align*}
+                f(A) &= \sum_{k=0}^{\infty}c_kA^k = (c_0I + c_1A + \dots + c_{m-1}A^{m-1}) + c_m(k_0I + k_1A + \dots + k_{m-1}A^{m-1}) \\ &+ \dots + c_{m+l}(k_0^{l}I + k_1^{(l)}) + \dots + k_{m-1}^{(l)}A^{m-1} + \dots \\ &= (c_0 + \sum_{l=0}^{\infty}c_{m+l}k_0^{(l)})I +  (c_1 + \sum_{l=0}^{\infty}c_{m+l}k_1^{(l)})A + \dots + (c_{m-1} + \sum_{l=0}^{\infty}c_{m+l}k_{m-1}^{(l)})I
+            \end{align*}
+            \par 这表明，矩阵幂级数的求和问题可以转化为 $m$ 个数项级数求和问题. 当 $\psi(A)$ 中的非零项很少时，这种求法的性能十分优越.
+            \\
+            \par 按上述方法，在实际使用待定系数法求解函数矩阵时，我们通常遵循以下步骤：
+            \begin{enumerate}
+                \item 求出满足 $\psi(A) = O$ 的首$1$多项式
+                \item 通过上述递推关系求出 $A^{m}, \ A^{m+1}, \ A^{m+l}, \ \dots$
+                \item 将原矩阵函数展开并化简为上述数项级数求和的形式，计算数项级数并求和得到答案
+            \end{enumerate}
+
+        \subsubsection{举例展示求法}
+            \begin{problem}
+                \par 设 $A = \begin{bmatrix}
+                    \pi & 0 & 0 & 0 \\ 0 & -\pi & 0 & 0 \\ 0 & 0 & 0 & 1 \\ 0 & 0 & 0 & 0
+                \end{bmatrix}$，求 $sinA$.
+            \end{problem}
+            \begin{solution}
+                \begin{enumerate}
+                    \item 求出满足 $\psi(A) = O$ 的首$1$多项式
+                        \begin{align*}
+                            \lambda I - A = \begin{bmatrix}
+                                \lambda - \pi & 0 & 0 & 0 \\ 0 & \lambda + \pi & 0 & 0 \\ 0 & 0 & \lambda & -1 \\ 0 & 0 & 0 & \lambda
+                            \end{bmatrix} \rightarrow \begin{bmatrix}
+                                \lambda - \pi & 0 & 0 & 0 \\ 0 & \lambda + \pi & 0 & 0 \\ 0 & 0 & \lambda & 0 \\ 0 & 0 & 0 & \lambda
+                            \end{bmatrix}
+                        \end{align*}
+                        $\varphi(\lambda) = det(\lambda I - A) = \lambda^4 - \pi^2\lambda^2$. 由于 $\varphi(A) = O$，并且注意到该式中非零项极少，可以使用数项级数求和法
+                    \item 通过上述递推关系求出 $A^{m}, \ A^{m+1}, \ A^{m+l}, \ \dots$
+                        \par $A^4 = \pi^2A^2, \ A^5 = \pi^2A^3, \ A^7 = \pi^4A^3, \ \dots$
+                    \item 将原矩阵函数展开并化简为上述数项级数求和的形式，计算数项级数并求和得到答案
+                        \begin{align*}
+                            sinA &= A - \frac{1}{3!}A^3 + \frac{1}{5!}A^5 - \frac{1}{7!}A^7 + \frac{1}{9!}A^9 - \dots \\ &= A - \frac{1}{3!}A^3 + \frac{1}{5!}\pi^2A^3 - \frac{1}{7!}\pi^4A^3 + \frac{1}{9!}\pi^6A^3 - \dots \\ &= A + (-\frac{1}{3!} + \frac{1}{5!}\pi^2 - \frac{1}{7!}\pi^4 + \frac{1}{9!}\pi^6 - \dots)A^3 \\ &= A + \frac{sin\pi-\pi}{\pi^3}A^3 = A - \pi^{-2}A^3 = \begin{bmatrix}
+                                0 & 0 & 0 & 0 \\ 0 & 0 & 0 & 0 \\ 0 & 0 & 0 & 1 \\ 0 & 0 & 0 & 0
+                            \end{bmatrix}
+                        \end{align*}
+                \end{enumerate}
+            \end{solution}
+
+    \subsection{对角型法}
+        \subsubsection{对角型法求矩阵函数的步骤推导}
+            \par 设 $A$ 相似于对角矩阵 $\Lambda$，即有可逆矩阵 $P$，使得 
+            \begin{equation*}
+                P^{-1}AP = \begin{bmatrix}
+                    \lambda_1 & & \\ & \ddots & \\ & & \lambda_n
+                \end{bmatrix}
+            \end{equation*}
+            则有 $A = P\Lambda P^{-1}, \ A^2 = P\Lambda^2P^{-1}, \ \dots$，于是可得
+            \begin{equation*}
+                \sum_{k=0}^{N}c_kA^k = \sum_{k=0}^{N}c_kP\Lambda^kP^{-1} = P \cdot \sum_{k=0}^{N}c_k\Lambda^kP^{-1} = P \begin{bmatrix}
+                    \sum_{k=0}^{N}c_k\lambda_1^k & & \\ & \ddots & \\ & & \sum_{k=0}^{N}c_k\lambda_n^k
+                \end{bmatrix} P^{-1}
+            \end{equation*}
+            从而
+            \begin{equation*}
+                f(A) = \sum_{k=0}^{\infty}c_kA^k = P\begin{bmatrix}
+                    \sum_{k=0}^{N}c_k\lambda_1^k & & \\ & \ddots & \\ & & \sum_{k=0}^{N}c_k\lambda_n^k
+                \end{bmatrix} P^{-1} = P \begin{bmatrix}
+                    f(\lambda_1) & & \\ & \ddots & \\ & & f(\lambda_n)
+                \end{bmatrix}
+            \end{equation*}
+            也就是，如果我们能求得 $A$ 与对角矩阵相似，就可以将矩阵幂级数求和问题转化为求相似变换矩阵的问题
+            \\
+            \par 按上述方法，在实际使用对角型法求解函数矩阵时，我们通常遵循以下步骤：
+            \begin{enumerate}
+                \item 求出特征多项式 $\varphi(\lambda)$
+                \item 求可逆矩阵 $P$，使得 $P^{-1}AP = diag(\lambda_1, \ \lambda_2, \ \dots, \ \lambda_n)$
+                \item 计算 $f(A) = P \cdot diag(f(\lambda_1, \ \lambda_2, \ \dots, \lambda_n)) \cdot P^{-1}$
+            \end{enumerate}
+            \par 下面一章节将通过 《矩阵论第五版》习题3.3.5 演示该过程.
+
+        \subsubsection{举例展示求法}
+            \begin{problem}
+                \par 设 $A = \begin{bmatrix}
+                    2 & 1 & 0 \\ 0 & 0 & 1 \\ 0 & 1 & 0
+                \end{bmatrix}$，求 $e^A, \ e^{tA}(t \in R), \ sinA$ 
+            \end{problem}
+            \begin{solution}
+                \begin{enumerate}
+                    \item 求出特征多项式 $\varphi(\lambda)$
+                        \par 我们在 \textbf{3.1.2} 中已经求过了该矩阵的特征多项式 $\varphi(\lambda) = (\lambda + 1)(\lambda - 1)(\lambda - 2)$，这里不再赘述.
+                    \item 求可逆矩阵 $P$，使得 $P^{-1}AP = diag(\lambda_1, \ \lambda_2, \ \dots, \ \lambda_n)$
+                        \par 特征值 $\lambda_1 = -1$ 对应的特征向量为 $p_1 = (1, \ -3, \ 3)^T$， 特征值 $\lambda_2 = 1$ 对应的特征向量为 $p_2 = (-1, \ 1, \ 1)^T$，特征值 $\lambda_3 = 2$ 对应的特征向量为 $p_3 = (1, \ 0, \ 0)^T$. 构造矩阵
+                        \begin{equation*}
+                            P = (p_1, \ p_2, \ p_3) = \begin{bmatrix}
+                                -1 & -2 & 0 \\ 1 & 1 & 0 \\ 1 & 0 & 1
+                            \end{bmatrix}
+                        \end{equation*}
+                        则有 
+                        \begin{equation*}
+                            P^{-1} = \frac{1}{6}\begin{bmatrix}
+                                0 & -1 & 1 \\ 0 & 3 & 3 \\ 0 & 4 & 2
+                            \end{bmatrix}, \quad P^{-1}AP = \begin{bmatrix}
+                                -1 & & \\ & 1 & \\ & & 2 
+                            \end{bmatrix}
+                        \end{equation*}
+                    \item 计算 $f(A) = P \cdot diag(f(\lambda_1, \ \lambda_2, \ \dots, \lambda_n)) \cdot P^{-1}$
+                        \begin{align*}
+                            e^A &= P \begin{bmatrix} 
+                                e^{-1} & & \\ & e & \\ & & e^2
+                            \end{bmatrix} P^{-1} = \frac{1}{6}\begin{bmatrix}
+                                6e^2 & 4e^2-3e-e^{-1} & 2e^2-3e+e^{-1} \\ 0 & 3e+3e^{-1} & 3e-3e^{-1} \\ 0 & 3e-3e^{-1} & 3e + 3e^{-1}
+                            \end{bmatrix} \\ e^{tA} &= P \begin{bmatrix}
+                                e^{-t} & & \\ & e^t & \\ & & e^{2t}
+                            \end{bmatrix} P^{-1} = \frac{1}{6}\begin{bmatrix}
+                                6e^{2t} & 4e^{2t}-3e^t-e^{-t} & 2e^{2t}-3e^t+e^{-t} \\ 0 & 3e^t+3e^{-t} & 3e^t-3e^{-t} \\ 0 & 3e^t-3e^{-t} & 3e^t + 3e^{-t}
+                            \end{bmatrix} \\ sinA &= P \begin{bmatrix}
+                                sin(-1) & & \\ & sin1 & \\ & & sin2
+                            \end{bmatrix} P^{-1} = \frac{1}{6}\begin{bmatrix}
+                                sin2 & 4sin2-2sin1 & 2sin2-4sin1 \\ 0 & 0 & 6sin1 \\ 0 & 6sin1 & 0 
+                            \end{bmatrix}
+                        \end{align*}
+                \end{enumerate}
+            \end{solution}
+
+    \subsection{若尔当标准型法}
+        \subsubsection{若尔当标准型法求矩阵函数的步骤推导}
+            \par 设 $A$ 的 Jordan 标准形为 $J$，则有可逆矩阵 $P$，使得
+            \begin{equation}
+                P^{-1}AP = J = \begin{bmatrix}
+                    J_1 & & \\ & \ddots & \\ & & J_s
+                \end{bmatrix}
+            \end{equation}
+            其中
+            \begin{equation*}
+                J_i = \begin{bmatrix}
+                    \lambda_i & 1 & & \\ & \ddots & \ddots & \\ & & \lambda_i & 1 \\ & & & \lambda_i
+                \end{bmatrix}_{m_i \times m_i}
+            \end{equation*}
+            可求得
+            \begin{align*}
+                f(J_i) = \sum_{k=0}^{\infty}c_kJ_i^k &= \sum_{k=0}^{\infty}c_k \begin{bmatrix}
+                    \lambda_i^k & C_k^1\lambda_i^{k-1} & \cdots & c_k^{m_i-1}\lambda_i^{k-m_i+1} \\ & \lambda_i^k & \ddots & \vdots \\ & & \ddots & C_k^1\lambda_i^{k-1} \\ & & & \lambda_i^k
+                \end{bmatrix} \\ &= \begin{bmatrix}
+                    f(\lambda_i) & \frac{1}{1!}f'(\lambda_i) & \cdots & \frac{1}{(m_i-1)!}f^{(m_i-1)}(\lambda_i) \\ & f(\lambda_i) & \ddots & \vdots \\ & & \ddots & \frac{1}{1!}f'(\lambda_i) \\ & & & f(\lambda_i)
+                \end{bmatrix}
+            \end{align*}
+            则有 
+            \begin{align*}
+                f(A) &= \sum_{k=0}^{\infty}c_kA^k = \sum_{k=0}^{\infty}c_kPJ^kP^{-1} = P(\sum_{k=0}^{\infty}c_kJ^k)P^{-1} \\ &= P\begin{bmatrix}
+                    \sum_{k=0}^{\infty}c_kJ_1^k & & \\ & \ddots & \\ & & \sum_{k=0}^{\infty}c_kJ_s^k
+                \end{bmatrix}P^{-1} = P \begin{bmatrix}
+                    f(J_1) & & \\ & \ddots & \\ & & f(J_s)
+                \end{bmatrix} P^{-1}
+            \end{align*}
+            \\
+            \par 按上述方法，在实际使用 Jordan 标准形法求解函数矩阵时，我们通常遵循以下步骤：
+            \begin{enumerate}
+                \item 求可逆矩阵 $P$，使得 $P^{-1}AP = diag(J_1, \ J_2, \ \dots, \ J_s)$，其中 $J_i$ 是 $m_i$ 阶的 Jordan 块 
+                \item 对于 $i = 1, \ 2, \ \dots, \ s$，计算 $f^{(l)}(\lambda_i)(l = 0, \ 1, \ \dots, \ m_i - 1)$，并构造 $m_i$ 阶矩阵 $f(J_i) = f(\lambda_i)I_{m_i} + f'(\lambda_i)I_{m_i}^{(1)} + \dots + \frac{f^{(m_i-1)}(\lambda_i)}{(m_i - 1)!}I_{m_i}^{(m_i-1)}$
+                \item 计算 $f(A) = P \cdot diag(f(J_1), \ f(J_2), \ \dots, \ f(J_s)) \cdot P^{-1}$
+            \end{enumerate}
+            \par 下面一章节将通过 《矩阵论第五版》习题3.3.6 演示该过程.
+
+        \subsubsection{举例展示求法}
+            \par 由于之前已经给过 Jordan 标准形和 $P$ 矩阵的详细求解方法，这里不再赘述.
+            \begin{problem}
+                \par 设 $f(z) = lnz$，求 $f(A)$，这里 $A$ 为：
+                \begin{equation*}
+                    (1) \quad A = \begin{bmatrix}
+                        1 & 0 & 0 & 0 \\ 1 & 1 & 0 & 0 \\ 0 & 1 & 1 & 0 \\ 0 & 0 & 1  &1
+                    \end{bmatrix}; \qquad (2) \quad A = \begin{bmatrix}
+                        2 & 1 & 0 & 0 \\ 0 & 2 & 0 & 0 \\ 0 & 0 & 1 & 1 \\ 0 & 0 & 0 & 1
+                    \end{bmatrix}
+                \end{equation*}
+            \end{problem}
+            \begin{solution}
+                \begin{enumerate}
+                    \item 求可逆矩阵 $P$，使得 $P^{-1}AP = diag(J_1, \ J_2, \ \dots, \ J_s)$，其中 $J_i$ 是 $m_i$ 阶的 Jordan 块 
+                        \par 对 $A$ 求得
+                        \begin{equation*}
+                            P = P^{-1} = \begin{bmatrix}
+                                & & & 1 \\ & & 1 & \\ & 1 & & \\ 1 & & &
+                            \end{bmatrix}, \quad P^{-1}AP = J = \begin{bmatrix}
+                                1 & 1 & & \\ & 1 & 1 & \\ & & 1 & 1 \\ & & & 1
+                            \end{bmatrix}
+                        \end{equation*}
+                    \item 对于 $i = 1, \ 2, \ \dots, \ s$，计算 $f^{(l)}(\lambda_i)(l = 0, \ 1, \ \dots, \ m_i - 1)$，并构造 $m_i$ 阶矩阵 $f(J_i) = f(\lambda_i)I_{m_i} + f'(\lambda_i)I_{m_i}^{(1)} + \dots + \frac{f^{(m_i-1)}(\lambda_i)}{(m_i - 1)!}I_{m_i}^{(m_i-1)}$
+                        \begin{equation*}
+                            f(J_1) = f(J) = \begin{bmatrix}
+                                ln1 & \frac{1}{1!}\frac{1}{1} & \frac{1}{2!}\frac{-1}{1^2} & \frac{1}{3!}\frac{2}{1^3} \\ & ln1 & \frac{1}{1!}\frac{1}{1} & \frac{1}{2!}\frac{-1}{1^2} \\ & & ln1 & \frac{1}{1!}\frac{1}{1} \\ & & & ln1 
+                            \end{bmatrix} = \begin{bmatrix}
+                                0 & 1 & -\frac{1}{2} & \frac{1}{3} \\ & 0 & 1 & -\frac{1}{2} \\ & & 0 & 1 \\ & & & 0
+                            \end{bmatrix}
+                        \end{equation*}
+                    \item 计算 $f(A) = P \cdot diag(f(J_1), \ f(J_2), \ \dots, \ f(J_s)) \cdot P^{-1}$
+                        \begin{equation*}
+                            lnA = f(A) = Pf(J)P^{-1} = \begin{bmatrix}
+                                0 & & & \\ 1 & 0 & & \\ -\frac{1}{2} & 1 & 0 & \\ \frac{1}{3} & -\frac{1}{2} & 1 & 0 
+                            \end{bmatrix}
+                        \end{equation*}
+                    \end{enumerate}
+                    \par 同理，对于 ($2$) 我们采取同样的步骤：
+                    \begin{enumerate}
+                        \item 求可逆矩阵 $P$，使得 $P^{-1}AP = diag(J_1, \ J_2, \ \dots, \ J_s)$，其中 $J_i$ 是 $m_i$ 阶的 Jordan 块 
+                           \par 观察矩阵形式，发现其已经是一个 Jordan 标准形，且有
+                           \begin{equation*}
+                                A = \begin{bmatrix}
+                                    J_1 & \\ & J_2 
+                                \end{bmatrix}, \quad J_1 = \begin{bmatrix}
+                                    2 & 1 \\ 0 & 2
+                                \end{bmatrix}, \quad J_2 = \begin{bmatrix}
+                                    1 & 1 \\ 0 & 1
+                                \end{bmatrix}
+                           \end{equation*}
+                           故可取 $P = P^{-1} = I$.
+                        \item 对于 $i = 1, \ 2, \ \dots, \ s$，计算 $f^{(l)}(\lambda_i)(l = 0, \ 1, \ \dots, \ m_i - 1)$，并构造 $m_i$ 阶矩阵 $f(J_i) = f(\lambda_i)I_{m_i} + f'(\lambda_i)I_{m_i}^{(1)} + \dots + \frac{f^{(m_i-1)}(\lambda_i)}{(m_i - 1)!}I_{m_i}^{(m_i-1)}$
+                            \begin{align*}
+                                f(J_1) = \begin{bmatrix}
+                                    ln2 & \frac{1}{2} \\ 0 & ln2
+                                \end{bmatrix}, \quad lnJ_2 = \begin{bmatrix}
+                                    0 & 1 \\ 0 & 0
+                                \end{bmatrix}
+                            \end{align*}
+                        \item 计算 $f(A) = P \cdot diag(f(J_1), \ f(J_2), \ \dots, \ f(J_s)) \cdot P^{-1}$
+                            \begin{equation*}
+                                lnA = f(A) = Pf(J)P^{-1} = f(J) = \begin{bmatrix}
+                                    f(J_1) & \\ & f(J_2) 
+                                \end{bmatrix} = \begin{bmatrix}
+                                    ln2 & \frac{1}{2} & 0 & 0 \\ & ln2 & 0 & 0 \\ & & 0 & 1 \\ & & & 0
+                                \end{bmatrix}
+                            \end{equation*}
+                            
+                        \end{enumerate}
+                    \end{solution}

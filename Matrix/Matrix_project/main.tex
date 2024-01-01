@@ -1,0 +1,191 @@
+\documentclass[UTF8, 12pt, a4paper, oneside]{ctexart}
+\usepackage{listing}
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{geometry}
+\usepackage{ulem}
+\usepackage[most]{tcolorbox}
+\usepackage[hidelinks]{hyperref}
+\usepackage{multicol}
+\usepackage{color}
+\usepackage{xcolor}
+\usepackage{framed}
+\usepackage{mdframed}
+\usepackage{mathtools,amssymb}
+\usepackage{bm}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{caption}
+\usepackage{fancyhdr}
+\usepackage{arydshln}
+%\usepackage{draftwatermark}         % 所有页加水印
+%\usepackage[firstpage]{draftwatermark} % 只有第一页加水印
+%\SetWatermarkText{傻逼优诺我星野爱和你爆了}
+%\SetWatermarkText{\includegraphics{fig/texlion.png}}         % 设置水印logo
+%\SetWatermarkLightness{0.8}             % 设置水印透明度 0-1
+%\SetWatermarkScale{0.5}                   % 设置水印大小 0-1 
+
+\definecolor{backcolour}{rgb}{0.18,0.18,0.18}
+\definecolor{codegray}{rgb}{0.93,0.93,0.93}
+\definecolor{codegreen}{rgb}{0.34,0.76,0.34}
+\definecolor{codeblue}{rgb}{0.27,0.35,0.69}
+\definecolor{codepurple}{rgb}{0.69,0.25,0.82}
+\definecolor{codeorange}{rgb}{0.8,0.6,0.2}
+\definecolor{codered}{rgb}{0.8,0.25,0.33}
+
+\titleformat{\section}
+    {\fontsize{16pt}{16pt}\bfseries\centering}
+    {第 \thesection 章} % 标签部分为空
+    {0.5em} % 标题与正文的距离
+    {} % 标题为空
+    
+\titleformat{\subsection}
+    {\fontsize{14pt}{16.8pt}\bfseries}
+    {\thesubsection} % 标签部分为空
+    {0.5em} % 标题与正文的距离
+    {} % 标题为空 
+
+\titleformat{\subsubsection}
+    {\fontsize{12pt}{14pt}\bfseries}
+    {\thesubsubsection} % 标签部分为空
+    {0.5em} % 标题与正文的距离
+    {} % 标题为空 
+
+\titlespacing{\subsubsection}
+  {\parindent}{3.25ex plus 1ex minus .2ex}{1em}
+
+\pagestyle{fancy}
+\fancyhf{} % 清除默认页眉页脚
+\fancyfoot[C]{\thepage} % 页脚居中显示页码
+
+\lstset{
+    backgroundcolor     =   \color{codegray},
+    basicstyle          =   \sffamily,          % 基本代码风格
+    keywordstyle        =   \bfseries,          % 关键字风格
+    commentstyle        =   \rmfamily\itshape,  % 注释的风格，斜体
+    stringstyle         =   \ttfamily,  % 字符串风格
+    flexiblecolumns,                % 别问为什么，加上这个
+    numbers             =   left,   % 行号的位置在左边
+    showspaces          =   false,  % 是否显示空格，显示了有点乱，所以不现实了
+    numberstyle         =   \zihao{-5}\ttfamily,    % 行号的样式，小五号，tt等宽字体
+    showstringspaces    =   false,
+    captionpos          =   t,      % 这段代码的名字所呈现的位置，t指的是top上面
+    aboveskip           =   1em,
+    belowskip           =   1em,
+    frame               =   lrtb,   % 显示边框
+}
+
+\lstdefinestyle{C++}{
+    language        =   C++, % 语言选Python
+    basicstyle      =   \zihao{-5}\ttfamily,
+    numberstyle     =   \zihao{-5}\ttfamily,
+    keywordstyle    =   \color{codepurple},
+    keywordstyle    =   [2] \color{codegray},
+    stringstyle     =   \color{magenta},
+    commentstyle    =   \color{codegreen}\ttfamily,
+    breaklines      =   true,   % 自动换行，建议不要写太长的行
+    columns         =   fixed,  % 如果不加这一句，字间距就不固定，很丑，必须加
+    basewidth       =   0.5em,
+}
+
+\lstdefinestyle{C}{
+    language        =   C, % 语言选Python
+    basicstyle      =   \zihao{-5}\ttfamily,
+    numberstyle     =   \zihao{-5}\ttfamily,
+    keywordstyle    =   \color{codepurple},
+    keywordstyle    =   [2] \color{codegray},
+    stringstyle     =   \color{magenta},
+    commentstyle    =   \color{codegreen}\ttfamily,
+    breaklines      =   true,   % 自动换行，建议不要写太长的行
+    columns         =   fixed,  % 如果不加这一句，字间距就不固定，很丑，必须加
+    basewidth       =   0.5em,
+}
+
+\newlist{choices}{enumerate}{2}
+\setlist[choices,1]{
+  label = \Alph*.,       % 设置标签格式为大写字母后跟括号，例如 A)、B) 等
+  leftmargin = *,        % 设置左边距，使其与上层列表对齐
+  align = left,          % 设置标签对齐方式为左对齐
+  labelwidth = 1.5em,    % 设置标签宽度
+  itemsep = 0.5em        % 设置列表项之间的距离
+}
+
+\newmdenv[
+  leftmargin=0cm,
+  rightmargin=0cm,
+  skipabove=1em,
+  skipbelow=1em,
+  backgroundcolor=gray!20,
+  linewidth=0pt
+]{mquote}
+
+\usepackage{paralist}
+\let\itemize\compactitem
+\let\enditemize\endcompactitem
+\let\enumerate\compactenum
+\let\endenumerate\endcompactenum
+\let\description\compactdesc
+\let\enddescription\endcompactdesc
+
+\definecolor{shadecolor}{RGB}{241, 241, 255}
+\geometry{left=2.54cm,right=2.54cm,top=3.18cm,bottom=3.18cm}
+\linespread{1.5}
+
+\newcounter{problemname}[subsubsection]
+%\newenvironment{problem}{\begin{shaded}\stepcounter{problemname}\par\noindent\textbf{题目\arabic{problemname}. }}{\end{shaded}\par}
+\newenvironment{problem}{\stepcounter{problemname}\par\noindent\textbf{题目. }\par}
+
+%\newenvironment{problem}{\begin{shaded}\par\noindent\textbf{题目. }}{\end{shaded}\par}
+\newenvironment{solution}{\par\noindent\textbf{解答. }}{\par}
+\newenvironment{note}{\par\noindent\textbf{题目\arabic{problemname}的注记. }}{\par}
+
+\begin{document}
+	\sloppy
+	\thispagestyle{empty}
+    \begin{figure}[t]
+		\centering
+		\includegraphics[width=13cm]{logo1.jpg}
+	\end{figure}
+
+    \begin{center}
+        \Huge\textbf{期末课程论文}
+    \end{center}
+	\vspace*{1em}
+    \begin{figure}[htbp]
+		\centering
+		\includegraphics[width=3cm]{logo2.jpg}
+	\end{figure}
+		\begin{center}
+			\Large\textbf{题目:} \underline{\textbf{矩阵函数的求法和矩阵分解方法研究}} 
+		\end{center}
+    \vspace*{3em}
+	\begin{table}[htbp]
+		\hspace*{8em}
+		\large
+		\begin{tabular}{ll}
+		\textbf{姓 \hspace*{1.3em}  名:} & \underline{胡宇杭} \\
+		\textbf{学 \hspace*{1.3em}  院:} & \underline{计算机学院(国家示范性软件学院)} \\
+        \textbf{专 \hspace*{1.3em}  业:} & \underline{计算机类} \\
+        \textbf{班 \hspace*{1.3em}  级:} & \underline{2022211320} \\
+        \textbf{学 \hspace*{1.3em}  号:} & \underline{2022212408} \\
+        \textbf{指导教师:} & \underline{李昊辰} \\
+		\end{tabular}
+	\end{table}
+    \vspace*{2em}
+    \begin{center}
+        \Large\textbf{\today}
+    \end{center}
+    \setcounter{page}{1}
+	\include{section0.tex}
+    \include{section0_1.tex}
+    \pagenumbering{Roman}
+	\tableofcontents
+    \newpage
+    \pagenumbering{arabic}
+    \include{section1.tex}
+    \include{section2.tex}
+    \include{section3.tex}
+    \include{section4.tex}
+    \include{section5.tex}
+\end{document}
