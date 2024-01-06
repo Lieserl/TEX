@@ -70,3 +70,9 @@ int deQueue(Priority_Queue* q)
     return idx;
 }
 
+typedef struct node
+{
+    char data;
+    struct node* lc, rc;
+} bitptr;
+
