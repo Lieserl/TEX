@@ -347,6 +347,9 @@
                 \end{equation*}
             \end{solution}
 
+        \subsubsection{代码实现}
+            \lstinputlisting[style = Python, title = {\bf LU 分解}]{LU.py}
+
     \subsection{矩阵的 QR 分解}
         \subsubsection{矩阵 QR 分解的步骤推导}
             \par \textbf{Givens 矩阵：}设实数 $c$ 和 $s$ 满足 $c^2 + s^2 = 1$，对应的 $Givens$ 矩阵为 $T_{ij}(c, \ s)(i \ne j)$，则
@@ -519,6 +522,7 @@
                 \end{bmatrix} = I_n - 2vv^T
             \end{equation*}
             是 $n$ 阶 Householder 矩阵. 因此，$S$ 是有限个 Householder 矩阵的乘积，且使得 $SA$ 等于上述上三角矩阵，记为 $R$，则 $Q = S^{-1} = S^T$，有 $A = QR$.
+ 
         \subsubsection{举例展示求法}
             \begin{problem}
                 \par 用 Schmidt 正交化方法求矩阵
@@ -605,6 +609,9 @@
                         则有 $A = QR$
                 \end{enumerate}
             \end{solution}
+
+        \subsubsection{代码实现}
+            \lstinputlisting[style = Python, title = {\bf QR 分解}]{QR.py}
 
     \subsection{矩阵的满秩分解}
         \subsubsection{矩阵满秩分解的步骤推导}
@@ -748,6 +755,8 @@
                 \end{enumerate}
             \end{solution}
 
+        \subsubsection{代码实现}
+            \lstinputlisting[style = Python, title = {\bf 满秩分解}]{FR.py}
 
     \subsection{矩阵的奇异值分解}
         \subsubsection{矩阵奇异值分解的步骤推导}
@@ -900,6 +909,8 @@
                 \end{enumerate} 
             \end{solution}
 
+        \subsubsection{代码实现}
+            \lstinputlisting[style = Python, title = {\bf SVD 分解}]{SVD.py}
     \subsection{利用矩阵分解求矩阵广义逆}
         \subsubsection{矩阵广义逆介绍}
             \par 逆矩阵的概念只是对可逆矩阵才有意义. 但是在实际问题中，遇到的矩阵不一 定是方阵，即便是方阵也不一定可逆，这就需要考虑，可否将逆矩阵概念进一步推 广，为此，引进下列条件：
@@ -1119,4 +1130,4 @@
                             \end{bmatrix}
                         \end{equation*}
                 \end{enumerate}
-            \end{solution}
+        \end{solution}

@@ -60,7 +60,6 @@
 \fancyfoot[C]{\thepage} % 页脚居中显示页码
 
 \lstset{
-    backgroundcolor     =   \color{codegray},
     basicstyle          =   \sffamily,          % 基本代码风格
     keywordstyle        =   \bfseries,          % 关键字风格
     commentstyle        =   \rmfamily\itshape,  % 注释的风格，斜体
@@ -84,6 +83,19 @@
     keywordstyle    =   [2] \color{codegray},
     stringstyle     =   \color{magenta},
     commentstyle    =   \color{codegreen}\ttfamily,
+    breaklines      =   true,   % 自动换行，建议不要写太长的行
+    columns         =   fixed,  % 如果不加这一句，字间距就不固定，很丑，必须加
+    basewidth       =   0.5em,
+}
+
+\lstdefinestyle{Python}{
+    language        =   Python, % 语言选Python
+    basicstyle      =   \zihao{-5}\ttfamily,
+    numberstyle     =   \zihao{-5}\ttfamily,
+    keywordstyle    =   \color{blue},
+    keywordstyle    =   [2] \color{teal},
+    stringstyle     =   \color{magenta},
+    commentstyle    =   \color{red}\ttfamily,
     breaklines      =   true,   % 自动换行，建议不要写太长的行
     columns         =   fixed,  % 如果不加这一句，字间距就不固定，很丑，必须加
     basewidth       =   0.5em,
