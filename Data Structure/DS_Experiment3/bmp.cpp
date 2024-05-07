@@ -117,3 +117,78 @@ void destroyBmpCode(BCode* bc)
     if (bc->data) free(bc->data);
     free(bc);
 }
+
+int solution(int *target, int **res, int len)
+{
+    int ptr = 0;
+    int flag = 0;
+    int id = 0;
+    int num = 0;
+    for (int i = 1; i < 101; i++)
+        res[i] = (int *)malloc(sizeof(int) * 3);
+    while (ptr != len)
+    {
+        if (flag == 0)
+        {
+            id = target[ptr++];
+            flag = 1;
+            num = target[ptr++];
+        }
+        else
+        {
+            int sum = 0;
+            int maxdense = 0;
+            for (int i = 0; i < num; i++)
+            {
+                sum += target[ptr];
+                if (maxdense <= target[ptr])
+                    maxdense = target[ptr];
+                ptr++;
+            }
+            res[id][0] = id;
+            res[id][1] = sum;
+            res[id][2] = maxdense;
+            flag = 0;
+        }
+    }
+
+    for (int i = 1; i < id; i++)
+    {
+        for (int j = 1; j < id - i; j++)
+        {
+            if (res[j][1] < res[j + 1][1])
+            {
+                int *tmp = res[j];
+                res[j] = res[j + 1];
+                res[j + 1] = tmp;
+            }
+        }
+    }
+
+    int sb = 0;
+    for (int i = 1; i < id + 1; i++)
+    {
+        if (res[i][1] < 3000)
+        {
+            sb = i;
+            break;
+        }
+    }
+    for (int i = sb; i < id; i++)
+    {
+        for (int j = sb; j < id - i + sb; j++)
+        {
+            if (res[j][2] < res[j + 1][2])
+            {
+                int *tmp = res[j];
+                res[j] = res[j + 1];
+                res[j + 1] = tmp;
+            }
+        }
+    }
+    for (int i = 0; i < id; i++)
+    {
+        res[i][0] = res[i + 1][0];
+    }
+    return id;
+}

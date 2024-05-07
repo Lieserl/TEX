@@ -1,0 +1,90 @@
+\section{双端口存储器实验}
+    \subsection{实验目的及任务}
+        \begin{itemize}
+            \item 实验目的：
+            \begin{enumerate}
+                \item 进一步熟悉 \textit{TEC-Plus} 模型计算机的数据通路
+                \item 熟练掌握数据通路中各种控制信号的作用和用法
+                \item 掌握数据通路中数据流动的路径
+            \end{enumerate}
+            \item 实验任务：
+            \begin{enumerate}
+                \item 向通用寄存器堆内的R3-R0写入数据
+                \item 将寄存器 R0-R3 中的数据写入双端口 \textit{RAM} 的 20H、21H、22H、23H 存储单元
+                \item 从存储器 20H、21H、22H、23H 存储单元中读出数据，并存入寄存器 R3-R0
+                \item 显示寄存器 R3-R0 的值，检查数据传送是否正确
+            \end{enumerate}
+        \end{itemize}
+    
+    \subsection{实验电路分析}
+        \begin{figure}[htbp]
+            \centering
+            \includegraphics*[width=12cm]{3_cu.png}
+        \end{figure}
+
+        \par 一次完整的运算步骤的电路分析如下：
+        \begin{enumerate}
+            \item 通过数据开关 \textit{SD}7-\textit{SD}0 将两位 $16$ 进制数输入到 \textit{SWD} 中，当 $SBUS = 1$ 时，数据被送入 \textit{DBUS} 总线上
+            \item 通过 2-4 译码器片选输入 $RD0$、$RD1$ 进行寄存器的选择
+            \item 令 $DRW = 1$，此时被选中的寄存器可以写入
+            \item 按下 $QD$ 输入时钟信号，在 $T3$ 时钟上升沿 \textit{DBUS} 中的数据被写入寄存器中
+            \item 关闭所有开关，令 $SBUS = 0, LAR = 1$，此时地址寄存器可以写入
+            \item \textit{QD}，在 $T3$ 时钟上升沿 \textit{DBUS} 上的数据被送入地址寄存器 \textit{AR} 中
+            \item 此时 \textit{AR} 中的数据被送至 A7L-A0L 端口，选中对应的内存地址，令 $LAR=0$，关闭地址寄存器写入，令 $MEMW=1$，开启双端口 RAM 的写入功能
+            \item 令$S3-S0 = F, M = 1, CIN = 0, SBUS = 0, ABUS = 1, MBUS = 0$，通过 RD1 和 RD0 选中寄存器，此时 ALU 将（A）端口的数据直接输出至 DBUS 上
+            \item \textit{QD}，在 $T2$ 时钟上升沿 \textit{DBUS} 上的数据被送入双端口 \textit{RAM} 中由 \textit{AR} 寄存器指定的地址中
+            \item 令 $MEMW=0, SBUS=0, MBUS=1, ABUS=0$，此时由 $AR$ 选中的内存地址中的数据被送到 \textit{DBUS} 上
+            \item 重复步骤 2-4 将内存中的数据写入寄存器中
+            \item 重复步骤 8 将内存中的数据读出至 DBUS 上
+        \end{enumerate}
+
+        \subsection{思考题解答}
+        \begin{problem}
+            同步从 RAM 的右端口读出数据应该如何操作，信号如何设置，PC7-PC0、INS7- INS0 显示情况如何?
+        \end{problem}
+        \begin{solution}
+            \begin{enumerate}
+                \item SBUS=1，LPC=1，数据开关为 20H，QD，将 20H 存入 PC，此时 PC=20H，INS=75H
+                \item PCINC=1，QD，PC自增，此时 PC=21H，INS=28H
+                \item 重复步骤 2，此时 PC=22H，INS=89H
+                \item 重复步骤 2，此时 PC=23H，INS=32H
+            \end{enumerate}
+        \end{solution}
+    
+    
+    \subsection{实验过程及结果}
+    \begin{table}[htbp]
+        \centering
+        \scalebox{0.5}{
+        \begin{tabular}{|c|>{\centering\arraybackslash}p{4cm}|c|>{\centering\arraybackslash}p{6cm}|>{\centering\arraybackslash}p{3cm}|c|}
+            \hline
+            \multicolumn{6}{|c|}{\textbf{实验过程记录表}} \\ \hline
+            \textbf{序号} & \textbf{操作} & \textbf{数据开关} & \textbf{操作目的} & \textbf{实验现象} & \textbf{备注} \\ \hline
+            \textbf{1} & CLR & & 复位 & & \\ \hline
+            \textbf{2} & DP=1 & & 设置操作模式 & & \\ \hline
+            \textbf{3} & SBUS=1, RD=00, DRW=1 & 75H & R0 存数 & A=10H D=75H & \\ \hline
+            \textbf{4} & SBUS=1, RD=01, DRW=1 & 28H & R1 存数 & A=28H D=28H & \\ \hline
+            \textbf{5} & SBUS=1, RD=10, DRW=1 & 89H & R2 存数 & A=89H D=89H & \\ \hline
+            \textbf{6} & SBUS=1, RD=11, DRW=1 & 32H & R3 存数 & A=32H D=32H & \\ \hline
+            \textbf{6} & SBUS = 1 LAR = 1 QD & 20H & AR 写入地址 & AR=20H D=20H & \\ \hline
+            \textbf{7} & S3-S0=F, M=1, CIN=0, SBUS=0, ABUS=1, MEMW=1, ARINC=1, QD=00, QD & & R0 写入地址 20H，AR自增 & D=75H A=75H AR=21H & \\ \hline
+            \textbf{8} & S3-S0=F, M=1, CIN=0, SBUS=0, ABUS=1, MEMW=1, ARINC=1, QD=01, QD & & R1 写入地址 21H，AR自增 & D=28H A=28H AR=22H & \\ \hline
+            \textbf{9} & S3-S0=F, M=1, CIN=0, SBUS=0, ABUS=1, MEMW=1, ARINC=1, QD=10, QD & & R2 写入地址 22H，AR自增 & D=89H A=89H AR=23H & \\ \hline
+            \textbf{10} & S3-S0=F, M=1, CIN=0, SBUS=0, ABUS=1, MEMW=1, ARINC=1, QD=11, QD & & R0 写入地址 23H，AR自增 & D=32H A=32H AR=24H & \\ \hline
+            \textbf{11} & 全关，LAR=1, SBUS=1 & 20H & AR 写入地址 & AR=20H D=20H & \\ \hline
+            \textbf{12} & RD=11, MBUS=1, DRW=1 SBUS=0, LAR=0, ARINC=1 & & 将地址 20H 数据写入 R3，AR自增 & D=75H A=75H AR=21H & \\ \hline
+            \textbf{13} & RD=10, MBUS=1, DRW=1 SBUS=0, LAR=0, ARINC=1 & & 将地址 21H 数据写入 R2，AR自增 & D=28H A=28H AR=22H & \\ \hline
+            \textbf{14} & RD=01, MBUS=1, DRW=1 SBUS=0, LAR=0, ARINC=1 & & 将地址 22H 数据写入 R1，AR自增 & D=89H A=89H AR=23H & \\ \hline
+            \textbf{15} & RD=00, MBUS=1, DRW=1 SBUS=0, LAR=0, ARINC=1 & & 将地址 23H 数据写入 R0，AR自增 & D=32H A=32H AR=24H & \\ \hline
+            \textbf{16} & RD=00 & & 读取 R0 中的数据 & A=32H & \\ \hline
+            \textbf{17} & RD=01 & & 读取 R1 中的数据 & A=89H & \\ \hline
+            \textbf{18} & RD=10 & & 读取 R2 中的数据 & A=28H & \\ \hline
+            \textbf{19} & RD=11 & & 读取 R3 中的数据 & A=75H & \\ \hline
+        \end{tabular}
+        } 
+    \end{table}
+
+    \subsection{实验收获及体会}
+        \par 熟悉了 \textit{TEC-Plus} 模型计算机的数据通路，掌握了数据通路中各种控制信号的作用和用法，掌握了数据通路中数据流动的路径
+
+    

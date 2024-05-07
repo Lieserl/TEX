@@ -200,3 +200,28 @@ begin
     q <= temp;
 end rtl_arc;
 ```
+
+```vhdl
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.std_logic_arith.all;
+
+entity func is
+    port(X, clk : IN STD_LOGIC;
+        Y : OUT STD_LOGIC);
+end func
+
+ARCHITECTURE rtl of func is
+TYPE state_type IS(s0, s1, s2);
+SIGNAL state : state_type;
+BEGIN
+    PROCESS(clk)
+    BEGIN
+        IF (clk'event AND clk = '1') THEN
+            IF X = '0' THEN
+                CASE state IS
+                    when s0 => state <= s1;
+                        Y <= 0;
+
+
+```

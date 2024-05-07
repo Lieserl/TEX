@@ -1,0 +1,103 @@
+\section{双端口存储器实验}
+    \subsection{实验目的及任务}
+        \begin{itemize}
+            \item 实验目的：
+            \begin{enumerate}
+                \item 了解双端口静态随机存储器 \textit{IDT7132} 的工作特性及使用方法
+                \item 了解半导体存储器存储和读取数据的方式
+                \item 了解双端口存储器并行读写的方式
+                \item 熟悉 \textit{TEC-}8模型计算机存储器部分的数据通路
+            \end{enumerate}
+            \item 实验任务：
+            \begin{enumerate}
+                \item 向双端口 \textit{RAM} 的某个地址写入数据（左端口）
+                \begin{itemize}
+                    \item 向连续的地址写入
+                    \item 向非连续的地址写入
+                \end{itemize}
+                \item 从双端口 \textit{RAM} 的某个地址中读出数据（左、右端口）
+                \begin{itemize}
+                    \item 从连续的地址读出
+                    \item 从非连续的地址读出
+                    \item 通过左右端口从同一个地址同时读出
+                \end{itemize}
+            \end{enumerate}
+        \end{itemize}
+    
+    \subsection{实验电路分析}
+        \begin{figure}[htbp]
+            \centering
+            \includegraphics*[width=12cm]{2_cu.png}
+        \end{figure}
+
+        \par 一次完整的运算步骤的电路分析如下：
+        \begin{enumerate}
+            \item 通过数据开关 \textit{SD}7-\textit{SD}0 将两位 $16$ 进制数输入到 \textit{SWD} 中，当 $SBUS = 1$ 时，数据被送入 \textit{DBUS} 总线上
+            \item 令 $LAR = 1$，此时地址寄存器可以写入
+            \item \textit{QD}，在 $T3$ 时钟上升沿 \textit{DBUS} 上的数据被送入地址寄存器 \textit{AR} 中
+            \item 此时 \textit{AR} 中的数据被送至 A7L-A0L 端口，选中对应的内存地址，令 $LAR=0$，关闭地址寄存器写入，令 $MEMW=1$，开启双端口 RAM 的写入功能
+            \item \textit{QD}，在 $T2$ 时钟上升沿 \textit{DBUS} 上的数据被送入双端口 \textit{RAM} 中由 \textit{AR} 寄存器指定的地址中
+            \item 令 $MEMW=0, SBUS=0, MBUS=1$，此时由 $AR$ 选中的内存地址中的数据被送到 \textit{DBUS} 上
+        \end{enumerate}
+
+        \subsection{思考题解答}
+        \begin{problem}
+            如果 \textit{LAR} 为1，45H 是否可以正确写入 23H 单元？
+        \end{problem}
+        \begin{solution}
+            可以正常写入，因为控制内存写入的是 $T2$，比控制 \textit{AR} 写入的 $T3$ 早，所以可以正确写入，但之后 \textit{AR} 被写入 45H，需要重新将 23H 写入 \textit{AR} 才能正确显示
+        \end{solution}
+        \begin{problem}
+            如果 \textit{MEMW}为 1 会发生什么事情？
+        \end{problem}
+        \begin{solution}
+            \textit{MEMW} 为 1 会导致 写入地址时 \textit{RAM} 原来地址位置的数据被覆盖为地址数据
+        \end{solution}
+        \begin{problem}
+            如果 \textit{SBUS} 为 1 会发生什么事情？
+        \end{problem}
+        \begin{solution}
+            不能正常读出，同时控制数据开关，只有原来 \textit{MBUS} 该亮的地方才会亮
+        \end{solution}
+    
+    \subsection{实验过程及结果}
+    \begin{table}[htbp]
+        \centering
+        \scalebox{0.5}{
+        \begin{tabular}{|c|>{\centering\arraybackslash}p{4cm}|c|>{\centering\arraybackslash}p{6cm}|>{\centering\arraybackslash}p{3cm}|c|}
+            \hline
+            \multicolumn{6}{|c|}{\textbf{向10H、20H、21H、22H地址单元写入数据过程}} \\ \hline
+            \textbf{序号} & \textbf{操作} & \textbf{数据开关} & \textbf{操作目的} & \textbf{实验现象} & \textbf{备注} \\ \hline
+            \textbf{1} & CLR & & 复位 & & \\ \hline
+            \textbf{2} & DP=1 & & 设置操作模式 & & \\ \hline
+            \textbf{3} & SBUS=1, LAR=1, QD & 10H & 设置第一个写入地址10H，打开SBUS将10H送入数据总线DBUS,同时打开AR的写入信号LAR，按一次QD，将10H地址写入AR & AR=10H & \\ \hline
+            \textbf{4} & SBUS=1, MEMW=1, LAR=0, QD & 55H & 设置第一个写入数据45H，打开SBUS将55H送入数据总线DBUS，打开RAM的写入信号MEMW，关闭 AR 的写入信号 LAR，按一次QD, 将 55H 写入 RAM & & \\ \hline
+            \textbf{5} & SBUS=1, MEMW=0, LAR=1, QD & 20H & 设置第二个写入地址20H & AR=20H & \\ \hline
+            \textbf{6} & SBUS=1, MEMW=1, LAR=0, ARINC=1, QD & AAH & 将 AAH 写入内存地址 20H，同时 AR 自增 & AR=21H & \\ \hline
+            \textbf{6} & SBUS=1, MEMW=1, LAR=0, ARINC=1, QD & 10H & 将 10H 写入内存地址 21H，同时 AR 自增 & AR=22H & \\ \hline
+            \textbf{7} & SBUS=1, MEMW=1, LAR=0, ARINC=1, QD & 20H & 将 20H 写入内存地址 22H，同时 AR 自增 & AR=23H & \\ \hline
+        \end{tabular}
+        } 
+    \end{table}
+
+    \begin{table}[htbp]
+        \centering
+        \scalebox{0.5}{
+        \begin{tabular}{|c|>{\centering\arraybackslash}p{4cm}|c|>{\centering\arraybackslash}p{6cm}|>{\centering\arraybackslash}p{3cm}|c|}
+            \hline
+            \multicolumn{6}{|c|}{\textbf{通过左右端口并发从10H、20H、21H、22H地址单元读出数据过程}} \\ \hline
+            \textbf{序号} & \textbf{操作} & \textbf{数据开关} & \textbf{操作目的} & \textbf{实验现象} & \textbf{备注} \\ \hline
+            \textbf{1} & SBUS=1, MEMW=0, LAR=1, LPC=1, QD & 10H & 将地址10H写入 PC 和 AR & PC=AR=20H IR=INS=55H & \\ \hline
+            \textbf{2} & SBUS=0, LAR=0, LPC=0, MBUS=1 & & 左侧读取数据送到 DBUS 上 & D7-D0=55H & \\ \hline
+            \textbf{3} & SBUS=1, MEMW=0, LAR=1, LPC=1, QD & 20H & 将地址20H写入 PC 和 AR & PC=AR=20H IR=INS=AAH & \\ \hline
+            \textbf{4} & SBUS=0, LAR=0, LPC=0, MBUS=1 & & 读出 20H 的数据 & D7-D0=AAH & \\ \hline
+            \textbf{5} & SBUS=0, ARINC=1, LAR=0, LPC=0, PCINC=1, MBUS=1, QD & & AR、PC自增，读出 21H 的数据 & PC=AR=21H D7-D0=10H IR=INS=10H & \\ \hline
+            \textbf{6} & SBUS=0, ARINC=1, LAR=0, LPC=0, PCINC=1, MBUS=1, QD & & AR、PC自增，读出 22H 的数据 & PC=AR=22H D7-D0=20H IR=INS=20H & \\ \hline
+        \end{tabular}
+        } 
+    \end{table}
+
+    \subsection{实验收获及体会}
+        \par 知道了计算机如何向存储器中写入和读出数据，如何连续的存储和读取数据
+
+    
