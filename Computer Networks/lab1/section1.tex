@@ -1,0 +1,98 @@
+\section{软件设计}
+    \subsection{数据结构}
+        \subsubsection{帧的种类及结构}
+            \par 帧的结构如下所示：
+            \lstinputlisting[
+                style = C++,
+                title = {\bf 帧的种类及结构}
+            ]{frame.cpp}
+            \par 帧的种类有 $3$ 中，在 \textbf{datalink.h} 中定义，分别为 \textbf{DATA(1)}、\textbf{ACK(2)}、 \textbf{NAK(3)}，相应的帧组成如上所示
+            \par 其中，通过查阅指导书，发现网络层的包长固定为256字节，故一个数据帧的帧长固定为 $256 + 1 + 1 + 1 + 4 = 263$ 字节。其中，\textbf{kind}、\textbf{ack}、\textbf{seq} 均为 $1$ 字节，\textbf{data} 为 $240-256$ 字节（实际固定为 $256$ 字节），\textbf{CRC} 为 $4$ 字节。
+            \par 每个字段的含义如下所示（以数据帧为例）：
+            \begin{itemize}
+                \item \textbf{kind}：表示帧种类，有 \textbf{DATA}、\textbf{ACK}、\textbf{NAK} 三种
+                \item \textbf{ack}：用于捎带确认，在数据帧中包含所要发送的 \textbf{ACK} 帧的数据，即期望帧的前一帧的序号
+                \item \textbf{seq}：当前发送帧的序号
+                \item \textbf{data}：网络层传来的包的数据
+                \item \textbf{padding}：\textbf{CRC} 校验位，用于差错检测，在 \textbf{ACK}、\textbf{NAK} 中填充在 \textbf{ACK} 字段的后 $4$ 个字节 
+            \end{itemize} 
+        
+        \subsubsection{使用的静态全局变量 SR}
+            \par 使用的静态全局变量如下：
+            \lstinputlisting[
+                style = C++,
+                title = {\bf 使用的静态全局变量}
+            ]{global\_static.cpp}
+            \par 对每个变量的说明如下：
+            \begin{itemize}
+                \item \textbf{nbuffered}：目前发送端窗口（缓冲区）内缓存的帧的数量
+                \item \textbf{phl\_ready}：物理层是否准备好，当且仅当物理层发送队列长度低于 $50$ 字节时为 $1$
+                \item \textbf{next\_frame\_to\_send}：发送端下一帧要发送的帧序号
+                \item \textbf{sender\_buffer}：发送端缓冲区
+                \item \textbf{sender\_window\_head \& sender\_window\_tail}：显式定义的发送端窗口的头尾
+                \item \textbf{frame\_expected}：接收端期望接收到的帧序号
+                \item \textbf{receiver\_buffer}：接收端缓冲区
+                \item \textbf{receiver\_window\_head \& receiver\_window\_tail}：显式定义的接收端窗口的头尾
+                \item \textbf{arrived}：标记数组，表示该索引位置是否有未传输到网络层的缓冲数据
+                \item \textbf{no\_nak}：接收方使用，表示当前期望帧是否发送过 \textbf{NAK}
+            \end{itemize}
+            
+    \subsection{模块结构}
+        \subsubsection{子程序说明}
+            \begin{itemize}
+                \item \textbf{static int sender\_window\_check\_inside(unsigned char frame\_id)}：判断序号 \textbf{frame\_id} 是否在发送端窗口内，返回值为 $0$ 代表不在，反之则为在
+                \item \textbf{static void sender\_window\_slide(int step)}：将发送方窗口左移或右移 \textbf{step} 位，\textbf{step} 的正负代表右或左移
+                \item \textbf{static int nak\_active(void)}：判断当前是否允许发送 \textbf{NAK}，返回值为 $0$ 代表不能，反之则为能发送
+                \item \textbf{static void nak\_enable(void)}：将 \textbf{no\_nak} 设置为 $1$，代表当前允许发送 \textbf{NAK}
+                \item \textbf{static void nak\_disable(void)}：将 \textbf{no\_nak} 设置为 $0$，代表当前不允许发送 \textbf{NAK}
+                \item \textbf{static void accmulate\_confirm(unsigned char end\_id)}：依次确认发送方窗口在 \textbf{end\_id} 前的所有帧（不包括 \textbf{end\_id} 帧）
+                \item \textbf{static int receiver\_window\_check\_inside(unsigned char frame\_id)}：判断序号 \textbf{frame\_id} 是否在接收方窗口内，返回值为 $0$ 代表不在，反之则为在
+                \item \textbf{static void receiver\_window\_slide(int step)}：将接收方窗口左移或右移 \textbf{step} 位，\textbf{step} 的正负代表右或左移
+                \item \textbf{static void put\_frame(unsigned char *frame, int len)}：\textbf{frame} 为指向传入帧的指针，\textbf{len} 为该帧的长度，该函数作用为为传入帧生成 \textbf{CRC} 校验并发送到物理层
+                \item \textbf{static void send\_data\_frame(unsigned char frame\_id)}：发送发送方缓冲区中索引为 \textbf{frame\_id} 的帧，同时停止 \textbf{ACK} 计时器（因为数据帧中包含 ACK）,并启动 \textbf{frame\_id} 帧的计时器
+                \item \textbf{static void send\_ack\_frame(unsigned char frame\_id)}：发送序号为 \textbf{frame\_id} 帧的 \textbf{ACK}，由于该函数仅在 \textbf{ACK} 计时器超时时调用，故不需要显式地停止 \textbf{ACK} 计时器
+                \item \textbf{static void send\_nak\_frame(unsigned char frame\_id)}：发送序号为 \textbf{frame\_id} 帧的 \textbf{NAK}，同时令当前帧不再发送 \textbf{NAK} 并停止 \textbf{ACK} 计时器，因为程序中发送 \textbf{NAK} 仅会以当前期望帧作为 \textbf{frame\_id}，因此也有 \textbf{ACK} 的作用
+            \end{itemize}
+
+        \subsubsection{子程序调用图}
+            \begin{figure*}[htbp]
+                \centering
+                \includegraphics*[width = 16cm]{logic1.png}
+            \end{figure*}
+            \begin{figure*}[htbp]
+                \centering
+                \includegraphics*[width = 16cm]{logic2.png}
+            \end{figure*}
+            
+            
+    \subsection{算法流程}
+        \subsubsection{算法流程图}
+            \begin{figure*}[htbp]
+                \centering
+                \includegraphics*[width = 19cm]{logic3.png}
+            \end{figure*}
+
+        \subsubsection{算法流程描述}
+            \begin{enumerate}
+                \item 初始化阶段：
+                    \begin{itemize}
+                        \item 使用 \textbf{protocol_init()} 初始化运行环境
+                        \item 通过 \textbf{disable_network_layer()} 函数控制网络层的数据发送，防止缓冲区溢出
+                    \end{itemize}
+                \item 主循环：循环中通过 \txtbf{wait_for_event()} 函数等待事件的发生，并根据事件类型执行相应的操作，执行完后判断是否满足网络层准备好的条件并设置网络层的状态
+                \item 事件处理：
+                    \begin{itemize}
+                        \item \textbf{NETWORK_LAYER_READY}：当网络层准备好（网络层有包可发并且数据链路层缓冲区未满并且物理层准备好）时，将数据包保存到缓冲区并发送数据帧，更新待发送帧的序号
+                        \item \textbf{PHYSICAL_LAYER_READY}：更新物理层准备标识（\textbf{phl_ready}）为 $1$
+                        \item \textbf{FRAME_RECEIVED}：处理接收到的帧，处理逻辑如下：
+                            \begin{itemize}
+                                \item \textbf{帧损坏}：如果当前期望帧帧未发送过 \textbf{NAK}，则立刻发送当前期望帧的 \textbf{NAK}，跳出当前事件
+                                \item \textbf{接收到 NAK 帧}：上文说过，接收到 \textbf{NAK} 帧可以累计确认 \textbf{NAK} 帧前的所有帧，再确认完后如果缓冲区仍有数据，则发送 \textbf{NAK} 帧指定的数据帧，这是因为做完累计确认后当前的发送端窗口头即为 \textbf{NAK} 帧指定的数据帧，所以只要缓冲区有数据，说明指定的数据帧一定存在
+                                \item \textbf{接收到 ACK 帧}：如果 \textbf{ACK} 帧的序号在发送方窗口内，则依次确认 \textbf{ACK} 帧的序号所指帧及之前所有帧
+                                \item \textbf{接收到 数据 帧}：如果接收到的帧序号不是期望帧的序号并且当前期望帧没发送过 \textbf{NAK}，则发送该帧的 \textbf{NAK}。如果帧序号在接收方窗口内并且当前序号索引位置的缓冲区未被占用，则标志占用，拷贝数据进缓冲区。标记使用 \textbf{len} 是因为向网络层传数据时需要此参数，而最一开始判断帧损坏时确保帧长大于 $5$，不会影响判断。如果期望帧已到达，则依次确认从期望帧开始缓冲区内连续的所有帧，并移动接收方窗口、使期望帧序号自增，同时激活 \textbf{NAK}，启动 \textbf{ACK} 计时器。如果 \textbf{ACK} 帧的序号在发送方窗口内，则依次确认 \textbf{ACK} 帧的序号所指帧及之前所有帧
+                            \end{itemize}
+                        \item \textbf{DATA_TIMEOUT}：重发超时帧
+                        \item \textbf{ACK_TIMEOUT}：发送期望帧前一帧的 \textbf{ACK}
+                    \end{itemize}
+            \end{enumerate} 
+            
